@@ -1,402 +1,1197 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PetMatch: Right Toy & Food Matcher</title>
+  <title>PetMatch: Interactive Playtime Playground</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            indigo: '#313A70',
+            mustard: '#FFB300',
+            rose: '#C9888F',
+            mint: '#AFE2CF',
+            terracotta: '#C3684D',
+            charcoal: '#3D3D3D',
+            cream: '#FBF7F1',
+            grey: '#98A1A6'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Fredoka', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    :root {
-      --indigo: #313A70;
-      --mustard: #FFB300;
-      --terracotta: #C3684D;
-      --mint: #AFE2CF;
-      --cream: #FBF7F1;
-      --charcoal: #3D3D3D;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
     body {
-      background-color: var(--cream);
-      color: var(--charcoal);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 15px;
+      background-color: #313A70;
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+      touch-action: none;
     }
-
-    .game-card {
-      background: #FFFFFF;
-      width: 100%;
-      max-width: 480px;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(49, 58, 112, 0.15);
-      border: 3px solid var(--mint);
-      overflow: hidden;
-      text-align: center;
-      position: relative;
+    .font-display {
+      font-family: 'Fredoka', sans-serif;
     }
-
-    .header {
-      background: var(--indigo);
-      color: #FFF;
-      padding: 16px;
-    }
-
-    .header h1 {
-      font-size: 1.5rem;
-      color: var(--mustard);
-      margin-bottom: 4px;
-    }
-
-    .header p {
-      font-size: 0.85rem;
-      opacity: 0.95;
-    }
-
-    .hud-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 20px;
-      background: #F2EFE9;
-      font-weight: bold;
-      font-size: 1.1rem;
-      color: var(--indigo);
-    }
-
     canvas {
-      background: linear-gradient(180deg, #FAF7F2 0%, var(--mint) 100%);
-      display: block;
-      margin: 0 auto;
-      cursor: none;
+      touch-action: none;
     }
-
-    .overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(49, 58, 112, 0.96);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 24px;
-      z-index: 10;
-    }
-
-    .overlay h2 {
-      font-size: 1.8rem;
-      color: var(--mustard);
-      margin-bottom: 10px;
-    }
-
-    .overlay p {
-      font-size: 0.9rem;
-      margin-bottom: 16px;
-      line-height: 1.4;
-      max-width: 360px;
-    }
-
-    /* Pet Picker inside Overlay */
-    .pet-select-container {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-
-    .pet-card-btn {
-      background: #FFFFFF;
-      color: var(--indigo);
-      border: 3px solid transparent;
-      border-radius: 16px;
-      padding: 12px 24px;
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: bold;
-      transition: all 0.2s ease;
-      text-align: center;
-    }
-
-    .pet-card-btn.active {
-      border-color: var(--mustard);
-      background: var(--terracotta);
-      color: white;
-      transform: scale(1.08);
-    }
-
-    .start-btn {
-      background: var(--terracotta);
-      color: white;
-      border: none;
-      padding: 14px 36px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      border-radius: 30px;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-
-    .start-btn:hover {
+    .toy-btn.active-toy {
+      border-color: #FFB300 !important;
+      background-color: #FFB300 !important;
+      color: #313A70 !important;
       transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(255, 179, 0, 0.4);
     }
-
-    .legend {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      padding: 12px;
-      font-size: 0.8rem;
-      background: #FFF;
-      border-top: 1px solid #EEE;
-      text-align: left;
+    .toy-btn-cat.active-toy {
+      border-color: #C9888F !important;
+      background-color: #C9888F !important;
+      color: #FFFFFF !important;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(201, 136, 143, 0.4);
     }
-
-    .legend-row {
-      display: flex;
-      justify-content: space-between;
+    .pulse-glow {
+      animation: pulseGlow 1.5s infinite alternate;
+    }
+    @keyframes pulseGlow {
+      from { box-shadow: 0 0 5px rgba(255, 179, 0, 0.4); }
+      to { box-shadow: 0 0 18px rgba(255, 179, 0, 0.9); }
     }
   </style>
 </head>
-<body>
+<body class="h-full flex flex-col justify-between text-charcoal bg-indigo overflow-hidden">
 
-  <div class="game-card">
-    <div class="header">
-      <h1>PetMatch: Food & Toy Matcher</h1>
-      <p>Match your pet with their specific toys & treats!</p>
+  <header class="bg-cream/95 backdrop-blur border-b-4 border-mustard px-4 py-2 sm:px-6 flex justify-between items-center shadow-lg z-20">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-full bg-terracotta flex items-center justify-center text-white text-xl font-bold shadow-md">
+        <i class="fa-solid fa-bolt text-mustard"></i>
+      </div>
+      <div>
+        <h1 class="font-display font-bold text-lg sm:text-xl text-indigo leading-tight">PetMatch Active Playground</h1>
+        <p class="text-xs text-terracotta font-semibold hidden sm:block">Real-Time Responsive Dog & Cat Play</p>
+      </div>
     </div>
 
-    <!-- HUD -->
-    <div class="hud-bar">
-      <div>Score: <span id="scoreVal">0</span></div>
-      <div>Playing as: <span id="petLabel">🐶 Dog</span></div>
-      <div>Lives: <span id="livesVal">❤️❤️❤️</span></div>
+    <!-- Trick Counter & Sound Controls -->
+    <div class="flex items-center space-x-2 sm:space-x-3">
+      <div class="bg-indigo/10 border border-indigo/20 px-3 py-1 rounded-full flex items-center space-x-1.5">
+        <span class="text-xs font-bold text-indigo uppercase">Combo:</span>
+        <span id="comboCounter" class="font-display font-bold text-base text-terracotta">0x</span>
+      </div>
+
+      <button id="soundToggle" class="bg-mint hover:bg-opacity-80 text-indigo font-semibold px-3 py-1.5 rounded-full text-xs sm:text-sm flex items-center space-x-1.5 transition shadow">
+        <i id="soundIcon" class="fa-solid fa-volume-high"></i>
+        <span id="soundLabel" class="hidden sm:inline">Sound: ON</span>
+      </button>
+
+      <button id="clearRoomBtn" class="bg-rose hover:bg-opacity-90 text-white font-semibold px-3 py-1.5 rounded-full text-xs sm:text-sm flex items-center space-x-1.5 transition shadow">
+        <i class="fa-solid fa-rotate-left"></i>
+        <span class="hidden sm:inline">Reset</span>
+      </button>
     </div>
+  </header>
 
-    <!-- Game Canvas -->
-    <canvas id="gameCanvas" width="400" height="380"></canvas>
-
-    <!-- Legend Rules -->
-    <div class="legend">
-      <div class="legend-row"><span>🐶 <b>DOG WANTS:</b> 🦴 🎾 🥩 🪢</span><span>🐱 <b>CAT WANTS:</b> 🐟 🧶 🐭 🪶</span></div>
-      <div class="legend-row" style="color: var(--terracotta);"><span>⚠️ <b>DON'T MIX THEM UP OR CATCH POISON:</b> ☠️ 🌶️ 🍄 (-1 Life)</span></div>
-    </div>
-
-    <!-- Start / Pet Selector Screen -->
-    <div class="overlay" id="overlay">
-      <h2 id="overlayTitle">Choose Your Pet!</h2>
-      <p id="overlayDesc">Select which pet you want to play as, then catch <b>ONLY</b> their food and toys!</p>
+  <main class="relative flex-1 w-full bg-cream overflow-hidden flex flex-col items-center justify-center">
+    
+    <!-- Top Floating Status Overlay -->
+    <div class="absolute top-3 left-4 right-4 z-10 flex flex-wrap gap-2 justify-between pointer-events-none">
       
-      <!-- Select Cat or Dog -->
-      <div class="pet-select-container">
-        <button class="pet-card-btn active" id="selectDogBtn" onclick="selectPet('dog')">
-          <span style="font-size: 2.2rem;">🐶</span><br>Dog
+      <!-- Dog Happiness Card -->
+      <div class="bg-white/95 backdrop-blur border-2 border-mustard rounded-2xl p-2 sm:p-2.5 shadow-lg flex items-center space-x-2.5 pointer-events-auto min-w-[150px] sm:min-w-[190px]">
+        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-mustard/20 border-2 border-mustard flex items-center justify-center text-lg sm:text-2xl text-terracotta">
+          🐶
+        </div>
+        <div class="flex-1">
+          <div class="flex justify-between items-center mb-0.5">
+            <span class="font-display font-bold text-xs sm:text-sm text-indigo">Barnaby</span>
+            <span id="dogActionTag" class="text-[10px] font-bold text-terracotta bg-mustard/20 px-1.5 py-0.5 rounded-full">Attentive</span>
+          </div>
+          <div class="w-full bg-slate-200 h-2 sm:h-2.5 rounded-full overflow-hidden border border-slate-300">
+            <div id="dogHappyBar" class="bg-mustard h-full transition-all duration-300 w-4/5"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Action Tip Banner -->
+      <div id="actionBanner" class="bg-indigo text-white px-3.5 py-1.5 rounded-2xl shadow-xl border-2 border-mint text-xs sm:text-sm font-medium flex items-center space-x-2 transition-all">
+        <i id="actionBannerIcon" class="fa-solid fa-hand-pointer text-mustard"></i>
+        <span id="actionBannerText">Click any toy or click a pet directly to play!</span>
+      </div>
+
+      <!-- Cat Happiness Card -->
+      <div class="bg-white/95 backdrop-blur border-2 border-rose rounded-2xl p-2 sm:p-2.5 shadow-lg flex items-center space-x-2.5 pointer-events-auto min-w-[150px] sm:min-w-[190px]">
+        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-rose/20 border-2 border-rose flex items-center justify-center text-lg sm:text-2xl text-rose">
+          🐱
+        </div>
+        <div class="flex-1">
+          <div class="flex justify-between items-center mb-0.5">
+            <span class="font-display font-bold text-xs sm:text-sm text-indigo">Mimi</span>
+            <span id="catActionTag" class="text-[10px] font-bold text-rose bg-rose/20 px-1.5 py-0.5 rounded-full">Ready</span>
+          </div>
+          <div class="w-full bg-slate-200 h-2 sm:h-2.5 rounded-full overflow-hidden border border-slate-300">
+            <div id="catHappyBar" class="bg-rose h-full transition-all duration-300 w-3/4"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- The Play Canvas -->
+    <canvas id="gameCanvas" class="w-full h-full cursor-crosshair block"></canvas>
+  </main>
+
+  <footer class="bg-indigo border-t-4 border-terracotta p-2.5 sm:p-3.5 z-20 shadow-2xl">
+    <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5">
+      
+      <!-- Dog Toys Toolbar -->
+      <div class="flex items-center space-x-2 w-full md:w-auto justify-center">
+        <span class="font-display text-white text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1">
+          <i class="fa-solid fa-dog text-mustard"></i> Dog Toys:
+        </span>
+        <div class="flex space-x-1.5">
+          <button data-toy="ball" class="toy-btn active-toy bg-cream text-indigo border-2 border-mustard px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1 transition shadow">
+            <span>🎾 Ball</span>
+          </button>
+          <button data-toy="bone" class="toy-btn bg-cream text-indigo border-2 border-mustard px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1 transition shadow">
+            <span>🦴 Squeaker</span>
+          </button>
+          <button data-toy="rope" class="toy-btn bg-cream text-indigo border-2 border-mustard px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1 transition shadow">
+            <span>🪢 Tug Rope</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Trick Callouts -->
+      <div class="flex items-center space-x-2">
+        <button id="dogTrickBtn" class="bg-mustard hover:bg-yellow-400 text-indigo font-display font-bold px-3 py-1.5 rounded-xl text-xs shadow-md border-2 border-white transition active:scale-95 flex items-center space-x-1">
+          <span>🐶 Dog Trick!</span>
         </button>
-        <button class="pet-card-btn" id="selectCatBtn" onclick="selectPet('cat')">
-          <span style="font-size: 2.2rem;">🐱</span><br>Cat
+        <button id="catTrickBtn" class="bg-rose hover:bg-pink-400 text-white font-display font-bold px-3 py-1.5 rounded-xl text-xs shadow-md border-2 border-white transition active:scale-95 flex items-center space-x-1">
+          <span>🐱 Cat Trick!</span>
         </button>
       </div>
 
-      <button class="start-btn" onclick="startGame()">Start Game</button>
+      <!-- Cat Toys Toolbar -->
+      <div class="flex items-center space-x-2 w-full md:w-auto justify-center">
+        <span class="font-display text-white text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1">
+          <i class="fa-solid fa-cat text-rose"></i> Cat Toys:
+        </span>
+        <div class="flex space-x-1.5">
+          <button data-toy="wand" class="toy-btn-cat bg-cream text-indigo border-2 border-rose px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1 transition shadow">
+            <span>🪶 Wand</span>
+          </button>
+          <button data-toy="yarn" class="toy-btn-cat bg-cream text-indigo border-2 border-rose px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1 transition shadow">
+            <span>🧶 Yarn</span>
+          </button>
+          <button data-toy="mouse" class="toy-btn-cat bg-cream text-indigo border-2 border-rose px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1 transition shadow">
+            <span>🐭 Mouse</span>
+          </button>
+        </div>
+      </div>
+
     </div>
-  </div>
+  </footer>
 
   <script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-
-    let gameRunning = false;
-    let score = 0;
-    let lives = 3;
-    let selectedPet = "dog"; // "dog" or "cat"
-    let playerX = 200;
-    let items = [];
-    let spawnTimer = 0;
-    let messageText = "";
-    let messageTimer = 0;
-    let messageColor = "green";
-
-    const DOG_ITEMS = [
-      { emoji: "🦴", type: "dog" },
-      { emoji: "🎾", type: "dog" },
-      { emoji: "🥩", type: "dog" },
-      { emoji: "🪢", type: "dog" }
-    ];
-
-    const CAT_ITEMS = [
-      { emoji: "🐟", type: "cat" },
-      { emoji: "🧶", type: "cat" },
-      { emoji: "🐭", type: "cat" },
-      { emoji: "🪶", type: "cat" }
-    ];
-
-    const BAD_ITEMS = [
-      { emoji: "☠️", type: "poison" },
-      { emoji: "🌶️", type: "poison" },
-      { emoji: "🍄", type: "poison" }
-    ];
-
-    function selectPet(pet) {
-      selectedPet = pet;
-      document.getElementById("selectDogBtn").classList.toggle("active", pet === "dog");
-      document.getElementById("selectCatBtn").classList.toggle("active", pet === "cat");
-      document.getElementById("petLabel").innerText = pet === "dog" ? "🐶 Dog" : "🐱 Cat";
-    }
-
-    function updatePlayerPos(clientX) {
-      const rect = canvas.getBoundingClientRect();
-      playerX = clientX - rect.left;
-      if (playerX < 35) playerX = 35;
-      if (playerX > canvas.width - 35) playerX = canvas.width - 35;
-    }
-
-    canvas.addEventListener("mousemove", (e) => updatePlayerPos(e.clientX));
-    canvas.addEventListener("touchmove", (e) => {
-      if (e.touches.length > 0) updatePlayerPos(e.touches[0].clientX);
-    });
-
-    function startGame() {
-      score = 0;
-      lives = 3;
-      items = [];
-      gameRunning = true;
-      document.getElementById("overlay").style.display = "none";
-      updateHUD();
-      requestAnimationFrame(gameLoop);
-    }
-
-    function updateHUD() {
-      document.getElementById("scoreVal").innerText = score;
-      document.getElementById("petLabel").innerText = selectedPet === "dog" ? "🐶 Dog" : "🐱 Cat";
-      let hearts = "";
-      for (let i = 0; i < lives; i++) hearts += "❤️";
-      document.getElementById("livesVal").innerText = hearts || "💀";
-    }
-
-    function spawnItem() {
-      const rand = Math.random();
-      let template;
-
-      if (rand < 0.40) {
-        template = DOG_ITEMS[Math.floor(Math.random() * DOG_ITEMS.length)];
-      } else if (rand < 0.80) {
-        template = CAT_ITEMS[Math.floor(Math.random() * CAT_ITEMS.length)];
-      } else {
-        template = BAD_ITEMS[Math.floor(Math.random() * BAD_ITEMS.length)];
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.muted = false;
       }
 
-      items.push({
-        x: Math.random() * (canvas.width - 70) + 35,
-        y: -20,
-        speed: 2.5 + Math.random() * 2.0,
-        emoji: template.emoji,
-        type: template.type
-      });
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playBark() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(260, now);
+        osc.frequency.exponentialRampToValueAtTime(90, now + 0.14);
+
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.14);
+      }
+
+      playMeow() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(450, now);
+        osc.frequency.linearRampToValueAtTime(800, now + 0.15);
+        osc.frequency.linearRampToValueAtTime(400, now + 0.3);
+
+        gain.gain.setValueAtTime(0.01, now);
+        gain.gain.linearRampToValueAtTime(0.25, now + 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+
+      playSqueak() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1400, now);
+        osc.frequency.exponentialRampToValueAtTime(2200, now + 0.07);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.07);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.07);
+      }
+
+      playBounce() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(50, now + 0.1);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.1);
+      }
+
+      playTugRumble() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(110, now);
+        osc.frequency.linearRampToValueAtTime(140, now + 0.1);
+
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.1);
+      }
+
+      playPurr() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(35, now);
+
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      }
     }
 
-    function showFeedback(text, isError) {
-      messageText = text;
-      messageColor = isError ? "#C3684D" : "#313A70";
-      messageTimer = 35;
+    const soundEngine = new SoundEngine();
+
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = 0;
+    let height = 0;
+    let groundY = 0;
+
+    function resizeCanvas() {
+      width = canvas.parentElement.clientWidth;
+      height = canvas.parentElement.clientHeight;
+      canvas.width = width;
+      canvas.height = height;
+      groundY = height * 0.78;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Game State Variables
+    let activeToyType = 'ball'; // 'ball', 'bone', 'rope', 'wand', 'yarn', 'mouse'
+    let dogHappiness = 85;
+    let catHappiness = 80;
+    let trickCombo = 0;
+
+    const mousePos = { x: width / 2, y: height / 2, isDown: false, isDragging: false };
+
+    // DOM References
+    const dogHappyBar = document.getElementById('dogHappyBar');
+    const catHappyBar = document.getElementById('catHappyBar');
+    const dogActionTag = document.getElementById('dogActionTag');
+    const catActionTag = document.getElementById('catActionTag');
+    const actionBannerText = document.getElementById('actionBannerText');
+    const comboCounter = document.getElementById('comboCounter');
+
+    function updateBanner(text, iconClass = "fa-solid fa-bolt") {
+      actionBannerText.innerText = text;
+      document.getElementById('actionBannerIcon').className = `${iconClass} text-mustard`;
+    }
+
+    class Particle {
+      constructor(x, y, symbol) {
+        this.x = x;
+        this.y = y;
+        this.symbol = symbol;
+        this.vx = (Math.random() - 0.5) * 4;
+        this.vy = -Math.random() * 3 - 2;
+        this.life = 1.0;
+        this.decay = Math.random() * 0.02 + 0.015;
+        this.size = Math.random() * 12 + 14;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life -= this.decay;
+      }
+
+      draw(ctx) {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, this.life);
+        ctx.font = `${this.size}px sans-serif`;
+        ctx.fillText(this.symbol, this.x, this.y);
+        ctx.restore();
+      }
+    }
+
+    const particles = [];
+    function spawnParticles(x, y, symbol, count = 3) {
+      for (let i = 0; i < count; i++) {
+        particles.push(new Particle(x + (Math.random() - 0.5) * 20, y + (Math.random() - 0.5) * 20, symbol));
+      }
+    }
+
+    class ToyItem {
+      constructor(type, x, y) {
+        this.type = type;
+        this.x = x;
+        this.y = y;
+        this.vx = 0;
+        this.vy = 0;
+        this.radius = 16;
+        this.rotation = 0;
+        this.active = true;
+        this.isHeld = false;
+        this.trail = [];
+      }
+
+      update() {
+        if (this.isHeld) return;
+
+        // Mouse Toy erratic movement logic
+        if (this.type === 'mouse' && this.active) {
+          if (Math.random() < 0.08) {
+            this.vx = (Math.random() - 0.5) * 12;
+            soundEngine.playSqueak();
+          }
+        }
+
+        // Gravity & Physics
+        this.vy += 0.38;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vx *= 0.97;
+
+        // Ground Collision
+        if (this.y + this.radius >= groundY) {
+          this.y = groundY - this.radius;
+          if (Math.abs(this.vy) > 1.5) {
+            this.vy = -this.vy * 0.5;
+            soundEngine.playBounce();
+          } else {
+            this.vy = 0;
+          }
+        }
+
+        // Walls
+        if (this.x < 30) { this.x = 30; this.vx = -this.vx * 0.7; }
+        if (this.x > width - 30) { this.x = width - 30; this.vx = -this.vx * 0.7; }
+
+        // Yarn trail
+        if (this.type === 'yarn' && Math.abs(this.vx) > 0.5) {
+          this.trail.push({ x: this.x, y: this.y });
+          if (this.trail.length > 20) this.trail.shift();
+        }
+      }
+
+      draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+
+        if (this.type === 'ball') {
+          ctx.beginPath();
+          ctx.arc(0, 0, 14, 0, Math.PI * 2);
+          ctx.fillStyle = '#CCFF00';
+          ctx.fill();
+          ctx.lineWidth = 2.5;
+          ctx.strokeStyle = '#FFFFFF';
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(0, 0, 9, 0.4, 2.6);
+          ctx.stroke();
+
+        } else if (this.type === 'bone') {
+          ctx.fillStyle = '#FFFDF9';
+          ctx.strokeStyle = '#C3684D';
+          ctx.lineWidth = 2;
+          ctx.fillRect(-12, -4, 24, 8);
+          ctx.beginPath();
+          ctx.arc(-12, -5, 5, 0, Math.PI * 2);
+          ctx.arc(-12, 5, 5, 0, Math.PI * 2);
+          ctx.arc(12, -5, 5, 0, Math.PI * 2);
+          ctx.arc(12, 5, 5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+        } else if (this.type === 'yarn') {
+          ctx.beginPath();
+          ctx.arc(0, 0, 15, 0, Math.PI * 2);
+          ctx.fillStyle = '#C9888F';
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = '#313A70';
+          ctx.stroke();
+
+        } else if (this.type === 'mouse') {
+          ctx.fillStyle = '#98A1A6';
+          ctx.beginPath();
+          ctx.ellipse(0, 0, 12, 8, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#C9888F';
+          ctx.beginPath();
+          ctx.arc(-4, -6, 4, 0, Math.PI * 2);
+          ctx.arc(4, -6, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#C9888F';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(-12, 0); ctx.quadraticCurveTo(-18, -6, -20, -2);
+          ctx.stroke();
+        }
+
+        ctx.restore();
+
+        // Draw yarn unraveled thread line
+        if (this.type === 'yarn' && this.trail.length > 1) {
+          ctx.save();
+          ctx.strokeStyle = '#C9888F';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(this.trail[0].x, this.trail[0].y);
+          for (let p of this.trail) ctx.lineTo(p.x, p.y);
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+    }
+
+    let activeToyInstance = null;
+
+    class Dog {
+      constructor(x) {
+        this.x = x;
+        this.y = groundY - 20;
+        this.vx = 0;
+        this.vy = 0;
+        this.facing = 1;
+        this.state = 'ATTENTIVE'; // 'ATTENTIVE', 'SPRINTING', 'LEAPING', 'FETCHING', 'CHEWING', 'TUGGING', 'TRICK'
+        this.trickType = 'flip';
+        this.trickTimer = 0;
+        this.rotation = 0;
+        this.tailWag = 0;
+        this.walkCycle = 0;
+        this.carriedToy = null;
+      }
+
+      triggerAction(actionName, targetX, targetY) {
+        if (actionName === 'FETCH_BALL') {
+          this.state = 'SPRINTING';
+          this.targetX = targetX;
+          soundEngine.playBark();
+          updateBanner("Barnaby is sprinting for the ball!", "fa-solid fa-dog");
+        } else if (actionName === 'CHEW_BONE') {
+          this.state = 'SPRINTING';
+          this.targetX = targetX;
+          soundEngine.playBark();
+          updateBanner("Barnaby smells the squeaky bone!", "fa-solid fa-bone");
+        } else if (actionName === 'TUG_ROPE') {
+          this.state = 'TUGGING';
+          soundEngine.playTugRumble();
+          updateBanner("Tug-of-war! Pull back and forth with Barnaby!", "fa-solid fa-hand-rock");
+        } else if (actionName === 'TRICK') {
+          this.state = 'TRICK';
+          this.trickTimer = 40;
+          this.trickType = Math.random() < 0.5 ? 'flip' : 'spin';
+          soundEngine.playBark();
+          spawnParticles(this.x, this.y - 30, '⭐', 4);
+          dogHappiness = Math.min(100, dogHappiness + 12);
+          trickCombo++;
+          comboCounter.innerText = `${trickCombo}x`;
+          updateBanner(`Barnaby performed a ${this.trickType === 'flip' ? 'Backflip' : '360 Spin'}!`, "fa-solid fa-star");
+        }
+      }
+
+      update() {
+        this.tailWag += 0.25;
+
+        // ATTENTIVE STANDBY (No AFK wandering)
+        if (this.state === 'ATTENTIVE') {
+          this.vx = 0;
+          this.rotation = 0;
+          const target = activeToyInstance ? activeToyInstance.x : mousePos.x;
+          this.facing = target >= this.x ? 1 : -1;
+
+        } else if (this.state === 'SPRINTING') {
+          this.walkCycle += 0.3;
+          const dx = this.targetX - this.x;
+          this.facing = dx >= 0 ? 1 : -1;
+
+          if (Math.abs(dx) > 20) {
+            this.vx = this.facing * 7.5;
+            this.x += this.vx;
+
+            // Mid-air leap near target
+            if (Math.abs(dx) < 80 && this.y >= groundY - 20) {
+              this.vy = -6;
+              this.state = 'LEAPING';
+            }
+          } else {
+            this.reachTarget();
+          }
+
+        } else if (this.state === 'LEAPING') {
+          this.x += this.facing * 6;
+          this.vy += 0.4;
+          this.y += this.vy;
+
+          if (this.y >= groundY - 20) {
+            this.y = groundY - 20;
+            this.reachTarget();
+          }
+
+        } else if (this.state === 'FETCHING') {
+          this.walkCycle += 0.25;
+          const returnX = width * 0.25;
+          const dx = returnX - this.x;
+          this.facing = dx >= 0 ? 1 : -1;
+
+          if (Math.abs(dx) > 15) {
+            this.x += this.facing * 5;
+          } else {
+            // Returned toy!
+            if (activeToyInstance) activeToyInstance.isHeld = false;
+            this.state = 'ATTENTIVE';
+            dogHappiness = Math.min(100, dogHappiness + 10);
+            spawnParticles(this.x, this.y - 30, '❤️', 3);
+            soundEngine.playBark();
+            updateBanner("Good boy! Barnaby brought the ball back!", "fa-solid fa-heart");
+          }
+
+        } else if (this.state === 'CHEWING') {
+          this.vx = 0;
+          this.rotation = Math.sin(this.tailWag * 2) * 0.1;
+          if (Math.random() < 0.1) soundEngine.playSqueak();
+
+          this.trickTimer--;
+          if (this.trickTimer <= 0) {
+            this.state = 'ATTENTIVE';
+            dogHappiness = Math.min(100, dogHappiness + 10);
+            spawnParticles(this.x, this.y - 30, '🦴', 3);
+          }
+
+        } else if (this.state === 'TUGGING') {
+          const dx = mousePos.x - this.x;
+          this.facing = dx >= 0 ? 1 : -1;
+          this.x += (mousePos.x - (this.facing * 40) - this.x) * 0.1;
+
+          if (mousePos.isDragging) {
+            soundEngine.playTugRumble();
+            dogHappiness = Math.min(100, dogHappiness + 0.3);
+            spawnParticles(this.x, this.y - 30, '⚡', 1);
+          }
+          if (!mousePos.isDown) this.state = 'ATTENTIVE';
+
+        } else if (this.state === 'TRICK') {
+          this.trickTimer--;
+          if (this.trickType === 'flip') {
+            this.rotation = -((40 - this.trickTimer) / 40) * Math.PI * 2;
+            this.vy = Math.sin((this.trickTimer / 40) * Math.PI) * -4;
+            this.y = groundY - 20 + this.vy * 5;
+          } else {
+            this.rotation = ((40 - this.trickTimer) / 40) * Math.PI * 2;
+          }
+
+          if (this.trickTimer <= 0) {
+            this.rotation = 0;
+            this.y = groundY - 20;
+            this.state = 'ATTENTIVE';
+          }
+        }
+
+        // Clamp
+        this.x = Math.max(50, Math.min(width - 50, this.x));
+
+        // Sync held toy
+        if (activeToyInstance && activeToyInstance.isHeld && this.state === 'FETCHING') {
+          activeToyInstance.x = this.x + this.facing * 18;
+          activeToyInstance.y = this.y - 12;
+        }
+      }
+
+      reachTarget() {
+        if (activeToyType === 'ball') {
+          if (activeToyInstance) activeToyInstance.isHeld = true;
+          this.state = 'FETCHING';
+        } else if (activeToyType === 'bone') {
+          this.state = 'CHEWING';
+          this.trickTimer = 80;
+          soundEngine.playSqueak();
+        } else {
+          this.state = 'ATTENTIVE';
+        }
+      }
+
+      draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.scale(this.facing, 1);
+
+        const legOffset = (this.state === 'SPRINTING' || this.state === 'FETCHING') ? Math.sin(this.walkCycle) * 10 : 0;
+        const tailAngle = Math.sin(this.tailWag) * 0.4;
+
+        // Shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.15)';
+        ctx.beginPath();
+        ctx.ellipse(0, 15, 26, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Tail
+        ctx.save();
+        ctx.translate(-22, -10);
+        ctx.rotate(-0.5 + tailAngle);
+        ctx.strokeStyle = '#FFB300';
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(-15, -10, -20, -5); ctx.stroke();
+        ctx.restore();
+
+        // Legs
+        ctx.strokeStyle = '#C3684D';
+        ctx.lineWidth = 6;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-12, 0); ctx.lineTo(-12 + legOffset, 15);
+        ctx.moveTo(12, 0); ctx.lineTo(12 - legOffset, 15);
+        ctx.moveTo(-6, 0); ctx.lineTo(-6 - legOffset, 15);
+        ctx.moveTo(18, 0); ctx.lineTo(18 + legOffset, 15);
+        ctx.stroke();
+
+        // Body
+        ctx.fillStyle = '#FFB300';
+        ctx.beginPath();
+        ctx.ellipse(0, -5, 24, 16, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Head
+        ctx.beginPath();
+        ctx.ellipse(18, -20, 14, 12, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Snout
+        ctx.fillStyle = '#FFFDF9';
+        ctx.beginPath();
+        ctx.ellipse(25, -17, 8, 6, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Nose
+        ctx.fillStyle = '#3D3D3D';
+        ctx.beginPath(); ctx.arc(30, -19, 3, 0, Math.PI * 2); ctx.fill();
+
+        // Eye (Tracking cursor position)
+        ctx.fillStyle = '#3D3D3D';
+        ctx.beginPath(); ctx.arc(20, -22, 2.5, 0, Math.PI * 2); ctx.fill();
+
+        // Ear
+        ctx.fillStyle = '#313A70';
+        ctx.beginPath();
+        ctx.ellipse(12, -18, 6, 12, 0.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      }
+    }
+
+    class Cat {
+      constructor(x) {
+        this.x = x;
+        this.y = groundY - 20;
+        this.vx = 0;
+        this.vy = 0;
+        this.facing = -1;
+        this.state = 'ATTENTIVE'; // 'ATTENTIVE', 'STALKING', 'POUNCING', 'BATTING', 'ROLLING', 'TRICK'
+        this.trickTimer = 0;
+        this.rotation = 0;
+        this.tailWag = 0;
+        this.walkCycle = 0;
+      }
+
+      triggerAction(actionName, targetX, targetY) {
+        if (actionName === 'BAT_WAND') {
+          this.state = 'POUNCING';
+          this.targetX = targetX;
+          this.targetY = targetY;
+          soundEngine.playMeow();
+          updateBanner("Mimi is leaping for the feather wand!", "fa-solid fa-feather");
+        } else if (actionName === 'ROLL_YARN') {
+          this.state = 'STALKING';
+          this.targetX = targetX;
+          soundEngine.playMeow();
+          updateBanner("Mimi is stalking the yarn ball!", "fa-solid fa-cat");
+        } else if (actionName === 'POUNCE_MOUSE') {
+          this.state = 'POUNCING';
+          this.targetX = targetX;
+          this.targetY = groundY - 20;
+          soundEngine.playMeow();
+          updateBanner("Mimi pounces on the wind-up mouse!", "fa-solid fa-bullseye");
+        } else if (actionName === 'TRICK') {
+          this.state = 'TRICK';
+          this.trickTimer = 35;
+          soundEngine.playMeow();
+          soundEngine.playPurr();
+          spawnParticles(this.x, this.y - 35, '💖', 4);
+          catHappiness = Math.min(100, catHappiness + 12);
+          trickCombo++;
+          comboCounter.innerText = `${trickCombo}x`;
+          updateBanner("Mimi performed a High Acrobatic Leap!", "fa-solid fa-heart");
+        }
+      }
+
+      update() {
+        this.tailWag += 0.22;
+
+        // ATTENTIVE STANDBY (No AFK wandering)
+        if (this.state === 'ATTENTIVE') {
+          this.vx = 0;
+          this.rotation = 0;
+          const target = activeToyInstance ? activeToyInstance.x : mousePos.x;
+          this.facing = target >= this.x ? 1 : -1;
+
+          // Wand chase reaction when user moves wand near cat
+          if (activeToyType === 'wand' && Math.hypot(mousePos.x - this.x, mousePos.y - this.y) < 180) {
+            this.triggerAction('BAT_WAND', mousePos.x, mousePos.y);
+          }
+
+        } else if (this.state === 'STALKING') {
+          this.walkCycle += 0.2;
+          const dx = this.targetX - this.x;
+          this.facing = dx >= 0 ? 1 : -1;
+
+          if (Math.abs(dx) > 30) {
+            this.x += this.facing * 3.5;
+          } else {
+            this.vy = -7;
+            this.state = 'POUNCING';
+            soundEngine.playMeow();
+          }
+
+        } else if (this.state === 'POUNCING') {
+          const dx = (this.targetX || mousePos.x) - this.x;
+          this.facing = dx >= 0 ? 1 : -1;
+          this.x += this.facing * 6;
+
+          this.vy += 0.45;
+          this.y += this.vy;
+
+          if (this.y >= groundY - 20) {
+            this.y = groundY - 20;
+            this.state = 'ROLLING';
+            this.trickTimer = 40;
+            soundEngine.playPurr();
+            spawnParticles(this.x, this.y - 30, '🐾', 3);
+            catHappiness = Math.min(100, catHappiness + 8);
+          }
+
+        } else if (this.state === 'ROLLING') {
+          this.rotation = Math.sin(this.trickTimer) * 0.3;
+          this.trickTimer--;
+          if (this.trickTimer <= 0) {
+            this.rotation = 0;
+            this.state = 'ATTENTIVE';
+          }
+
+        } else if (this.state === 'TRICK') {
+          this.trickTimer--;
+          this.vy = Math.sin((this.trickTimer / 35) * Math.PI) * -6;
+          this.y = groundY - 20 + this.vy * 4;
+          this.rotation = Math.sin(this.trickTimer * 0.4) * 0.5;
+
+          if (this.trickTimer <= 0) {
+            this.rotation = 0;
+            this.y = groundY - 20;
+            this.state = 'ATTENTIVE';
+          }
+        }
+
+        // Clamp
+        this.x = Math.max(50, Math.min(width - 50, this.x));
+      }
+
+      draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.scale(this.facing, 1);
+
+        const legOffset = (this.state === 'STALKING' || this.state === 'POUNCING') ? Math.sin(this.walkCycle) * 8 : 0;
+        const tailAngle = Math.sin(this.tailWag) * 0.5;
+
+        // Shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.15)';
+        ctx.beginPath();
+        ctx.ellipse(0, 15, 20, 6, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Tail
+        ctx.save();
+        ctx.translate(-16, -8);
+        ctx.rotate(-0.8 + tailAngle);
+        ctx.strokeStyle = '#C3684D';
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(-10, -20, -5, -28); ctx.stroke();
+        ctx.restore();
+
+        // Legs
+        ctx.strokeStyle = '#C3684D';
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-10, 0); ctx.lineTo(-10 + legOffset, 15);
+        ctx.moveTo(10, 0); ctx.lineTo(10 - legOffset, 15);
+        ctx.moveTo(-4, 0); ctx.lineTo(-4 - legOffset, 15);
+        ctx.moveTo(14, 0); ctx.lineTo(14 + legOffset, 15);
+        ctx.stroke();
+
+        // Body
+        ctx.fillStyle = '#C9888F';
+        ctx.beginPath();
+        ctx.ellipse(0, -4, 18, 13, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Head
+        ctx.beginPath();
+        ctx.arc(14, -18, 11, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Ears
+        ctx.fillStyle = '#AFE2CF';
+        ctx.beginPath(); ctx.moveTo(8, -24); ctx.lineTo(12, -32); ctx.lineTo(16, -24); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(16, -24); ctx.lineTo(20, -32); ctx.lineTo(22, -22); ctx.fill();
+
+        // Eye
+        ctx.fillStyle = '#AFE2CF';
+        ctx.beginPath(); ctx.ellipse(18, -19, 3, 2, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#3D3D3D';
+        ctx.beginPath(); ctx.arc(18, -19, 1, 0, Math.PI * 2); ctx.fill();
+
+        ctx.restore();
+      }
+    }
+
+    // Instantiating Pets
+    const dog = new Dog(width * 0.3);
+    const cat = new Cat(width * 0.7);
+
+    function drawActiveToolOverlays() {
+      // Feather Wand Tool
+      if (activeToyType === 'wand') {
+        ctx.save();
+        ctx.strokeStyle = '#C3684D';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(mousePos.x + 25, mousePos.y + 25);
+        ctx.lineTo(mousePos.x, mousePos.y);
+        ctx.stroke();
+
+        // Feathers
+        ctx.fillStyle = '#AFE2CF';
+        ctx.beginPath(); ctx.ellipse(mousePos.x - 4, mousePos.y - 4, 10, 5, Math.PI / 4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#FFB300';
+        ctx.beginPath(); ctx.ellipse(mousePos.x, mousePos.y - 2, 8, 4, Math.PI / 3, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+
+      // Tug Rope Tool
+      if (activeToyType === 'rope' && dog.state === 'TUGGING') {
+        ctx.save();
+        ctx.strokeStyle = '#FFB300';
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(dog.x + (dog.facing * 25), dog.y - 12);
+        ctx.lineTo(mousePos.x, mousePos.y);
+        ctx.stroke();
+
+        // Knots
+        ctx.fillStyle = '#C3684D';
+        ctx.beginPath(); ctx.arc(dog.x + (dog.facing * 25), dog.y - 12, 8, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(mousePos.x, mousePos.y, 8, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function drawRoomBackground() {
+      ctx.fillStyle = '#FBF7F1';
+      ctx.fillRect(0, 0, width, height);
+
+      // Stripes
+      ctx.fillStyle = 'rgba(201, 136, 143, 0.06)';
+      for (let x = 0; x < width; x += 40) {
+        ctx.fillRect(x, 0, 20, groundY);
+      }
+
+      // Baseboard
+      ctx.fillStyle = '#313A70';
+      ctx.fillRect(0, groundY - 10, width, 10);
+
+      // Floor
+      ctx.fillStyle = '#EAD7C3';
+      ctx.fillRect(0, groundY, width, height - groundY);
+
+      // Rug
+      ctx.fillStyle = 'rgba(175, 226, 207, 0.45)';
+      ctx.strokeStyle = '#AFE2CF';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.ellipse(width / 2, groundY + 22, width * 0.38, 28, 0, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
     }
 
     function gameLoop() {
-      if (!gameRunning) return;
+      ctx.clearRect(0, 0, width, height);
+      drawRoomBackground();
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      spawnTimer++;
-      if (spawnTimer > 40) {
-        spawnItem();
-        spawnTimer = 0;
+      // Active Toy logic
+      if (activeToyInstance) {
+        activeToyInstance.update();
+        activeToyInstance.draw(ctx);
       }
 
-      for (let i = items.length - 1; i >= 0; i--) {
-        let item = items[i];
-        item.y += item.speed;
+      // Pets Update & Draw
+      dog.update();
+      dog.draw(ctx);
 
-        ctx.font = "28px sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText(item.emoji, item.x, item.y);
+      cat.update();
+      cat.draw(ctx);
 
-        // Catch check
-        const dist = Math.hypot(item.x - playerX, item.y - 330);
-        if (dist < 35) {
-          if (item.type === selectedPet) {
-            score += 10;
-            showFeedback("+10 Yummy Match! 🎉", false);
-          } else if (item.type === "poison") {
-            lives--;
-            showFeedback("POISON! ☠️", true);
-          } else {
-            lives--;
-            const wrongMsg = selectedPet === "dog" ? "Wrong! Cat item! 🐱" : "Wrong! Dog item! 🐶";
-            showFeedback(wrongMsg, true);
-          }
+      drawActiveToolOverlays();
 
-          updateHUD();
-          items.splice(i, 1);
-
-          if (lives <= 0) {
-            gameOver();
-            return;
-          }
-          continue;
-        }
-
-        if (item.y > canvas.height + 20) {
-          items.splice(i, 1);
-        }
+      // Particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        particles[i].draw(ctx);
+        if (particles[i].life <= 0) particles.splice(i, 1);
       }
 
-      // Draw active player character (Dog or Cat)
-      const petEmoji = selectedPet === "dog" ? "🐶" : "🐱";
+      // UI Meters
+      dogHappyBar.style.width = `${dogHappiness}%`;
+      catHappyBar.style.width = `${catHappiness}%`;
 
-      ctx.fillStyle = "#313A70";
-      ctx.beginPath();
-      ctx.arc(playerX, 340, 32, 0, Math.PI * 2);
-      ctx.fill();
+      dogActionTag.innerText = dog.state;
+      catActionTag.innerText = cat.state;
 
-      ctx.fillStyle = "#FFB300";
-      ctx.beginPath();
-      ctx.arc(playerX, 340, 26, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.font = "32px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText(petEmoji, playerX, 352);
-
-      if (messageTimer > 0) {
-        messageTimer--;
-        ctx.font = "bold 16px sans-serif";
-        ctx.fillStyle = messageColor;
-        ctx.fillText(messageText, playerX, 290);
-      }
+      // Decay happiness slowly
+      dogHappiness = Math.max(10, dogHappiness - 0.008);
+      catHappiness = Math.max(10, catHappiness - 0.008);
 
       requestAnimationFrame(gameLoop);
     }
 
-    function gameOver() {
-      gameRunning = false;
-      document.getElementById("overlayTitle").innerText = "Game Over!";
-      document.getElementById("overlayDesc").innerHTML = `
-        Final Score: <b>${score} Points</b><br><br>
-        Pets need food and toys suited specifically for them!
-      `;
-      document.querySelector(".start-btn").innerText = "Play Again";
-      document.getElementById("overlay").style.display = "flex";
+    function handlePointerDown(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      mousePos.x = clickX;
+      mousePos.y = clickY;
+      mousePos.isDown = true;
+
+      // 1. Check direct click on Dog
+      if (Math.hypot(clickX - dog.x, clickY - dog.y) < 45) {
+        dog.triggerAction('TRICK');
+        return;
+      }
+
+      // 2. Check direct click on Cat
+      if (Math.hypot(clickX - cat.x, clickY - cat.y) < 45) {
+        cat.triggerAction('TRICK');
+        return;
+      }
+
+      // 3. Trigger Active Toy Action
+      if (activeToyType === 'ball') {
+        activeToyInstance = new ToyItem('ball', dog.x, dog.y - 20);
+        activeToyInstance.vx = (clickX - dog.x) * 0.08;
+        activeToyInstance.vy = -Math.abs(clickY - dog.y) * 0.1 - 4;
+        dog.triggerAction('FETCH_BALL', clickX, clickY);
+
+      } else if (activeToyType === 'bone') {
+        activeToyInstance = new ToyItem('bone', clickX, groundY - 10);
+        dog.triggerAction('CHEW_BONE', clickX, clickY);
+
+      } else if (activeToyType === 'rope') {
+        dog.triggerAction('TUG_ROPE');
+
+      } else if (activeToyType === 'wand') {
+        cat.triggerAction('BAT_WAND', clickX, clickY);
+
+      } else if (activeToyType === 'yarn') {
+        activeToyInstance = new ToyItem('yarn', cat.x, cat.y - 10);
+        activeToyInstance.vx = (clickX - cat.x) * 0.08;
+        cat.triggerAction('ROLL_YARN', clickX, clickY);
+
+      } else if (activeToyType === 'mouse') {
+        activeToyInstance = new ToyItem('mouse', clickX, groundY - 10);
+        cat.triggerAction('POUNCE_MOUSE', clickX, clickY);
+      }
     }
+
+    function handlePointerMove(e) {
+      const rect = canvas.getBoundingClientRect();
+      mousePos.x = e.clientX - rect.left;
+      mousePos.y = e.clientY - rect.top;
+
+      if (mousePos.isDown) mousePos.isDragging = true;
+
+      if (activeToyType === 'wand' && cat.state === 'ATTENTIVE' && Math.hypot(mousePos.x - cat.x, mousePos.y - cat.y) < 160) {
+        cat.triggerAction('BAT_WAND', mousePos.x, mousePos.y);
+      }
+    }
+
+    function handlePointerUp() {
+      mousePos.isDown = false;
+      mousePos.isDragging = false;
+    }
+
+    canvas.addEventListener('pointerdown', handlePointerDown);
+    canvas.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp);
+
+    // Toy Selection Toolbar Buttons
+    document.querySelectorAll('.toy-btn, .toy-btn-cat').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.toy-btn, .toy-btn-cat').forEach(b => b.classList.remove('active-toy'));
+        btn.classList.add('active-toy');
+        activeToyType = btn.dataset.toy;
+        activeToyInstance = null;
+
+        const names = {
+          ball: "Tennis Ball! Click floor to throw.",
+          bone: "Squeaky Bone! Click to squeak.",
+          rope: "Tug Rope! Click and hold to pull.",
+          wand: "Feather Wand! Move cursor to wave.",
+          yarn: "Yarn Ball! Click to roll.",
+          mouse: "Wind-up Mouse! Click to start skittering."
+        };
+        updateBanner(names[activeToyType]);
+      });
+    });
+
+    // Quick Trick Buttons
+    document.getElementById('dogTrickBtn').addEventListener('click', () => dog.triggerAction('TRICK'));
+    document.getElementById('catTrickBtn').addEventListener('click', () => cat.triggerAction('TRICK'));
+
+    // Sound Toggle
+    const soundToggle = document.getElementById('soundToggle');
+    soundToggle.addEventListener('click', () => {
+      soundEngine.muted = !soundEngine.muted;
+      document.getElementById('soundIcon').className = soundEngine.muted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
+      document.getElementById('soundLabel').innerText = soundEngine.muted ? 'Sound: OFF' : 'Sound: ON';
+      if (!soundEngine.muted) soundEngine.playBark();
+    });
+
+    // Reset Room
+    document.getElementById('clearRoomBtn').addEventListener('click', () => {
+      activeToyInstance = null;
+      dog.state = 'ATTENTIVE';
+      cat.state = 'ATTENTIVE';
+      dog.x = width * 0.3;
+      cat.x = width * 0.7;
+      trickCombo = 0;
+      comboCounter.innerText = '0x';
+      dogHappiness = 85;
+      catHappiness = 80;
+      updateBanner("Playground reset! Barnaby and Mimi are attentive and ready!");
+    });
+
+    window.onload = function() {
+      gameLoop();
+    };
   </script>
 </body>
 </html>
