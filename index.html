@@ -1,75 +1,385 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetMatch: Toy & Treat Catcher</title>
   <style>
-    body { text-align: center; background: #FBF7F1; font-family: sans-serif; }
-    #gameCanvas { background: #AFE2CF; border-radius: 12px; cursor: none; }
+    :root {
+      --indigo: #313A70;
+      --mustard: #FFB300;
+      --terracotta: #C3684D;
+      --mint: #AFE2CF;
+      --cream: #FBF7F1;
+      --charcoal: #3D3D3D;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--cream);
+      color: var(--charcoal);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 15px;
+    }
+
+    .game-card {
+      background: #FFFFFF;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(49, 58, 112, 0.15);
+      border: 3px solid var(--mint);
+      overflow: hidden;
+      text-align: center;
+      position: relative;
+    }
+
+    .header {
+      background: var(--indigo);
+      color: #FFF;
+      padding: 16px;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      color: var(--mustard);
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    .hud-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      background: #F2EFE9;
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: var(--indigo);
+    }
+
+    .pet-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    .btn-toggle {
+      background: var(--cream);
+      border: 2px solid var(--indigo);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    .btn-toggle.active {
+      background: var(--terracotta);
+      color: #FFF;
+      border-color: var(--terracotta);
+    }
+
+    canvas {
+      background: linear-gradient(180deg, #FAF7F2 0%, var(--mint) 100%);
+      display: block;
+      margin: 0 auto;
+      cursor: none;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(49, 58, 112, 0.92);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      z-content: 10;
+    }
+
+    .overlay h2 {
+      font-size: 2rem;
+      color: var(--mustard);
+      margin-bottom: 12px;
+    }
+
+    .overlay p {
+      font-size: 1rem;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .start-btn {
+      background: var(--terracotta);
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .start-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .legend {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+      font-size: 0.8rem;
+      background: #FFF;
+      border-top: 1px solid #EEE;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
   </style>
 </head>
 <body>
-  <h2>🍖 PetMatch: Treat Catch!</h2>
-  <p>Score: <span id="score">0</span></p>
-  <canvas id="gameCanvas" width="400" height="500"></canvas>
+
+  <div class="game-card">
+    <div class="header">
+      <h1>PetMatch: Toy Catcher</h1>
+      <p>Catch toys & treats! Avoid poison & bad items!</p>
+    </div>
+
+    <!-- Pet Selector -->
+    <div class="pet-toggle">
+      <button class="btn-toggle active" id="btnDog" onclick="setPet('dog')">🐶 Play as Dog</button>
+      <button class="btn-toggle" id="btnCat" onclick="setPet('cat')">🐱 Play as Cat</button>
+    </div>
+
+    <!-- HUD -->
+    <div class="hud-bar">
+      <div>Score: <span id="scoreVal">0</span></div>
+      <div>Lives: <span id="livesVal">❤️❤️❤️</span></div>
+    </div>
+
+    <!-- Game Canvas -->
+    <canvas id="gameCanvas" width="400" height="420"></canvas>
+
+    <!-- Guide Legend -->
+    <div class="legend">
+      <div class="legend-item"><span>GOOD:</span> 🦴 🎾 🧶 🐟 (+10)</div>
+      <div class="legend-item" style="color: red;"><span>POISON:</span> 🍄 🌶️ ☠️ (-1 Life)</div>
+    </div>
+
+    <!-- Overlay Screen (Start & Game Over) -->
+    <div class="overlay" id="overlay">
+      <h2 id="overlayTitle">Play PetMatch!</h2>
+      <p id="overlayDesc">Move your mouse or finger left & right to catch fun toys and treats.<br><br><b>Watch out!</b> Don't catch poison or spicy items!</p>
+      <button class="start-btn" onclick="startGame()">Start Game</button>
+    </div>
+  </div>
 
   <script>
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
+    // Game Variables
+    let gameRunning = false;
     let score = 0;
+    let lives = 3;
+    let selectedPet = "dog"; // "dog" or "cat"
     let playerX = 200;
-    let treat = { x: Math.random() * 360 + 20, y: 0, speed: 4 };
+    let items = [];
+    let spawnTimer = 0;
+    let messageText = "";
+    let messageTimer = 0;
+    let messageColor = "green";
 
-    // Track mouse position
-    canvas.addEventListener("mousemove", (e) => {
+    // Item Types
+    const GOOD_ITEMS = [
+      { emoji: "🦴", name: "Bone", pts: 10 },
+      { emoji: "🎾", name: "Tennis Ball", pts: 15 },
+      { emoji: "🧶", name: "Yarn", pts: 15 },
+      { emoji: "🐟", name: "Fish Treat", pts: 20 },
+      { emoji: "🧸", name: "Teddy", pts: 25 }
+    ];
+
+    const BAD_ITEMS = [
+      { emoji: "🍄", name: "Poison Mushroom", bad: true },
+      { emoji: "🌶️", name: "Spicy Pepper", bad: true },
+      { emoji: "☠️", name: "Poison Bottle", bad: true }
+    ];
+
+    // Select Pet Character
+    function setPet(pet) {
+      if (gameRunning) return;
+      selectedPet = pet;
+      document.getElementById("btnDog").classList.toggle("active", pet === "dog");
+      document.getElementById("btnCat").classList.toggle("active", pet === "cat");
+    }
+
+    // Controls (Mouse & Touch)
+    function updatePlayerPos(clientX) {
       const rect = canvas.getBoundingClientRect();
-      playerX = e.clientX - rect.left;
+      playerX = clientX - rect.left;
+      // Clamp player within boundaries
+      if (playerX < 30) playerX = 30;
+      if (playerX > canvas.width - 30) playerX = canvas.width - 30;
+    }
+
+    canvas.addEventListener("mousemove", (e) => updatePlayerPos(e.clientX));
+    canvas.addEventListener("touchmove", (e) => {
+      if (e.touches.length > 0) updatePlayerPos(e.touches[0].clientX);
     });
 
-    function update() {
-      // Drop the treat down
-      treat.y += treat.speed;
-
-      // Check collision with player (Pet)
-      if (treat.y >= 440 && Math.abs(treat.x - playerX) < 40) {
-        score += 10;
-        document.getElementById("score").innerText = score;
-        resetTreat();
-      }
-
-      // Reset if treat missed
-      if (treat.y > 500) resetTreat();
-
-      draw();
-      requestAnimationFrame(update);
+    function startGame() {
+      score = 0;
+      lives = 3;
+      items = [];
+      gameRunning = true;
+      document.getElementById("overlay").style.display = "none";
+      updateHUD();
+      requestAnimationFrame(gameLoop);
     }
 
-    function resetTreat() {
-      treat.y = 0;
-      treat.x = Math.random() * 360 + 20;
-      treat.speed = 3 + Math.random() * 3; // Randomize speed
+    function updateHUD() {
+      document.getElementById("scoreVal").innerText = score;
+      let hearts = "";
+      for (let i = 0; i < lives; i++) hearts += "❤️";
+      document.getElementById("livesVal").innerText = hearts || "💀";
     }
 
-    function draw() {
+    function spawnItem() {
+      // 70% chance good item, 30% chance bad/poison item
+      const isBad = Math.random() < 0.3;
+      const template = isBad 
+        ? BAD_ITEMS[Math.floor(Math.random() * BAD_ITEMS.length)]
+        : GOOD_ITEMS[Math.floor(Math.random() * GOOD_ITEMS.length)];
+
+      items.push({
+        x: Math.random() * (canvas.width - 60) + 30,
+        y: -20,
+        speed: 2.5 + Math.random() * 2.5,
+        emoji: template.emoji,
+        pts: template.pts || 0,
+        isBad: template.bad || false
+      });
+    }
+
+    function showFeedback(text, isError) {
+      messageText = text;
+      messageColor = isError ? "#C3684D" : "#313A70";
+      messageTimer = 30; // Frames to display
+    }
+
+    function gameLoop() {
+      if (!gameRunning) return;
+
+      // Clear Screen
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw Pet Basket / Player
+      // Spawn items periodically
+      spawnTimer++;
+      if (spawnTimer > 40) {
+        spawnItem();
+        spawnTimer = 0;
+      }
+
+      // Update & Draw Items
+      for (let i = items.length - 1; i >= 0; i--) {
+        let item = items[i];
+        item.y += item.speed;
+
+        // Draw Item Emoji
+        ctx.font = "28px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(item.emoji, item.x, item.y);
+
+        // Collision Check with Player Basket
+        const dist = Math.hypot(item.x - playerX, item.y - 370);
+        if (dist < 35) {
+          if (item.isBad) {
+            lives--;
+            showFeedback("YUCK! Poison! 🤮", true);
+            updateHUD();
+            if (lives <= 0) {
+              gameOver();
+              return;
+            }
+          } else {
+            score += item.pts;
+            showFeedback("+" + item.pts + " Yum! 🎉", false);
+            updateHUD();
+          }
+          items.splice(i, 1);
+          continue;
+        }
+
+        // Remove if off-screen
+        if (item.y > canvas.height + 20) {
+          items.splice(i, 1);
+        }
+      }
+
+      // Draw Player (Pet Basket)
+      const petEmoji = selectedPet === "dog" ? "🐶" : "🐱";
       ctx.fillStyle = "#313A70";
       ctx.beginPath();
-      ctx.arc(playerX, 460, 30, 0, Math.PI * 2);
+      ctx.arc(playerX, 380, 30, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = "#FFF";
-      ctx.fillText("🐶", playerX - 8, 465);
 
-      // Draw Falling Treat
-      ctx.fillStyle = "#C36040";
+      ctx.fillStyle = "#FFB300";
       ctx.beginPath();
-      ctx.arc(treat.x, treat.y, 12, 0, Math.PI * 2);
+      ctx.arc(playerX, 380, 26, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = "#FFF";
-      ctx.fillText("🦴", treat.x - 7, treat.y + 4);
+
+      // Pet Face inside
+      ctx.font = "32px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(petEmoji, playerX, 392);
+
+      // Feedback Text
+      if (messageTimer > 0) {
+        messageTimer--;
+        ctx.font = "bold 18px sans-serif";
+        ctx.fillStyle = messageColor;
+        ctx.fillText(messageText, playerX, 330);
+      }
+
+      requestAnimationFrame(gameLoop);
     }
 
-    update();
+    function gameOver() {
+      gameRunning = false;
+      document.getElementById("overlayTitle").innerText = "Game Over!";
+      document.getElementById("overlayDesc").innerHTML = `
+        Your Pet Score: <b>${score} Points</b><br><br>
+        Remember: Every rescue pet deserves safe toys, good care, and a loving home!
+      `;
+      document.querySelector(".start-btn").innerText = "Play Again";
+      document.getElementById("overlay").style.display = "flex";
+    }
   </script>
 </body>
 </html>
