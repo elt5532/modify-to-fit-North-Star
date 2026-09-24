@@ -1,124 +1,532 @@
-<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetMatch: Which Pet Is Right for You?</title>
+  <style>
+    :root {
+      --deep-indigo: #313A70;
+      --warm-mustard: #FFB300;
+      --dusty-rose: #C9888F;
+      --soft-mint: #AFE2CF;
+      --terracotta: #C3684D;
+      --charcoal: #3D3D3D;
+      --cream: #FBF7F1;
+      --cool-grey: #98A1A6;
+    }
 
-Learn how to code this game step-by-step on YouTube:
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-https://www.youtube.com/watch?v=2q5EufbUEQk
+    body {
+      background-color: var(--cream);
+      color: var(--charcoal);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
 
-Follow me on 𝕏 for more: https://twitter.com/HunorBorbely
+    .container {
+      background: #ffffff;
+      width: 100%;
+      max-width: 600px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(49, 58, 112, 0.1);
+      padding: 32px;
+      border: 2px solid var(--soft-mint);
+    }
 
--->
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
 
-<canvas id="game"></canvas>
+    h1 {
+      color: var(--deep-indigo);
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+    }
 
-<svg width="200" height="250" id="windmill">
-  <defs>
-    <path id="arm" d="M -7 -20 C -7 -10 7 -10 7 -20 L 2 -80 L -2 -80" />
-  </defs>
-  <g transform="translate(100, 100)">
-    <g id="windmill-head">
-      <circle r="8"></circle>
-      <use href="#arm" />
-      <use href="#arm" transform="rotate(+120)" />
-      <use href="#arm" transform="rotate(-120)" />
-    </g>
-  </g>
-  <path
-    transform="translate(100, 0)"
-    d="M -7 250 L 7 250 L 3 115 L -3 115"
-  ></path>
-</svg>
+    p.subtitle {
+      color: var(--cool-grey);
+      font-size: 0.95rem;
+    }
 
-<div id="wind-info">Wind Speed: <span id="wind-speed">0</span></div>
+    /* Card screens */
+    .screen {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
 
-<div id="info-left">
-  <h3><span class="name">Player</span></h3>
-  <p>Angle: <span class="angle">0</span>°</p>
-  <p>Velocity: <span class="velocity">0</span></p>
-</div>
+    .hidden {
+      display: none;
+    }
 
-<div id="info-right">
-  <h3><span class="name">Computer</span></h3>
-  <p>Angle: <span class="angle">0</span>°</p>
-  <p>Velocity: <span class="velocity">0</span></p>
-</div>
+    /* Start Screen */
+    .intro-box {
+      text-align: center;
+      background: var(--cream);
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px dashed var(--dusty-rose);
+    }
 
-<div id="instructions">
-  <h3 id="game-mode">Player vs. Computer</h3>
-  <h1>Drag the bomb to aim!</h1>
-</div>
+    .btn {
+      background-color: var(--terracotta);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 30px;
+      cursorHere is a complete, self-contained **HTML, CSS, and JavaScript interactive quiz game** for your "PetMatch" campaign. You can save this code as an `index.html` file and open it directly in any browser or embed it into your project website.
 
-<div id="bomb-grab-area"></div>
+The visual design uses the warm color scheme and rounded card layout from your design mood board.
 
-<div id="congratulations">
-  <h1><span id="winner">?</span> won!</h1>
-  <p>
-    Learn How to Code This Game with Plain JavaScript and HTML Canvas on
-    <a href="https://youtu.be/2q5EufbUEQk?si=w2Himy4oN99AQeks" target="_top"
-      >YouTube</a
-    >!
-  </p>
-  <p>
-    Say hello
-    <a href="https://twitter.com/HunorBorbely" target="_top">@HunorBorbely</a
-    >.
-  </p>
-  <div class="dropdown">
-    <button class="dropbtn">New Game</button>
-    <div class="dropdown-content">
-      <a href="#" class="single-player">Single Player</a>
-      <a href="#" class="two-players">Two-Player</a>
-      <a href="#" class="auto-play">Autoplay</a>
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetMatch: Which Pet Is Right for You?</title>
+  <style>
+    :root {
+      --bg-color: #FBF7F1;
+      --card-bg: #FFFFFF;
+      --primary-navy: #313A70;
+      --accent-yellow: #FFB300;
+      --terracotta: #C36040;
+      --soft-green: #AFE2CF;
+      --text-dark: #3D3D3D;
+      --text-muted: #6E7278;
+      --border-radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .quiz-container {
+      background: var(--card-bg);
+      max-width: 480px;
+      width: 100%;
+      border-radius: var(--border-radius);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      padding: 32px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 6px;
+      width: 100%;
+      background-color: #EAE5DD;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background-color: var(--terracotta);
+      transition: width 0.3s ease;
+    }
+
+    h1 {
+      color: var(--primary-navy);
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .option-btn {
+      background-color: var(--bg-color);
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding:Here is a complete, ready-to-run single-file code (`HTML`, `CSS`, and `JavaScript`) for your **"PetMatch: Which Pet Is Right for You?"** interactive quiz game. 
+
+The styling uses the warm color scheme from your project board (**Deep Indigo**, **Terracotta**, **Warm Mustard**, and **Cream**).
+
+### `index.html`
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetMatch: Which Pet Is Right for You?</title>
+  <style>
+    :root {
+      --indigo: #313A70;
+      --mustard: #FFB300;
+      --terracotta: #C36040;
+      --cream: #FBF7F1;
+      --charcoal: #3D3D3D;
+      --white: #FFFFFF;
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--cream);
+      color: var(--charcoal);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .quiz-card {
+      background: var(--white);
+      max-width: 600px;
+      width: 100%;
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      color: var(--indigo);
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      width: 100%;
+      background-color: #E8E3DC;
+      height: 8px;
+      border-radius: 4px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--terracotta);
+      transition: width 0.3s ease;
+    }
+
+    /* Questions & Options */
+    .question-title {
+      font-size: 1.2rem;
+      color: var(--indigo);
+      margin-bottom: 16px;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-btn {
+      background: var(--cream);
+      border: 2px solid transparent;
+      padding: 16px 20px;
+      border-radius: 12px;
+      font-size: 1rem;
+      color: var(--charcoal);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+
+    .option-btn:hover {
+      border-color: var(--mustard);
+      background: #FFFDF9;
+      transform: translateY(-2px);
+    }
+
+    /* Results Screen */
+    .result-container {
+      display: none;
+      text-align: center;
+    }
+
+    .pet-badge {
+      display: inline-block;
+      background: var(--mustard);
+      color: var(--indigo);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .result-title {
+      color: var(--indigo);
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+
+    .pet-image-box {
+      width: 100%;
+      height: 220px;
+      border-radius: 12px;
+      background-size: cover;
+      background-position: center;
+      margin: 16px 0;
+    }
+
+    .result-description {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #555;
+      margin-bottom: 24px;
+    }
+
+    .cta-btn {
+      background: var(--terracotta);
+      color: var(--white);
+      border: none;
+      padding: 14px 28px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .cta-btn:hover {
+      background: #a84f33;
+    }
+
+    .restart-btn {
+      display: block;
+      margin: 12px auto 0;
+      background: none;
+      border: none;
+      color: #888;
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-card">
+    <!-- Header -->
+    <div class="header">
+      <h1>PetMatch</h1>
+      <p>Find your ideal rescue companion based on your lifestyle</p>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-container" id="progressContainer">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Quiz Content -->
+    <div id="quizContent">
+      <h2 class="question-title" id="questionText">Loading...</h2>
+      <div class="options-grid" id="optionsContainer"></div>
+    </div>
+
+    <!-- Result Screen -->
+    <div class="result-container" id="resultContainer">
+      <span class="pet-badge">Your Match</span>
+      <h2 class="result-title" id="matchTitle">...</h2>
+      <div class="pet-image-box" id="matchImage"></div>
+      <p class="result-description" id="matchDesc">...</p>
+      <button class="cta-btn" onclick="alert('Redirecting to local available shelter pets!')">Meet Available Pets</button>
+      <button class="restart-btn" onclick="restartQuiz()">Take Quiz Again</button>
     </div>
   </div>
-</div>
 
-<div id="settings">
-  <div class="dropdown">
-    <button class="dropbtn">New Game</button>
-    <div class="dropdown-content">
-      <a href="#" class="single-player">Single Player</a>
-      <a href="#" class="two-players">Two-Players</a>
-      <a href="#" class="auto-play">Autoplay</a>
-    </div>
-  </div>
+  <script>
+    const questions = [
+      {
+        question: "What does your current living situation look like?",
+        options: [
+          { text: "Apartment or condo with limited space", points: { cat: 3, small: 3, calm_dog: 1 } },
+          { text: "House with a small yard or nearby park", points: { calm_dog: 3, cat: 2, active_dog: 1 } },
+          { text: "Large house with a fenced, spacious yard", points: { active_dog: 3, calm_dog: 2 } },
+          { text: "Rented room or shared living setup", points: { small: 3, cat: 2 } }
+        ]
+      },
+      {
+        question: "How would you describe your typical activity level?",
+        options: [
+          { text: "High energy: I love long runs, hikes, and outdoor sports", points: { active_dog: 3 } },
+          { text: "Moderate: Daily casual walks and light weekend outings", points: { calm_dog: 3, cat: 1 } },
+          { text: "Relaxed: Cozy nights in, reading, and watching movies", points: { cat: 3, small: 2 } },
+          { text: "On-the-go: Busy schedule, away from home often", points: { cat: 2, small: 3 } }
+        ]
+      },
+      {
+        question: "How much time can you dedicate daily to pet care & interaction?",
+        options: [
+          { text: "Less than 1 hour a day", points: { small: 3, cat: 1 } },
+          { text: "1 – 2 hours a day", points: { cat: 3, calm_dog: 2 } },
+          { text: "2 – 4 hours a day", points: { calm_dog: 3, active_dog: 2 } },
+          { text: "4+ hours (I work from home or have lots of free time)", points: { active_dog: 3, calm_dog: 2 } }
+        ]
+      },
+      {
+        question: "What is your prior experience with owning pets?",
+        options: [
+          { text: "First-time owner looking for an easy-going companion", points: { cat: 3, calm_dog: 2, small: 2 } },
+          { text: "Some experience, comfortable with basic training", points: { calm_dog: 3, cat: 2 } },
+          { text: "Experienced owner ready for a high-needs or high-energy rescue", points: { active_dog: 3 } }
+        ]
+      }
+    ];
 
-  <button id="color-mode">Dark Mode</button>
+    const resultsData = {
+      active_dog: {
+        title: "An Active & Adventurous Dog",
+        desc: "You have plenty of space, energy, and time to devote to a companion. A high-energy rescue dog who loves hiking, training, and playing fetch will fit right into your active lifestyle!",
+        image: "https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?auto=format&fit=crop&w=800&q=80"
+      },
+      calm_dog: {
+        title: "A Calm & Gentle Senior Dog",
+        desc: "You offer a stable, comfortable home perfect for a dog that prefers relaxed strolls and couch cuddles. An older or easygoing dog will shower you with low-maintenance affection.",
+        image: "https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&w=800&q=80"
+      },
+      cat: {
+        title: "An Independent & Loving Cat",
+        desc: "Your lifestyle balances cozy indoor vibes with manageable care needs. A rescue cat will love curling up in your lap, keeping you company, and staying content while you're busy.",
+        image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80"
+      },
+      small: {
+        title: "A Pocket Pet or Small Companion",
+        desc: "With limited space or time constraints, a small pet (like a bunny, guinea pig, or hamster) offers wonderful companionship, low-space needs, and tons of quiet charm.",
+        image: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?auto=format&fit=crop&w=800&q=80"
+      }
+    };
 
-  <a
-    id="youtube"
-    href="https://youtu.be/2q5EufbUEQk?si=w2Himy4oN99AQeks"
-    target="_top" 
-  >
-    <span>See how this game was made</span>
-  </a>
-  <div id="youtube-card">
-    Learn How to Code This Game with Plain JavaScript and HTML Canvas
-  </div>
-</div>
+    let currentQuestion = 0;
+    let scores = { active_dog: 0, calm_dog: 0, cat: 0, small: 0 };
 
-<button id="fullscreen" onclick="toggleFullscreen()">
-  <svg width="30" height="30">
-    <path
-          id="enter-fullscreen"
-          stroke="white"
-          stroke-width="3"
-          fill="none"
-          d="
-             M 10, 2 L 2,2 L 2, 10
-             M 20, 2 L 28,2 L 28, 10
-             M 28, 20 L 28,28 L 20, 28
-             M 10, 28 L 2,28 L 2, 20"
-          />
-    <path
-          id="exit-fullscreen"
-          stroke="transparent"
-          stroke-width="3"
-          fill="none"
-          d="
-             M 10, 2 L 10,10 L 2, 10
-             M 20, 2 L 20,10 L 28, 10
-             M 28, 20 L 20,20 L 20, 28
-             M 10, 28 L 10,20 L 2, 20"
-          />
-  </svg>
-</button>
+    function loadQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById("questionText").innerText = q.question;
+      
+      const optionsContainer = document.getElementById("optionsContainer");
+      optionsContainer.innerHTML = "";
+
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.innerText = opt.text;
+        btn.onclick = () => selectOption(opt.points);
+        optionsContainer.appendChild(btn);
+      });
+
+      // Update progress bar
+      const progressPercent = ((currentQuestion) / questions.length) * 100;
+      document.getElementById("progressBar").style.width = `${progressPercent}%`;
+    }
+
+    function selectOption(points) {
+      for (let pet in points) {
+        scores[pet] += points[pet];
+      }
+
+      currentQuestion++;
+
+      if (currentQuestion < questions.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      document.getElementById("quizContent").style.display = "none";
+      document.getElementById("progressContainer").style.display = "none";
+      document.getElementById("resultContainer").style.display = "block";
+
+      // Find pet type with highest score
+      let winningPet = "cat";
+      let maxScore = -1;
+      for (let pet in scores) {
+        if (scores[pet] > maxScore) {
+          maxScore = scores[pet];
+          winningPet = pet;
+        }
+      }
+
+      const match = resultsData[winningPet];
+      document.getElementById("matchTitle").innerText = match.title;
+      document.getElementById("matchDesc").innerText = match.desc;
+      document.getElementById("matchImage").style.backgroundImage = `url('${match.image}')`;
+    }
+
+    function restartQuiz() {
+      currentQuestion = 0;
+      scores = { active_dog: 0, calm_dog: 0, cat: 0, small: 0 };
+      document.getElementById("quizContent").style.display = "block";
+      document.getElementById("progressContainer").style.display = "block";
+      document.getElementById("resultContainer").style.display = "none";
+      loadQuestion();
+    }
+
+    // Initialize
+    loadQuestion();
+  </script>
+
+</body>
+</html>
