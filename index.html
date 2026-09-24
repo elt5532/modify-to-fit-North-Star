@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PetMatch: Food & Toy Matcher</title>
+  <title>PetMatch: Right Toy & Food Matcher</title>
   <style>
     :root {
       --indigo: #313A70;
@@ -72,30 +72,6 @@
       color: var(--indigo);
     }
 
-    .pet-toggle {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 10px 0;
-    }
-
-    .btn-toggle {
-      background: var(--cream);
-      border: 2px solid var(--indigo);
-      border-radius: 20px;
-      padding: 8px 18px;
-      font-size: 0.95rem;
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.2s ease;
-    }
-
-    .btn-toggle.active {
-      background: var(--terracotta);
-      color: #FFF;
-      border-color: var(--terracotta);
-    }
-
     canvas {
       background: linear-gradient(180deg, #FAF7F2 0%, var(--mint) 100%);
       display: block;
@@ -109,7 +85,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(49, 58, 112, 0.94);
+      background: rgba(49, 58, 112, 0.96);
       color: white;
       display: flex;
       flex-direction: column;
@@ -120,27 +96,56 @@
     }
 
     .overlay h2 {
-      font-size: 2rem;
+      font-size: 1.8rem;
       color: var(--mustard);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .overlay p {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+      line-height: 1.4;
+      max-width: 360px;
+    }
+
+    /* Pet Picker inside Overlay */
+    .pet-select-container {
+      display: flex;
+      gap: 16px;
       margin-bottom: 20px;
-      line-height: 1.5;
+    }
+
+    .pet-card-btn {
+      background: #FFFFFF;
+      color: var(--indigo);
+      border: 3px solid transparent;
+      border-radius: 16px;
+      padding: 12px 24px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .pet-card-btn.active {
+      border-color: var(--mustard);
+      background: var(--terracotta);
+      color: white;
+      transform: scale(1.08);
     }
 
     .start-btn {
       background: var(--terracotta);
       color: white;
       border: none;
-      padding: 14px 32px;
+      padding: 14px 36px;
       font-size: 1.1rem;
       font-weight: bold;
       border-radius: 30px;
       cursor: pointer;
       transition: transform 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
     .start-btn:hover {
@@ -168,24 +173,19 @@
 
   <div class="game-card">
     <div class="header">
-      <h1>PetMatch: Right Toy & Food Matcher</h1>
-      <p>Only catch items made for your chosen pet!</p>
-    </div>
-
-    <!-- Pet Switcher -->
-    <div class="pet-toggle">
-      <button class="btn-toggle active" id="btnDog" onclick="setPet('dog')">🐶 Play as Dog</button>
-      <button class="btn-toggle" id="btnCat" onclick="setPet('cat')">🐱 Play as Cat</button>
+      <h1>PetMatch: Food & Toy Matcher</h1>
+      <p>Match your pet with their specific toys & treats!</p>
     </div>
 
     <!-- HUD -->
     <div class="hud-bar">
       <div>Score: <span id="scoreVal">0</span></div>
+      <div>Playing as: <span id="petLabel">🐶 Dog</span></div>
       <div>Lives: <span id="livesVal">❤️❤️❤️</span></div>
     </div>
 
     <!-- Game Canvas -->
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <canvas id="gameCanvas" width="400" height="380"></canvas>
 
     <!-- Legend Rules -->
     <div class="legend">
@@ -193,15 +193,21 @@
       <div class="legend-row" style="color: var(--terracotta);"><span>⚠️ <b>DON'T MIX THEM UP OR CATCH POISON:</b> ☠️ 🌶️ 🍄 (-1 Life)</span></div>
     </div>
 
-    <!-- Start / Game Over Overlay -->
+    <!-- Start / Pet Selector Screen -->
     <div class="overlay" id="overlay">
-      <h2 id="overlayTitle">PetMatch: Food & Toy Match!</h2>
-      <p id="overlayDesc">
-        <b>Rules:</b><br>
-        1. Select 🐶 Dog or 🐱 Cat.<br>
-        2. Catch ONLY the food & toys meant for your pet!<br>
-        3. Do NOT mix them up or touch poison!
-      </p>
+      <h2 id="overlayTitle">Choose Your Pet!</h2>
+      <p id="overlayDesc">Select which pet you want to play as, then catch <b>ONLY</b> their food and toys!</p>
+      
+      <!-- Select Cat or Dog -->
+      <div class="pet-select-container">
+        <button class="pet-card-btn active" id="selectDogBtn" onclick="selectPet('dog')">
+          <span style="font-size: 2.2rem;">🐶</span><br>Dog
+        </button>
+        <button class="pet-card-btn" id="selectCatBtn" onclick="selectPet('cat')">
+          <span style="font-size: 2.2rem;">🐱</span><br>Cat
+        </button>
+      </div>
+
       <button class="start-btn" onclick="startGame()">Start Game</button>
     </div>
   </div>
@@ -210,7 +216,6 @@
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
-    // Game State Variables
     let gameRunning = false;
     let score = 0;
     let lives = 3;
@@ -222,32 +227,31 @@
     let messageTimer = 0;
     let messageColor = "green";
 
-    // Item Categories
     const DOG_ITEMS = [
-      { emoji: "🦴", type: "dog", name: "Bone" },
-      { emoji: "🎾", type: "dog", name: "Tennis Ball" },
-      { emoji: "🥩", type: "dog", name: "Steak Treat" },
-      { emoji: "🪢", type: "dog", name: "Rope Toy" }
+      { emoji: "🦴", type: "dog" },
+      { emoji: "🎾", type: "dog" },
+      { emoji: "🥩", type: "dog" },
+      { emoji: "🪢", type: "dog" }
     ];
 
     const CAT_ITEMS = [
-      { emoji: "🐟", type: "cat", name: "Fish Treat" },
-      { emoji: "🧶", type: "cat", name: "Yarn Ball" },
-      { emoji: "🐭", type: "cat", name: "Toy Mouse" },
-      { emoji: "🪶", type: "cat", name: "Feather Wand" }
+      { emoji: "🐟", type: "cat" },
+      { emoji: "🧶", type: "cat" },
+      { emoji: "🐭", type: "cat" },
+      { emoji: "🪶", type: "cat" }
     ];
 
     const BAD_ITEMS = [
-      { emoji: "☠️", type: "poison", name: "Poison Bottle" },
-      { emoji: "🌶️", type: "poison", name: "Hot Pepper" },
-      { emoji: "🍄", type: "poison", name: "Wild Mushroom" }
+      { emoji: "☠️", type: "poison" },
+      { emoji: "🌶️", type: "poison" },
+      { emoji: "🍄", type: "poison" }
     ];
 
-    function setPet(pet) {
-      if (gameRunning) return;
+    function selectPet(pet) {
       selectedPet = pet;
-      document.getElementById("btnDog").classList.toggle("active", pet === "dog");
-      document.getElementById("btnCat").classList.toggle("active", pet === "cat");
+      document.getElementById("selectDogBtn").classList.toggle("active", pet === "dog");
+      document.getElementById("selectCatBtn").classList.toggle("active", pet === "cat");
+      document.getElementById("petLabel").innerText = pet === "dog" ? "🐶 Dog" : "🐱 Cat";
     }
 
     function updatePlayerPos(clientX) {
@@ -274,6 +278,7 @@
 
     function updateHUD() {
       document.getElementById("scoreVal").innerText = score;
+      document.getElementById("petLabel").innerText = selectedPet === "dog" ? "🐶 Dog" : "🐱 Cat";
       let hearts = "";
       for (let i = 0; i < lives; i++) hearts += "❤️";
       document.getElementById("livesVal").innerText = hearts || "💀";
@@ -296,8 +301,7 @@
         y: -20,
         speed: 2.5 + Math.random() * 2.0,
         emoji: template.emoji,
-        type: template.type,
-        name: template.name
+        type: template.type
       });
     }
 
@@ -313,12 +317,11 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       spawnTimer++;
-      if (spawnTimer > 42) {
+      if (spawnTimer > 40) {
         spawnItem();
         spawnTimer = 0;
       }
 
-      // Process falling items
       for (let i = items.length - 1; i >= 0; i--) {
         let item = items[i];
         item.y += item.speed;
@@ -327,19 +330,16 @@
         ctx.textAlign = "center";
         ctx.fillText(item.emoji, item.x, item.y);
 
-        // Check catch collision
-        const dist = Math.hypot(item.x - playerX, item.y - 350);
+        // Catch check
+        const dist = Math.hypot(item.x - playerX, item.y - 330);
         if (dist < 35) {
           if (item.type === selectedPet) {
-            // Correct match!
             score += 10;
-            showFeedback("+10 Great Match! 🎉", false);
+            showFeedback("+10 Yummy Match! 🎉", false);
           } else if (item.type === "poison") {
-            // Poison hit
             lives--;
             showFeedback("POISON! ☠️", true);
           } else {
-            // Mixed up dog and cat items
             lives--;
             const wrongMsg = selectedPet === "dog" ? "Wrong! Cat item! 🐱" : "Wrong! Dog item! 🐶";
             showFeedback(wrongMsg, true);
@@ -355,38 +355,33 @@
           continue;
         }
 
-        // Remove off-screen items
         if (item.y > canvas.height + 20) {
           items.splice(i, 1);
         }
       }
 
-      // Draw Player Pet Catcher
+      // Draw active player character (Dog or Cat)
       const petEmoji = selectedPet === "dog" ? "🐶" : "🐱";
 
-      // Outer rim
       ctx.fillStyle = "#313A70";
       ctx.beginPath();
-      ctx.arc(playerX, 360, 32, 0, Math.PI * 2);
+      ctx.arc(playerX, 340, 32, 0, Math.PI * 2);
       ctx.fill();
 
-      // Inner bowl
       ctx.fillStyle = "#FFB300";
       ctx.beginPath();
-      ctx.arc(playerX, 360, 26, 0, Math.PI * 2);
+      ctx.arc(playerX, 340, 26, 0, Math.PI * 2);
       ctx.fill();
 
-      // Pet Avatar
       ctx.font = "32px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText(petEmoji, playerX, 372);
+      ctx.fillText(petEmoji, playerX, 352);
 
-      // Feedback message on catch
       if (messageTimer > 0) {
         messageTimer--;
         ctx.font = "bold 16px sans-serif";
         ctx.fillStyle = messageColor;
-        ctx.fillText(messageText, playerX, 310);
+        ctx.fillText(messageText, playerX, 290);
       }
 
       requestAnimationFrame(gameLoop);
@@ -397,9 +392,9 @@
       document.getElementById("overlayTitle").innerText = "Game Over!";
       document.getElementById("overlayDesc").innerHTML = `
         Final Score: <b>${score} Points</b><br><br>
-        Proper care means feeding pets the right food and giving them species-safe toys!
+        Pets need food and toys suited specifically for them!
       `;
-      document.querySelector(".start-btn").innerText = "Try Again";
+      document.querySelector(".start-btn").innerText = "Play Again";
       document.getElementById("overlay").style.display = "flex";
     }
   </script>
