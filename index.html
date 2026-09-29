@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PetMatch: Interactive Playtime Playground</title>
+  <title>PetMatch: Full Room Playtime Playground</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome Icons -->
@@ -25,7 +25,8 @@
             terracotta: '#C3684D',
             charcoal: '#3D3D3D',
             cream: '#FBF7F1',
-            grey: '#98A1A6'
+            grey: '#98A1A6',
+            wallTan: '#DAC19C'
           },
           fontFamily: {
             sans: ['Inter', 'sans-serif'],
@@ -54,44 +55,33 @@
       background-color: #FFB300 !important;
       color: #313A70 !important;
       transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(255, 179, 0, 0.4);
+      box-shadow: 0 4px 14px rgba(255, 179, 0, 0.45);
     }
     .toy-btn-cat.active-toy {
       border-color: #C9888F !important;
       background-color: #C9888F !important;
       color: #FFFFFF !important;
       transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(201, 136, 143, 0.4);
-    }
-    .pulse-glow {
-      animation: pulseGlow 1.5s infinite alternate;
-    }
-    @keyframes pulseGlow {
-      from { box-shadow: 0 0 5px rgba(255, 179, 0, 0.4); }
-      to { box-shadow: 0 0 18px rgba(255, 179, 0, 0.9); }
+      box-shadow: 0 4px 14px rgba(201, 136, 143, 0.45);
     }
   </style>
 </head>
 <body class="h-full flex flex-col justify-between text-charcoal bg-indigo overflow-hidden">
 
-  <header class="bg-cream/95 backdrop-blur border-b-4 border-mustard px-4 py-2 sm:px-6 flex justify-between items-center shadow-lg z-20">
+  <!-- Header Navigation -->
+  <header class="bg-cream/95 backdrop-blur border-b-4 border-mustard px-4 py-2.5 sm:px-6 flex justify-between items-center shadow-lg z-20">
     <div class="flex items-center space-x-3">
       <div class="w-10 h-10 rounded-full bg-terracotta flex items-center justify-center text-white text-xl font-bold shadow-md">
-        <i class="fa-solid fa-bolt text-mustard"></i>
+        <i class="fa-solid fa-paw text-mustard"></i>
       </div>
       <div>
-        <h1 class="font-display font-bold text-lg sm:text-xl text-indigo leading-tight">PetMatch Playtime Playground</h1>
-        <p class="text-xs text-terracotta font-semibold hidden sm:block">Interactive Responsive Dog & Cat Play Room</p>
+        <h1 class="font-display font-bold text-lg sm:text-xl text-indigo leading-tight">PetMatch: Full Room Playground</h1>
+        <p class="text-xs text-terracotta font-semibold hidden sm:block">Interactive 2.5D Co-Play Experience</p>
       </div>
     </div>
 
-    <!-- Trick Counter & Sound Controls -->
+    <!-- Sound & Reset Controls -->
     <div class="flex items-center space-x-2 sm:space-x-3">
-      <div class="bg-indigo/10 border border-indigo/20 px-3 py-1 rounded-full flex items-center space-x-1.5">
-        <span class="text-xs font-bold text-indigo uppercase">Combo:</span>
-        <span id="comboCounter" class="font-display font-bold text-base text-terracotta">0x</span>
-      </div>
-
       <button id="soundToggle" class="bg-mint hover:bg-opacity-80 text-indigo font-semibold px-3 py-1.5 rounded-full text-xs sm:text-sm flex items-center space-x-1.5 transition shadow">
         <i id="soundIcon" class="fa-solid fa-volume-high"></i>
         <span id="soundLabel" class="hidden sm:inline">Sound: ON</span>
@@ -99,14 +89,15 @@
 
       <button id="clearRoomBtn" class="bg-rose hover:bg-opacity-90 text-white font-semibold px-3 py-1.5 rounded-full text-xs sm:text-sm flex items-center space-x-1.5 transition shadow">
         <i class="fa-solid fa-rotate-left"></i>
-        <span class="hidden sm:inline">Reset Room</span>
+        <span>Reset Pets</span>
       </button>
     </div>
   </header>
 
+  <!-- Main Canvas Playfield -->
   <main class="relative flex-1 w-full bg-cream overflow-hidden flex flex-col items-center justify-center">
     
-    <!-- Top Floating Status Overlay -->
+    <!-- Top HUD Floating Status Overlay -->
     <div class="absolute top-3 left-4 right-4 z-10 flex flex-wrap gap-2 justify-between pointer-events-none">
       
       <!-- Dog Happiness Card -->
@@ -117,7 +108,7 @@
         <div class="flex-1">
           <div class="flex justify-between items-center mb-0.5">
             <span class="font-display font-bold text-xs sm:text-sm text-indigo">Barnaby</span>
-            <span id="dogActionTag" class="text-[10px] font-bold text-terracotta bg-mustard/20 px-1.5 py-0.5 rounded-full">Attentive</span>
+            <span id="dogActionTag" class="text-[10px] font-bold text-terracotta bg-mustard/20 px-1.5 py-0.5 rounded-full">Roaming</span>
           </div>
           <div class="w-full bg-slate-200 h-2 sm:h-2.5 rounded-full overflow-hidden border border-slate-300">
             <div id="dogHappyBar" class="bg-mustard h-full transition-all duration-300 w-4/5"></div>
@@ -125,10 +116,10 @@
         </div>
       </div>
 
-      <!-- Center Action Tip Banner -->
+      <!-- Center Dynamic Banner -->
       <div id="actionBanner" class="bg-indigo text-white px-3.5 py-1.5 rounded-2xl shadow-xl border-2 border-mint text-xs sm:text-sm font-medium flex items-center space-x-2 transition-all">
-        <i id="actionBannerIcon" class="fa-solid fa-hand-pointer text-mustard"></i>
-        <span id="actionBannerText">Click any toy or tap a pet directly to play!</span>
+        <i id="actionBannerIcon" class="fa-solid fa-face-smile text-mustard"></i>
+        <span id="actionBannerText">Barnaby & Mimi are freely exploring the room!</span>
       </div>
 
       <!-- Cat Happiness Card -->
@@ -139,7 +130,7 @@
         <div class="flex-1">
           <div class="flex justify-between items-center mb-0.5">
             <span class="font-display font-bold text-xs sm:text-sm text-indigo">Mimi</span>
-            <span id="catActionTag" class="text-[10px] font-bold text-rose bg-rose/20 px-1.5 py-0.5 rounded-full">Ready</span>
+            <span id="catActionTag" class="text-[10px] font-bold text-rose bg-rose/20 px-1.5 py-0.5 rounded-full">Exploring</span>
           </div>
           <div class="w-full bg-slate-200 h-2 sm:h-2.5 rounded-full overflow-hidden border border-slate-300">
             <div id="catHappyBar" class="bg-rose h-full transition-all duration-300 w-3/4"></div>
@@ -149,16 +140,17 @@
 
     </div>
 
-    <!-- The Play Canvas -->
+    <!-- The 2.5D Game Canvas -->
     <canvas id="gameCanvas" class="w-full h-full cursor-crosshair block"></canvas>
   </main>
 
-  <footer class="bg-indigo border-t-4 border-terracotta p-2.5 sm:p-3.5 z-20 shadow-2xl">
-    <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5">
+  <!-- Toy Toolbar Footer -->
+  <footer class="bg-indigo border-t-4 border-terracotta p-2 sm:p-3 z-20 shadow-2xl">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
       
       <!-- Dog Toys Toolbar -->
       <div class="flex items-center space-x-2 w-full md:w-auto justify-center">
-        <span class="font-display text-white text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1">
+        <span class="font-display text-white text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1.5">
           <i class="fa-solid fa-dog text-mustard"></i> Dog Toys:
         </span>
         <div class="flex space-x-1.5">
@@ -174,22 +166,15 @@
         </div>
       </div>
 
-      <!-- Quick Trick Callouts -->
-      <div class="flex items-center space-x-2">
-        <button id="dogTrickBtn" class="bg-mustard hover:bg-yellow-400 text-indigo font-display font-bold px-3 py-1.5 rounded-xl text-xs shadow-md border-2 border-white transition active:scale-95 flex items-center space-x-1">
-          <span>🐶 Dog Trick!</span>
-        </button>
-        <button id="catTrickBtn" class="bg-rose hover:bg-pink-400 text-white font-display font-bold px-3 py-1.5 rounded-xl text-xs shadow-md border-2 border-white transition active:scale-95 flex items-center space-x-1">
-          <span>🐱 Cat Trick!</span>
-        </button>
-      </div>
-
       <!-- Cat Toys Toolbar -->
       <div class="flex items-center space-x-2 w-full md:w-auto justify-center">
-        <span class="font-display text-white text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1">
+        <span class="font-display text-white text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1.5">
           <i class="fa-solid fa-cat text-rose"></i> Cat Toys:
         </span>
         <div class="flex space-x-1.5">
+          <button data-toy="laser" class="toy-btn-cat bg-cream text-indigo border-2 border-rose px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1 transition shadow">
+            <span>🔴 Laser</span>
+          </button>
           <button data-toy="wand" class="toy-btn-cat bg-cream text-indigo border-2 border-rose px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1 transition shadow">
             <span>🪶 Wand</span>
           </button>
@@ -231,16 +216,16 @@
         const gain = this.ctx.createGain();
 
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(260, now);
-        osc.frequency.exponentialRampToValueAtTime(90, now + 0.14);
+        osc.frequency.setValueAtTime(280, now);
+        osc.frequency.exponentialRampToValueAtTime(95, now + 0.15);
 
-        gain.gain.setValueAtTime(0.35, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
 
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.14);
+        osc.stop(now + 0.15);
       }
 
       playMeow() {
@@ -252,18 +237,18 @@
         const gain = this.ctx.createGain();
 
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(450, now);
-        osc.frequency.linearRampToValueAtTime(800, now + 0.15);
-        osc.frequency.linearRampToValueAtTime(400, now + 0.3);
+        osc.frequency.setValueAtTime(460, now);
+        osc.frequency.linearRampToValueAtTime(820, now + 0.14);
+        osc.frequency.linearRampToValueAtTime(420, now + 0.28);
 
         gain.gain.setValueAtTime(0.01, now);
-        gain.gain.linearRampToValueAtTime(0.25, now + 0.08);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        gain.gain.linearRampToValueAtTime(0.22, now + 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
 
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.3);
+        osc.stop(now + 0.28);
       }
 
       playSqueak() {
@@ -275,16 +260,16 @@
         const gain = this.ctx.createGain();
 
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(1400, now);
-        osc.frequency.exponentialRampToValueAtTime(2200, now + 0.07);
+        osc.frequency.setValueAtTime(1300, now);
+        osc.frequency.exponentialRampToValueAtTime(2100, now + 0.08);
 
-        gain.gain.setValueAtTime(0.25, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.07);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
 
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.07);
+        osc.stop(now + 0.08);
       }
 
       playBounce() {
@@ -296,19 +281,19 @@
         const gain = this.ctx.createGain();
 
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(180, now);
-        osc.frequency.exponentialRampToValueAtTime(50, now + 0.1);
+        osc.frequency.setValueAtTime(170, now);
+        osc.frequency.exponentialRampToValueAtTime(50, now + 0.12);
 
         gain.gain.setValueAtTime(0.25, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
 
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.1);
+        osc.stop(now + 0.12);
       }
 
-      playTugRumble() {
+      playLaserZap() {
         if (this.muted) return;
         this.init();
         if (!this.ctx) return;
@@ -317,16 +302,16 @@
         const gain = this.ctx.createGain();
 
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(110, now);
-        osc.frequency.linearRampToValueAtTime(140, now + 0.1);
+        osc.frequency.setValueAtTime(1800, now);
+        osc.frequency.exponentialRampToValueAtTime(300, now + 0.06);
 
-        gain.gain.setValueAtTime(0.15, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
 
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.1);
+        osc.stop(now + 0.06);
       }
 
       playPurr() {
@@ -338,7 +323,7 @@
         const gain = this.ctx.createGain();
 
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(35, now);
+        osc.frequency.setValueAtTime(32, now);
 
         gain.gain.setValueAtTime(0.12, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
@@ -349,23 +334,25 @@
         osc.stop(now + 0.35);
       }
 
-      playChime() {
+      playTugRumble() {
         if (this.muted) return;
         this.init();
         if (!this.ctx) return;
         const now = this.ctx.currentTime;
-        [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, now + idx * 0.06);
-          gain.gain.setValueAtTime(0.2, now + idx * 0.06);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.25);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(now + idx * 0.06);
-          osc.stop(now + idx * 0.06 + 0.25);
-        });
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(105, now);
+        osc.frequency.linearRampToValueAtTime(135, now + 0.1);
+
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.1);
       }
     }
 
@@ -376,36 +363,57 @@
 
     let width = 0;
     let height = 0;
-    let groundY = 0;
+    let floorYMin = 0; // Back wall baseboard
+    let floorYMax = 0; // Foreground bottom
 
     function resizeCanvas() {
       width = canvas.parentElement.clientWidth;
       height = canvas.parentElement.clientHeight;
       canvas.width = width;
       canvas.height = height;
-      groundY = height * 0.78;
+      floorYMin = height * 0.48; // Wall ends, floor starts
+      floorYMax = height * 0.94; // Bottom of room floor
     }
 
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Game State Variables
-    let activeToyType = 'ball'; // 'ball', 'bone', 'rope', 'wand', 'yarn', 'mouse'
-    let dogHappiness = 85;
-    let catHappiness = 80;
-    let trickCombo = 0;
+    // 2.5D Depth Scale Mapping: Further back = smaller scale, Closer front = larger scale
+    function getDepthScale(y) {
+      const normY = Math.max(0, Math.min(1, (y - floorYMin) / (floorYMax - floorYMin)));
+      return 0.62 + normY * 0.53; // Ranges from ~0.62 to ~1.15
+    }
 
-    const mousePos = { x: width / 2, y: height / 2, isDown: false, isDragging: false, prevX: width / 2, prevY: height / 2, vx: 0, vy: 0 };
+    // Convert 2.5D floor coords (x, y, z) into screen render coords
+    function getScreenCoords(x, y, z = 0) {
+      const scale = getDepthScale(y);
+      const screenX = x;
+      const screenY = y - z * scale;
+      return { screenX, screenY, scale };
+    }
 
-    // DOM References
+    // Global Game State
+    let activeToyType = 'ball'; // 'ball', 'bone', 'rope', 'laser', 'wand', 'yarn', 'mouse'
+    let dogHappiness = 88;
+    let catHappiness = 82;
+
+    const mousePos = { 
+      x: width / 2, 
+      y: (floorYMin + floorYMax) / 2, 
+      isDown: false, 
+      isDragging: false, 
+      vx: 0, 
+      vy: 0 
+    };
+
+    // DOM Elements
     const dogHappyBar = document.getElementById('dogHappyBar');
     const catHappyBar = document.getElementById('catHappyBar');
     const dogActionTag = document.getElementById('dogActionTag');
     const catActionTag = document.getElementById('catActionTag');
     const actionBannerText = document.getElementById('actionBannerText');
-    const comboCounter = document.getElementById('comboCounter');
 
-    function updateBanner(text, iconClass = "fa-solid fa-bolt") {
+    function updateBanner(text, iconClass = "fa-solid fa-face-smile") {
       actionBannerText.innerText = text;
       document.getElementById('actionBannerIcon').className = `${iconClass} text-mustard`;
     }
@@ -415,10 +423,10 @@
         this.x = x;
         this.y = y;
         this.symbol = symbol;
-        this.vx = (Math.random() - 0.5) * 4;
-        this.vy = -Math.random() * 3 - 2;
+        this.vx = (Math.random() - 0.5) * 5;
+        this.vy = -Math.random() * 4 - 2;
         this.life = 1.0;
-        this.decay = Math.random() * 0.02 + 0.015;
+        this.decay = Math.random() * 0.025 + 0.015;
         this.size = Math.random() * 12 + 14;
       }
 
@@ -445,43 +453,52 @@
     }
 
     function drawRoomBackground(ctx) {
-      // Wallpaper background base
-      ctx.fillStyle = '#FAF6F0';
-      ctx.fillRect(0, 0, width, groundY);
+      // 1. Clean, warm solid TAN Wall Background
+      ctx.fillStyle = '#DAC19C';
+      ctx.fillRect(0, 0, width, floorYMin);
 
-      // Cozy warm vertical striped wallpaper (alternating soft cream & warm blush)
-      const stripeWidth = 22;
-      ctx.fillStyle = '#F2E3DC';
-      for (let x = 0; x < width; x += stripeWidth * 2) {
-        ctx.fillRect(x, 0, stripeWidth, groundY);
-      }
+      // Subtle wall highlight accent for depth
+      const wallGrad = ctx.createLinearGradient(0, 0, 0, floorYMin);
+      wallGrad.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
+      wallGrad.addColorStop(1, 'rgba(0, 0, 0, 0.08)');
+      ctx.fillStyle = wallGrad;
+      ctx.fillRect(0, 0, width, floorYMin);
 
-      // Wooden Floor
-      ctx.fillStyle = '#E2C39B';
-      ctx.fillRect(0, groundY, width, height - groundY);
-
-      // Floor trim/skirting board
+      // 2. Skirting Board / Wall Baseboard
       ctx.fillStyle = '#C3684D';
-      ctx.fillRect(0, groundY - 12, width, 12);
+      ctx.fillRect(0, floorYMin - 16, width, 16);
       ctx.fillStyle = '#A3533B';
-      ctx.fillRect(0, groundY - 12, width, 3);
+      ctx.fillRect(0, floorYMin - 16, width, 4);
 
-      // Wooden floor planks
+      // 3. Wood Floor (Bottom 2.5D Section)
+      ctx.fillStyle = '#E2C39B';
+      ctx.fillRect(0, floorYMin, width, height - floorYMin);
+
+      // Perspective floor planks
       ctx.strokeStyle = '#D4B083';
-      ctx.lineWidth = 2;
-      const plankHeight = 22;
-      for (let y = groundY + plankHeight; y < height; y += plankHeight) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
-        ctx.stroke();
+      ctx.lineWidth = 1.5;
+
+      // Horizontal plank lines
+      const floorHeight = height - floorYMin;
+      const numPlanks = 10;
+      for (let i = 1; i <= numPlanks; i++) {
+        const y = floorYMin + (i / numPlanks) * floorHeight;
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
       }
 
-      // Cozy Center Rug
+      // Perspective vertical plank seams
+      const numPerspectiveSeams = 14;
+      for (let i = 0; i < numPerspectiveSeams; i++) {
+        const topX = (i / numPerspectiveSeams) * width;
+        const bottomX = (width / 2) + (topX - width / 2) * 1.4;
+        ctx.beginPath(); ctx.moveTo(topX, floorYMin); ctx.lineTo(bottomX, height); ctx.stroke();
+      }
+
+      // 4. Center Oval Play Rug
       const rugX = width * 0.5;
-      const rugY = groundY + (height - groundY) * 0.45;
-      const rugRx = Math.min(width * 0.35, 260);
-      const rugRy = Math.min((height - groundY) * 0.35, 45);
+      const rugY = floorYMin + (floorYMax - floorYMin) * 0.5;
+      const rugRx = Math.min(width * 0.38, 280);
+      const rugRy = Math.min((floorYMax - floorYMin) * 0.45, 65);
 
       ctx.save();
       ctx.beginPath();
@@ -492,85 +509,67 @@
       ctx.strokeStyle = '#313A70';
       ctx.stroke();
 
-      // Rug inner pattern ring
+      // Rug inner decorative ring
       ctx.beginPath();
-      ctx.ellipse(rugX, rugY, rugRx * 0.8, rugRy * 0.8, 0, 0, Math.PI * 2);
+      ctx.ellipse(rugX, rugY, rugRx * 0.78, rugRy * 0.78, 0, 0, Math.PI * 2);
       ctx.strokeStyle = '#FFB300';
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 3.5;
       ctx.stroke();
       ctx.restore();
 
-      // Dog Bed (Left Side)
-      const bedX = Math.max(90, width * 0.15);
-      const bedY = groundY + 10;
+      // 5. Dog Cushion Bed (Left Room Corner)
+      const bedX = Math.max(90, width * 0.14);
+      const bedY = floorYMin + 25;
       ctx.save();
       ctx.fillStyle = '#C3684D';
-      ctx.beginPath();
-      ctx.ellipse(bedX, bedY, 65, 25, 0, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.beginPath(); ctx.ellipse(bedX, bedY, 65, 25, 0, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#FBF7F1';
-      ctx.beginPath();
-      ctx.ellipse(bedX, bedY - 3, 52, 18, 0, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.beginPath(); ctx.ellipse(bedX, bedY - 3, 52, 18, 0, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
 
-      // Cat Tree Scratching Post (Right Side)
-      const catTreeX = Math.min(width - 90, width * 0.85);
-      const catTreeBaseY = groundY + 15;
+      // 6. Cat Tree Scratching Tower (Right Room Corner)
+      const catTreeX = Math.min(width - 90, width * 0.86);
+      const catTreeBaseY = floorYMin + 35;
       ctx.save();
-      // Base
       ctx.fillStyle = '#AFE2CF';
       ctx.fillRect(catTreeX - 45, catTreeBaseY - 10, 90, 15);
-      // Post
       ctx.fillStyle = '#C3A37C';
       ctx.fillRect(catTreeX - 10, catTreeBaseY - 140, 20, 130);
-      // Twine wrapping lines
       ctx.strokeStyle = '#9A7B56';
       ctx.lineWidth = 2;
       for (let py = catTreeBaseY - 135; py < catTreeBaseY - 10; py += 8) {
         ctx.beginPath(); ctx.moveTo(catTreeX - 10, py); ctx.lineTo(catTreeX + 10, py); ctx.stroke();
       }
-      // Top platform
       ctx.fillStyle = '#C9888F';
-      ctx.beginPath();
-      ctx.roundRect(catTreeX - 50, catTreeBaseY - 155, 100, 18, 8);
-      ctx.fill();
-      // Hanging pom-pom string
+      ctx.beginPath(); ctx.roundRect(catTreeX - 50, catTreeBaseY - 155, 100, 18, 8); ctx.fill();
+      // Hanging Pom-Pom
       ctx.strokeStyle = '#313A70';
       ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(catTreeX - 30, catTreeBaseY - 137);
-      ctx.lineTo(catTreeX - 30, catTreeBaseY - 100);
-      ctx.stroke();
-      // Pom-pom
+      ctx.beginPath(); ctx.moveTo(catTreeX - 30, catTreeBaseY - 137); ctx.lineTo(catTreeX - 30, catTreeBaseY - 100); ctx.stroke();
       ctx.fillStyle = '#FFB300';
-      ctx.beginPath();
-      ctx.arc(catTreeX - 30, catTreeBaseY - 95, 8, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(catTreeX - 30, catTreeBaseY - 95, 8, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
 
       // Wall Framed Photo
       ctx.save();
-      const frameX = width * 0.5 - 30;
-      const frameY = 30;
-      ctx.fillStyle = '#C3684D';
-      ctx.fillRect(frameX, frameY, 60, 45);
-      ctx.fillStyle = '#FBF7F1';
-      ctx.fillRect(frameX + 4, frameY + 4, 52, 37);
-      ctx.font = '18px sans-serif';
-      ctx.fillText('🐶❤️🐱', frameX + 7, frameY + 28);
+      const frameX = width * 0.5 - 32;
+      const frameY = 25;
+      ctx.fillStyle = '#C3684D'; ctx.fillRect(frameX, frameY, 64, 45);
+      ctx.fillStyle = '#FBF7F1'; ctx.fillRect(frameX + 4, frameY + 4, 56, 37);
+      ctx.font = '18px sans-serif'; ctx.fillText('🐶❤️🐱', frameX + 9, frameY + 28);
       ctx.restore();
     }
 
     class ToyItem {
       constructor(type, x, y) {
         this.type = type;
-        this.x = x;
-        this.y = y;
-        this.vx = 0;
-        this.vy = 0;
+        this.x = x; // 2.5D floor X
+        this.y = y; // 2.5D floor Y
+        this.z = 20; // 2.5D height above floor
+        this.vx = (Math.random() - 0.5) * 8;
+        this.vy = (Math.random() - 0.5) * 6;
+        this.vz = 5;
         this.radius = 16;
-        this.rotation = 0;
         this.active = true;
         this.isHeld = false;
         this.trail = [];
@@ -579,107 +578,104 @@
       update() {
         if (this.isHeld) return;
 
-        // Mouse Toy erratic movement logic
+        // Wind-up mouse autonomous motion
         if (this.type === 'mouse' && this.active) {
           if (Math.random() < 0.08) {
-            this.vx = (Math.random() - 0.5) * 12;
+            this.vx = (Math.random() - 0.5) * 11;
+            this.vy = (Math.random() - 0.5) * 8;
             soundEngine.playSqueak();
           }
         }
 
-        // Gravity & Physics
-        this.vy += 0.38;
+        // Gravity on Z axis
+        this.vz -= 0.42;
         this.x += this.vx;
         this.y += this.vy;
-        this.vx *= 0.97;
+        this.z += this.vz;
 
-        // Ground Collision
-        if (this.y + this.radius >= groundY) {
-          this.y = groundY - this.radius;
-          if (Math.abs(this.vy) > 1.5) {
-            this.vy = -this.vy * 0.5;
+        this.vx *= 0.96;
+        this.vy *= 0.96;
+
+        // Floor Bounce Physics
+        if (this.z <= 0) {
+          this.z = 0;
+          if (Math.abs(this.vz) > 1.5) {
+            this.vz = -this.vz * 0.55;
             soundEngine.playBounce();
           } else {
-            this.vy = 0;
+            this.vz = 0;
           }
         }
 
-        // Walls
-        if (this.x < 30) { this.x = 30; this.vx = -this.vx * 0.7; }
-        if (this.x > width - 30) { this.x = width - 30; this.vx = -this.vx * 0.7; }
+        // Floor Bounds Clamping
+        this.x = Math.max(40, Math.min(width - 40, this.x));
+        this.y = Math.max(floorYMin + 15, Math.min(floorYMax - 15, this.y));
 
-        // Yarn trail
-        if (this.type === 'yarn' && Math.abs(this.vx) > 0.5) {
+        // Yarn thread trail line
+        if (this.type === 'yarn' && (Math.abs(this.vx) > 0.4 || Math.abs(this.vy) > 0.4)) {
           this.trail.push({ x: this.x, y: this.y });
-          if (this.trail.length > 20) this.trail.shift();
+          if (this.trail.length > 25) this.trail.shift();
         }
       }
 
       draw(ctx) {
+        const { screenX, screenY, scale } = getScreenCoords(this.x, this.y, this.z);
+        const shadowCoords = getScreenCoords(this.x, this.y, 0);
+
+        // Ground Shadow
         ctx.save();
-        ctx.translate(this.x, this.y);
+        ctx.fillStyle = 'rgba(0,0,0,0.2)';
+        ctx.beginPath();
+        ctx.ellipse(shadowCoords.screenX, shadowCoords.screenY, 14 * scale, 6 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.save();
+        ctx.translate(screenX, screenY);
+        ctx.scale(scale, scale);
 
         if (this.type === 'ball') {
-          ctx.beginPath();
-          ctx.arc(0, 0, 14, 0, Math.PI * 2);
-          ctx.fillStyle = '#CCFF00';
-          ctx.fill();
-          ctx.lineWidth = 2.5;
-          ctx.strokeStyle = '#FFFFFF';
-          ctx.stroke();
-          ctx.beginPath();
-          ctx.arc(0, 0, 9, 0.4, 2.6);
-          ctx.stroke();
+          ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 2);
+          ctx.fillStyle = '#CCFF00'; ctx.fill();
+          ctx.lineWidth = 2.5; ctx.strokeStyle = '#FFFFFF'; ctx.stroke();
+          ctx.beginPath(); ctx.arc(0, 0, 9, 0.4, 2.6); ctx.stroke();
 
         } else if (this.type === 'bone') {
-          ctx.fillStyle = '#FFFDF9';
-          ctx.strokeStyle = '#C3684D';
-          ctx.lineWidth = 2;
+          ctx.fillStyle = '#FFFDF9'; ctx.strokeStyle = '#C3684D'; ctx.lineWidth = 2;
           ctx.fillRect(-12, -4, 24, 8);
           ctx.beginPath();
-          ctx.arc(-12, -5, 5, 0, Math.PI * 2);
-          ctx.arc(-12, 5, 5, 0, Math.PI * 2);
-          ctx.arc(12, -5, 5, 0, Math.PI * 2);
-          ctx.arc(12, 5, 5, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.stroke();
+          ctx.arc(-12, -5, 5, 0, Math.PI * 2); ctx.arc(-12, 5, 5, 0, Math.PI * 2);
+          ctx.arc(12, -5, 5, 0, Math.PI * 2); ctx.arc(12, 5, 5, 0, Math.PI * 2);
+          ctx.fill(); ctx.stroke();
 
         } else if (this.type === 'yarn') {
-          ctx.beginPath();
-          ctx.arc(0, 0, 15, 0, Math.PI * 2);
-          ctx.fillStyle = '#C9888F';
-          ctx.fill();
-          ctx.lineWidth = 2;
-          ctx.strokeStyle = '#313A70';
-          ctx.stroke();
+          ctx.beginPath(); ctx.arc(0, 0, 15, 0, Math.PI * 2);
+          ctx.fillStyle = '#C9888F'; ctx.fill();
+          ctx.lineWidth = 2; ctx.strokeStyle = '#313A70'; ctx.stroke();
 
         } else if (this.type === 'mouse') {
           ctx.fillStyle = '#98A1A6';
-          ctx.beginPath();
-          ctx.ellipse(0, 0, 12, 8, 0, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.beginPath(); ctx.ellipse(0, 0, 12, 8, 0, 0, Math.PI * 2); ctx.fill();
           ctx.fillStyle = '#C9888F';
-          ctx.beginPath();
-          ctx.arc(-4, -6, 4, 0, Math.PI * 2);
-          ctx.arc(4, -6, 4, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = '#C9888F';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(-12, 0); ctx.quadraticCurveTo(-18, -6, -20, -2);
-          ctx.stroke();
+          ctx.beginPath(); ctx.arc(-4, -6, 4, 0, Math.PI * 2); ctx.arc(4, -6, 4, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = '#C9888F'; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(-12, 0); ctx.quadraticCurveTo(-18, -6, -20, -2); ctx.stroke();
         }
 
         ctx.restore();
 
-        // Draw yarn unraveled thread line
+        // Draw Yarn Thread Trail in 2.5D
         if (this.type === 'yarn' && this.trail.length > 1) {
           ctx.save();
           ctx.strokeStyle = '#C9888F';
           ctx.lineWidth = 2.5;
           ctx.beginPath();
-          ctx.moveTo(this.trail[0].x, this.trail[0].y);
-          for (let p of this.trail) ctx.lineTo(p.x, p.y);
+          const first = getScreenCoords(this.trail[0].x, this.trail[0].y, 0);
+          ctx.moveTo(first.screenX, first.screenY);
+          for (let p of this.trail) {
+            const sc = getScreenCoords(p.x, p.y, 0);
+            ctx.lineTo(sc.screenX, sc.screenY);
+          }
           ctx.stroke();
           ctx.restore();
         }
@@ -688,15 +684,45 @@
 
     let activeToyInstance = null;
 
+    // Laser Dot rendering
+    function drawLaserPointer(ctx) {
+      if (activeToyType !== 'laser') return;
+
+      const lx = mousePos.x;
+      const ly = Math.max(floorYMin + 10, Math.min(floorYMax - 10, mousePos.y));
+      const { screenX, screenY, scale } = getScreenCoords(lx, ly, 0);
+
+      ctx.save();
+      // Outer Laser Glow
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.35)';
+      ctx.beginPath(); ctx.arc(screenX, screenY, 12 * scale, 0, Math.PI * 2); ctx.fill();
+
+      // Laser Center Dot
+      ctx.fillStyle = '#FF0033';
+      ctx.beginPath(); ctx.arc(screenX, screenY, 5 * scale, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath(); ctx.arc(screenX, screenY, 2 * scale, 0, Math.PI * 2); ctx.fill();
+
+      // Laser Emitter Beam from mouse source
+      ctx.strokeStyle = 'rgba(255, 0, 50, 0.25)';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(mousePos.x, mousePos.y - 60); ctx.lineTo(screenX, screenY); ctx.stroke();
+      ctx.restore();
+    }
+
     class Dog {
-      constructor(x) {
-        this.x = x;
-        this.y = groundY - 20;
+      constructor(x, y) {
+        this.x = x; // 2.5D Floor X
+        this.y = y; // 2.5D Floor Y
+        this.z = 0; // Height off floor
+        this.targetX = x;
+        this.targetY = y;
         this.vx = 0;
         this.vy = 0;
+        this.vz = 0;
         this.facing = 1;
-        this.state = 'ATTENTIVE'; // 'ATTENTIVE', 'SPRINTING', 'LEAPING', 'FETCHING', 'CHEWING', 'TUGGING', 'TRICK'
-        this.trickType = 'flip';
+        this.state = 'ROAMING'; // 'ROAMING', 'FETCHING', 'CHEWING', 'TUGGING', 'PETTED', 'PLAY_BOW'
+        this.roamTimer = Math.floor(Math.random() * 80) + 40;
         this.trickTimer = 0;
         this.rotation = 0;
         this.tailWag = 0;
@@ -705,243 +731,241 @@
 
       triggerAction(actionName, targetX, targetY) {
         if (actionName === 'FETCH_BALL') {
-          this.state = 'SPRINTING';
+          this.state = 'FETCHING';
           this.targetX = targetX;
+          this.targetY = targetY;
           soundEngine.playBark();
-          dogActionTag.innerText = "Fetching!";
-          updateBanner("Barnaby is sprinting for the ball!", "fa-solid fa-dog");
+          dogActionTag.innerText = "Sprinting!";
+          updateBanner("Barnaby sprints to fetch the tennis ball across the room!", "fa-solid fa-dog");
         } else if (actionName === 'CHEW_BONE') {
-          this.state = 'SPRINTING';
+          this.state = 'FETCHING';
           this.targetX = targetX;
+          this.targetY = targetY;
           soundEngine.playBark();
-          dogActionTag.innerText = "Interested!";
-          updateBanner("Barnaby smells the squeaky bone!", "fa-solid fa-bone");
+          dogActionTag.innerText = "Targeting!";
+          updateBanner("Barnaby trots over to grab the squeaky bone!", "fa-solid fa-bone");
         } else if (actionName === 'TUG_ROPE') {
           this.state = 'TUGGING';
           soundEngine.playTugRumble();
           dogActionTag.innerText = "Tugging!";
-          updateBanner("Tug-of-war! Drag mouse to pull with Barnaby!", "fa-solid fa-hand-rock");
-        } else if (actionName === 'TRICK') {
-          this.state = 'TRICK';
-          this.trickTimer = 40;
-          this.trickType = Math.random() < 0.5 ? 'flip' : 'spin';
-          soundEngine.playBark();
-          soundEngine.playChime();
-          spawnParticles(this.x, this.y - 30, '⭐', 4);
-          dogHappiness = Math.min(100, dogHappiness + 12);
-          trickCombo++;
-          comboCounter.innerText = `${trickCombo}x`;
-          dogActionTag.innerText = "Performing!";
-          updateBanner(`Barnaby performed a ${this.trickType === 'flip' ? 'Backflip' : '360 Spin'}!`, "fa-solid fa-star");
+          updateBanner("Tug-of-War! Pull with Barnaby across the room floor!", "fa-solid fa-hand-rock");
         } else if (actionName === 'PETTED') {
           soundEngine.playBark();
-          spawnParticles(this.x, this.y - 35, '❤️', 4);
+          const sc = getScreenCoords(this.x, this.y, this.z);
+          spawnParticles(sc.screenX, sc.screenY - 35, '❤️', 5);
           dogHappiness = Math.min(100, dogHappiness + 15);
           dogActionTag.innerText = "Loved!";
           updateBanner("You petted Barnaby! He's super happy!", "fa-solid fa-heart");
         }
       }
 
+      pickNewRoamTarget() {
+        this.targetX = Math.random() * (width - 120) + 60;
+        this.targetY = Math.random() * (floorYMax - floorYMin - 30) + floorYMin + 15;
+        this.roamTimer = Math.floor(Math.random() * 120) + 60;
+      }
+
       update() {
-        this.tailWag += 0.25;
+        this.tailWag += 0.28;
 
-        // ATTENTIVE STANDBY (No AFK wandering)
-        if (this.state === 'ATTENTIVE') {
-          this.vx = 0;
-          this.rotation = 0;
-          const target = activeToyInstance ? activeToyInstance.x : mousePos.x;
-          this.facing = target >= this.x ? 1 : -1;
-          dogActionTag.innerText = "Attentive";
+        // 1. UNRESTRICTED CONTINUOUS IDLE ROAMING & AUTO-PLAY
+        if (this.state === 'ROAMING') {
+          dogActionTag.innerText = "Roaming";
+          this.roamTimer--;
 
-        } else if (this.state === 'SPRINTING') {
-          this.walkCycle += 0.3;
-          const dx = this.targetX - this.x;
-          this.facing = dx >= 0 ? 1 : -1;
-
-          if (Math.abs(dx) > 20) {
-            this.vx = this.facing * 7.5;
-            this.x += this.vx;
-
-            // Mid-air leap near target
-            if (Math.abs(dx) < 80 && this.y >= groundY - 20) {
-              this.vy = -6;
-              this.state = 'LEAPING';
+          if (this.roamTimer <= 0) {
+            this.pickNewRoamTarget();
+            if (Math.random() < 0.25) {
+              this.state = 'PLAY_BOW';
+              this.trickTimer = 40;
+              soundEngine.playBark();
             }
+          }
+
+          const dx = this.targetX - this.x;
+          const dy = this.targetY - this.y;
+          const dist = Math.hypot(dx, dy);
+
+          if (dist > 15) {
+            this.walkCycle += 0.2;
+            const speed = 2.8;
+            this.vx = (dx / dist) * speed;
+            this.vy = (dy / dist) * speed;
+            this.x += this.vx;
+            this.y += this.vy;
+            if (Math.abs(dx) > 2) this.facing = dx >= 0 ? 1 : -1;
           } else {
-            this.reachTarget();
+            this.vx = 0; this.vy = 0;
+            const targetX = activeToyInstance ? activeToyInstance.x : cat.x;
+            this.facing = targetX >= this.x ? 1 : -1;
           }
 
-        } else if (this.state === 'LEAPING') {
-          this.x += this.facing * 6;
-          this.vy += 0.4;
-          this.y += this.vy;
-
-          if (this.y >= groundY - 20) {
-            this.y = groundY - 20;
-            this.reachTarget();
+          // Auto-respond if toy present
+          if (activeToyInstance && (activeToyType === 'ball' || activeToyType === 'bone')) {
+            this.triggerAction(activeToyType === 'ball' ? 'FETCH_BALL' : 'CHEW_BONE', activeToyInstance.x, activeToyInstance.y);
           }
+
+        } else if (this.state === 'PLAY_BOW') {
+          dogActionTag.innerText = "Play Bow";
+          this.trickTimer--;
+          if (this.trickTimer <= 0) this.state = 'ROAMING';
 
         } else if (this.state === 'FETCHING') {
-          this.walkCycle += 0.25;
-          const returnX = width * 0.25;
-          const dx = returnX - this.x;
-          this.facing = dx >= 0 ? 1 : -1;
+          this.walkCycle += 0.35;
+          const target = activeToyInstance ? activeToyInstance : { x: this.targetX, y: this.targetY };
+          const dx = target.x - this.x;
+          const dy = target.y - this.y;
+          const dist = Math.hypot(dx, dy);
 
-          if (Math.abs(dx) > 15) {
-            this.x += this.facing * 5;
+          if (Math.abs(dx) > 2) this.facing = dx >= 0 ? 1 : -1;
+
+          if (dist > 25) {
+            const speed = 7.5;
+            this.x += (dx / dist) * speed;
+            this.y += (dy / dist) * speed;
+
+            // Leap into air near target
+            if (dist < 80 && this.z <= 0) {
+              this.vz = 6;
+            }
           } else {
-            // Returned toy!
-            if (activeToyInstance) activeToyInstance.isHeld = false;
-            this.state = 'ATTENTIVE';
-            dogHappiness = Math.min(100, dogHappiness + 10);
-            spawnParticles(this.x, this.y - 30, '❤️', 3);
-            soundEngine.playBark();
-            updateBanner("Good boy! Barnaby brought the ball back!", "fa-solid fa-heart");
+            // Reached Toy
+            if (activeToyType === 'ball') {
+              if (activeToyInstance) activeToyInstance.isHeld = true;
+              this.state = 'CHEWING';
+              this.trickTimer = 60;
+              dogHappiness = Math.min(100, dogHappiness + 12);
+              soundEngine.playBark();
+              const sc = getScreenCoords(this.x, this.y, this.z);
+              spawnParticles(sc.screenX, sc.screenY - 30, '🎾', 3);
+            } else {
+              this.state = 'CHEWING';
+              this.trickTimer = 80;
+              soundEngine.playSqueak();
+              const sc = getScreenCoords(this.x, this.y, this.z);
+              spawnParticles(sc.screenX, sc.screenY - 30, '🦴', 3);
+            }
           }
 
         } else if (this.state === 'CHEWING') {
-          this.vx = 0;
-          this.rotation = Math.sin(this.tailWag * 2) * 0.1;
+          dogActionTag.innerText = "Chewing!";
+          this.trickTimer--;
           if (Math.random() < 0.1) soundEngine.playSqueak();
 
-          this.trickTimer--;
           if (this.trickTimer <= 0) {
-            this.state = 'ATTENTIVE';
-            dogHappiness = Math.min(100, dogHappiness + 10);
-            spawnParticles(this.x, this.y - 30, '🦴', 3);
+            if (activeToyInstance) activeToyInstance.isHeld = false;
+            this.state = 'ROAMING';
           }
 
         } else if (this.state === 'TUGGING') {
           const dx = mousePos.x - this.x;
           this.facing = dx >= 0 ? 1 : -1;
-          this.x += (mousePos.x - (this.facing * 40) - this.x) * 0.1;
 
           if (mousePos.isDragging) {
             soundEngine.playTugRumble();
             dogHappiness = Math.min(100, dogHappiness + 0.3);
-            spawnParticles(this.x, this.y - 30, '⚡', 1);
+            const sc = getScreenCoords(this.x, this.y, this.z);
+            spawnParticles(sc.screenX, sc.screenY - 30, '⚡', 1);
           }
-          if (!mousePos.isDown) this.state = 'ATTENTIVE';
+          if (!mousePos.isDown) this.state = 'ROAMING';
+        }
 
-        } else if (this.state === 'TRICK') {
-          this.trickTimer--;
-          if (this.trickType === 'flip') {
-            this.rotation = -((40 - this.trickTimer) / 40) * Math.PI * 2;
-            this.vy = Math.sin((this.trickTimer / 40) * Math.PI) * -4;
-            this.y = groundY - 20 + this.vy * 5;
-          } else {
-            this.rotation = ((40 - this.trickTimer) / 40) * Math.PI * 2;
-          }
-
-          if (this.trickTimer <= 0) {
-            this.rotation = 0;
-            this.y = groundY - 20;
-            this.state = 'ATTENTIVE';
+        // Z Height Gravity Physics
+        if (this.z > 0 || this.vz !== 0) {
+          this.z += this.vz;
+          this.vz -= 0.45;
+          if (this.z <= 0) {
+            this.z = 0;
+            this.vz = 0;
           }
         }
 
-        // Clamp
+        // Floor Boundary Clamping
         this.x = Math.max(50, Math.min(width - 50, this.x));
+        this.y = Math.max(floorYMin + 10, Math.min(floorYMax - 10, this.y));
 
-        // Sync held toy
-        if (activeToyInstance && activeToyInstance.isHeld && this.state === 'FETCHING') {
+        // Sync held ball position
+        if (activeToyInstance && activeToyInstance.isHeld && this.state === 'CHEWING') {
           activeToyInstance.x = this.x + this.facing * 18;
-          activeToyInstance.y = this.y - 12;
-        }
-      }
-
-      reachTarget() {
-        if (activeToyType === 'ball') {
-          if (activeToyInstance) activeToyInstance.isHeld = true;
-          this.state = 'FETCHING';
-        } else if (activeToyType === 'bone') {
-          this.state = 'CHEWING';
-          this.trickTimer = 80;
-          soundEngine.playSqueak();
-        } else {
-          this.state = 'ATTENTIVE';
+          activeToyInstance.y = this.y;
+          activeToyInstance.z = this.z + 10;
         }
       }
 
       draw(ctx) {
+        const { screenX, screenY, scale } = getScreenCoords(this.x, this.y, this.z);
+        const shadowCoords = getScreenCoords(this.x, this.y, 0);
+
+        // Ground Shadow
         ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.rotation);
-        ctx.scale(this.facing, 1);
-
-        const legOffset = (this.state === 'SPRINTING' || this.state === 'FETCHING') ? Math.sin(this.walkCycle) * 10 : 0;
-        const tailAngle = Math.sin(this.tailWag) * 0.4;
-
-        // Shadow
-        ctx.fillStyle = 'rgba(0,0,0,0.15)';
+        ctx.fillStyle = 'rgba(0,0,0,0.18)';
         ctx.beginPath();
-        ctx.ellipse(0, 15, 26, 8, 0, 0, Math.PI * 2);
+        ctx.ellipse(shadowCoords.screenX, shadowCoords.screenY, 28 * scale, 9 * scale, 0, 0, Math.PI * 2);
         ctx.fill();
+        ctx.restore();
+
+        ctx.save();
+        ctx.translate(screenX, screenY);
+        ctx.rotate(this.rotation);
+        ctx.scale(this.facing * scale, scale);
+
+        const legOffset = (this.state === 'FETCHING') ? Math.sin(this.walkCycle) * 12 : 0;
+        const tailAngle = Math.sin(this.tailWag) * 0.45;
 
         // Tail
         ctx.save();
-        ctx.translate(-22, -10);
-        ctx.rotate(-0.5 + tailAngle);
-        ctx.strokeStyle = '#FFB300';
-        ctx.lineWidth = 8;
-        ctx.lineCap = 'round';
+        ctx.translate(-22, -10); ctx.rotate(-0.5 + tailAngle);
+        ctx.strokeStyle = '#FFB300'; ctx.lineWidth = 8; ctx.lineCap = 'round';
         ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(-15, -10, -20, -5); ctx.stroke();
         ctx.restore();
 
         // Legs
-        ctx.strokeStyle = '#C3684D';
-        ctx.lineWidth = 6;
-        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#C3684D'; ctx.lineWidth = 6; ctx.lineCap = 'round';
         ctx.beginPath();
-        ctx.moveTo(-12, 0); ctx.lineTo(-12 + legOffset, 15);
-        ctx.moveTo(12, 0); ctx.lineTo(12 - legOffset, 15);
-        ctx.moveTo(-6, 0); ctx.lineTo(-6 - legOffset, 15);
-        ctx.moveTo(18, 0); ctx.lineTo(18 + legOffset, 15);
+        ctx.moveTo(-12, 0); ctx.lineTo(-12 + legOffset, 16);
+        ctx.moveTo(12, 0); ctx.lineTo(12 - legOffset, 16);
+        ctx.moveTo(-6, 0); ctx.lineTo(-6 - legOffset, 16);
+        ctx.moveTo(18, 0); ctx.lineTo(18 + legOffset, 16);
         ctx.stroke();
 
         // Body
         ctx.fillStyle = '#FFB300';
-        ctx.beginPath();
-        ctx.ellipse(0, -5, 24, 16, 0, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.beginPath(); ctx.ellipse(0, -5, 25, 16, 0, 0, Math.PI * 2); ctx.fill();
 
         // Head
-        ctx.beginPath();
-        ctx.ellipse(18, -20, 14, 12, 0, 0, Math.PI * 2);
-        ctx.fill();
+        const headY = this.state === 'PLAY_BOW' ? -10 : -20;
+        ctx.beginPath(); ctx.ellipse(18, headY, 14, 12, 0, 0, Math.PI * 2); ctx.fill();
 
         // Snout
         ctx.fillStyle = '#FFFDF9';
-        ctx.beginPath();
-        ctx.ellipse(25, -17, 8, 6, 0, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.beginPath(); ctx.ellipse(25, headY + 3, 8, 6, 0, 0, Math.PI * 2); ctx.fill();
 
-        // Nose
+        // Nose & Eye
         ctx.fillStyle = '#3D3D3D';
-        ctx.beginPath(); ctx.arc(30, -19, 3, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(30, headY + 1, 3, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(20, headY - 2, 2.5, 0, Math.PI * 2); ctx.fill();
 
-        // Eye (Tracking cursor position)
-        ctx.fillStyle = '#3D3D3D';
-        ctx.beginPath(); ctx.arc(20, -22, 2.5, 0, Math.PI * 2); ctx.fill();
-
-        // Ear
+        // Floppy Ear
         ctx.fillStyle = '#313A70';
-        ctx.beginPath();
-        ctx.ellipse(12, -18, 6, 12, 0.3, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.beginPath(); ctx.ellipse(12, headY + 2, 6, 12, 0.3, 0, Math.PI * 2); ctx.fill();
 
         ctx.restore();
       }
     }
 
     class Cat {
-      constructor(x) {
-        this.x = x;
-        this.y = groundY - 20;
+      constructor(x, y) {
+        this.x = x; // 2.5D Floor X
+        this.y = y; // 2.5D Floor Y
+        this.z = 0; // Height off floor
+        this.targetX = x;
+        this.targetY = y;
         this.vx = 0;
         this.vy = 0;
+        this.vz = 0;
         this.facing = -1;
-        this.state = 'ATTENTIVE'; // 'ATTENTIVE', 'STALKING', 'POUNCING', 'BATTING', 'ROLLING', 'TRICK'
+        this.state = 'ROAMING'; // 'ROAMING', 'STALKING_LASER', 'POUNCING', 'ROLLING', 'PETTED'
+        this.roamTimer = Math.floor(Math.random() * 80) + 30;
         this.trickTimer = 0;
         this.rotation = 0;
         this.tailWag = 0;
@@ -953,146 +977,167 @@
           this.state = 'POUNCING';
           this.targetX = targetX;
           this.targetY = targetY;
+          this.vz = 7;
           soundEngine.playMeow();
-          catActionTag.innerText = "Leaping!";
-          updateBanner("Mimi is leaping for the feather wand!", "fa-solid fa-feather");
-        } else if (actionName === 'ROLL_YARN') {
-          this.state = 'STALKING';
-          this.targetX = targetX;
-          soundEngine.playMeow();
-          catActionTag.innerText = "Stalking!";
-          updateBanner("Mimi is stalking the yarn ball!", "fa-solid fa-cat");
-        } else if (actionName === 'POUNCE_MOUSE') {
-          this.state = 'POUNCING';
-          this.targetX = targetX;
-          this.targetY = groundY - 20;
-          soundEngine.playMeow();
-          catActionTag.innerText = "Pouncing!";
-          updateBanner("Mimi pounces on the wind-up mouse!", "fa-solid fa-bullseye");
-        } else if (actionName === 'TRICK') {
-          this.state = 'TRICK';
-          this.trickTimer = 35;
-          soundEngine.playMeow();
-          soundEngine.playPurr();
-          soundEngine.playChime();
-          spawnParticles(this.x, this.y - 35, '💖', 4);
-          catHappiness = Math.min(100, catHappiness + 12);
-          trickCombo++;
-          comboCounter.innerText = `${trickCombo}x`;
-          catActionTag.innerText = "Acrobatic!";
-          updateBanner("Mimi performed a High Acrobatic Leap!", "fa-solid fa-heart");
+          catActionTag.innerText = "Acrobatic Leap!";
+          updateBanner("Mimi leaps through the air to catch the feather wand!", "fa-solid fa-feather");
+        } else if (actionName === 'STALK_LASER') {
+          this.state = 'STALKING_LASER';
+          soundEngine.playLaserZap();
+          catActionTag.innerText = "Stalking Laser!";
+          updateBanner("Mimi is intently tracking the red laser dot across the room!", "fa-solid fa-bullseye");
         } else if (actionName === 'PETTED') {
           soundEngine.playMeow();
           soundEngine.playPurr();
-          spawnParticles(this.x, this.y - 35, '🐾', 4);
+          const sc = getScreenCoords(this.x, this.y, this.z);
+          spawnParticles(sc.screenX, sc.screenY - 35, '🐾', 5);
           catHappiness = Math.min(100, catHappiness + 15);
           catActionTag.innerText = "Purring!";
-          updateBanner("You petted Mimi! She is purring softly!", "fa-solid fa-heart");
+          updateBanner("You petted Mimi! She is purring contentedly!", "fa-solid fa-heart");
         }
+      }
+
+      pickNewRoamTarget() {
+        this.targetX = Math.random() * (width - 120) + 60;
+        this.targetY = Math.random() * (floorYMax - floorYMin - 30) + floorYMin + 15;
+        this.roamTimer = Math.floor(Math.random() * 100) + 50;
       }
 
       update() {
-        this.tailWag += 0.22;
+        this.tailWag += 0.24;
 
-        // ATTENTIVE STANDBY (No AFK wandering)
-        if (this.state === 'ATTENTIVE') {
-          this.vx = 0;
-          this.rotation = 0;
-          const target = activeToyInstance ? activeToyInstance.x : mousePos.x;
-          this.facing = target >= this.x ? 1 : -1;
-          catActionTag.innerText = "Ready";
+        // 1. UNRESTRICTED CONTINUOUS IDLE ROAMING & AUTO-PLAY
+        if (this.state === 'ROAMING') {
+          catActionTag.innerText = "Exploring";
+          this.roamTimer--;
 
-          // Wand chase reaction when user moves wand near cat
-          if (activeToyType === 'wand' && Math.hypot(mousePos.x - this.x, mousePos.y - this.y) < 180) {
-            this.triggerAction('BAT_WAND', mousePos.x, mousePos.y);
+          if (this.roamTimer <= 0) {
+            this.pickNewRoamTarget();
+            if (Math.random() < 0.2) {
+              this.state = 'ROLLING';
+              this.trickTimer = 45;
+              soundEngine.playPurr();
+            }
           }
 
-        } else if (this.state === 'STALKING') {
-          this.walkCycle += 0.2;
+          // Laser Pointer Auto Detection
+          if (activeToyType === 'laser') {
+            this.triggerAction('STALK_LASER', mousePos.x, mousePos.y);
+          }
+
           const dx = this.targetX - this.x;
+          const dy = this.targetY - this.y;
+          const dist = Math.hypot(dx, dy);
+
+          if (dist > 15) {
+            this.walkCycle += 0.22;
+            const speed = 3.2;
+            this.vx = (dx / dist) * speed;
+            this.vy = (dy / dist) * speed;
+            this.x += this.vx;
+            this.y += this.vy;
+            if (Math.abs(dx) > 2) this.facing = dx >= 0 ? 1 : -1;
+          } else {
+            this.vx = 0; this.vy = 0;
+            const targetX = activeToyInstance ? activeToyInstance.x : dog.x;
+            this.facing = targetX >= this.x ? 1 : -1;
+          }
+
+        } else if (this.state === 'STALKING_LASER') {
+          const targetY = Math.max(floorYMin + 10, Math.min(floorYMax - 10, mousePos.y));
+          const dx = mousePos.x - this.x;
+          const dy = targetY - this.y;
+          const dist = Math.hypot(dx, dy);
+
           this.facing = dx >= 0 ? 1 : -1;
 
-          if (Math.abs(dx) > 30) {
-            this.x += this.facing * 3.5;
+          if (dist > 30) {
+            this.walkCycle += 0.15; // Slow cat crouch stalk
+            const speed = 4.2;
+            this.x += (dx / dist) * speed;
+            this.y += (dy / dist) * speed;
           } else {
-            this.vy = -7;
+            // Pounce on Red Dot!
             this.state = 'POUNCING';
+            this.vz = 6.5;
             soundEngine.playMeow();
+            const sc = getScreenCoords(this.x, this.y, this.z);
+            spawnParticles(sc.screenX, sc.screenY - 20, '💥', 3);
+            catHappiness = Math.min(100, catHappiness + 10);
           }
+
+          if (activeToyType !== 'laser') this.state = 'ROAMING';
 
         } else if (this.state === 'POUNCING') {
-          const dx = (this.targetX || mousePos.x) - this.x;
-          this.facing = dx >= 0 ? 1 : -1;
-          this.x += this.facing * 6;
+          this.walkCycle += 0.3;
+          const dx = this.targetX - this.x;
+          const dy = this.targetY - this.y;
+          const dist = Math.hypot(dx, dy);
 
-          this.vy += 0.45;
-          this.y += this.vy;
+          if (dist > 10) {
+            this.x += (dx / dist) * 5.5;
+            this.y += (dy / dist) * 5.5;
+          }
 
-          if (this.y >= groundY - 20) {
-            this.y = groundY - 20;
+          if (this.z <= 0) {
             this.state = 'ROLLING';
-            this.trickTimer = 40;
+            this.trickTimer = 35;
             soundEngine.playPurr();
-            spawnParticles(this.x, this.y - 30, '🐾', 3);
-            catHappiness = Math.min(100, catHappiness + 8);
           }
 
         } else if (this.state === 'ROLLING') {
-          this.rotation = Math.sin(this.trickTimer) * 0.3;
+          catActionTag.innerText = "Playful Roll";
+          this.rotation = Math.sin(this.trickTimer * 0.3) * 0.35;
           this.trickTimer--;
           if (this.trickTimer <= 0) {
             this.rotation = 0;
-            this.state = 'ATTENTIVE';
-          }
-
-        } else if (this.state === 'TRICK') {
-          this.trickTimer--;
-          this.vy = Math.sin((this.trickTimer / 35) * Math.PI) * -6;
-          this.y = groundY - 20 + this.vy * 4;
-          this.rotation = Math.sin(this.trickTimer * 0.4) * 0.5;
-
-          if (this.trickTimer <= 0) {
-            this.rotation = 0;
-            this.y = groundY - 20;
-            this.state = 'ATTENTIVE';
+            this.state = 'ROAMING';
           }
         }
 
-        // Clamp
+        // Z Height Physics
+        if (this.z > 0 || this.vz !== 0) {
+          this.z += this.vz;
+          this.vz -= 0.45;
+          if (this.z <= 0) {
+            this.z = 0;
+            this.vz = 0;
+          }
+        }
+
+        // Floor Bounds Clamping
         this.x = Math.max(50, Math.min(width - 50, this.x));
+        this.y = Math.max(floorYMin + 10, Math.min(floorYMax - 10, this.y));
       }
 
       draw(ctx) {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.rotation);
-        ctx.scale(this.facing, 1);
+        const { screenX, screenY, scale } = getScreenCoords(this.x, this.y, this.z);
+        const shadowCoords = getScreenCoords(this.x, this.y, 0);
 
-        const legOffset = (this.state === 'STALKING' || this.state === 'POUNCING') ? Math.sin(this.walkCycle) * 8 : 0;
+        // Ground Shadow
+        ctx.save();
+        ctx.fillStyle = 'rgba(0,0,0,0.18)';
+        ctx.beginPath();
+        ctx.ellipse(shadowCoords.screenX, shadowCoords.screenY, 22 * scale, 7 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.save();
+        ctx.translate(screenX, screenY);
+        ctx.rotate(this.rotation);
+        ctx.scale(this.facing * scale, scale);
+
+        const legOffset = (this.state === 'STALKING_LASER') ? Math.sin(this.walkCycle) * 10 : 0;
         const tailAngle = Math.sin(this.tailWag) * 0.5;
 
-        // Shadow
-        ctx.fillStyle = 'rgba(0,0,0,0.15)';
-        ctx.beginPath();
-        ctx.ellipse(0, 15, 20, 6, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Sinuous Tail
+        // Tail
         ctx.save();
-        ctx.translate(-18, -8);
-        ctx.strokeStyle = '#C9888F';
-        ctx.lineWidth = 5;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.bezierCurveTo(-15, -15 + tailAngle * 10, -25, -5 - tailAngle * 10, -20, -25);
-        ctx.stroke();
+        ctx.translate(-18, -8); ctx.strokeStyle = '#C9888F'; ctx.lineWidth = 5; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.bezierCurveTo(-15, -15 + tailAngle * 10, -25, -5 - tailAngle * 10, -20, -25); ctx.stroke();
         ctx.restore();
 
         // Legs
-        ctx.strokeStyle = '#313A70';
-        ctx.lineWidth = 4.5;
-        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#313A70'; ctx.lineWidth = 4.5; ctx.lineCap = 'round';
         ctx.beginPath();
         ctx.moveTo(-10, 0); ctx.lineTo(-10 + legOffset, 15);
         ctx.moveTo(10, 0); ctx.lineTo(10 - legOffset, 15);
@@ -1102,13 +1147,10 @@
 
         // Body
         ctx.fillStyle = '#C9888F';
-        ctx.beginPath();
-        ctx.ellipse(0, -5, 20, 13, 0, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.beginPath(); ctx.ellipse(0, -5, 20, 13, 0, 0, Math.PI * 2); ctx.fill();
 
-        // Body Tabby Stripes
-        ctx.strokeStyle = '#313A70';
-        ctx.lineWidth = 2;
+        // Tabby Stripes
+        ctx.strokeStyle = '#313A70'; ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(-6, -16); ctx.lineTo(-6, -6);
         ctx.moveTo(0, -17); ctx.lineTo(0, -5);
@@ -1117,26 +1159,19 @@
 
         // Head
         ctx.fillStyle = '#C9888F';
-        ctx.beginPath();
-        ctx.ellipse(15, -18, 12, 10, 0, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.beginPath(); ctx.ellipse(15, -18, 12, 10, 0, 0, Math.PI * 2); ctx.fill();
 
-        // Pointy Ears
+        // Ears
         ctx.fillStyle = '#313A70';
-        ctx.beginPath();
-        ctx.moveTo(10, -26); ctx.lineTo(14, -36); ctx.lineTo(18, -26); ctx.fill();
-        ctx.beginPath();
-        ctx.moveTo(18, -26); ctx.lineTo(22, -36); ctx.lineTo(25, -24); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(10, -26); ctx.lineTo(14, -36); ctx.lineTo(18, -26); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(18, -26); ctx.lineTo(22, -36); ctx.lineTo(25, -24); ctx.fill();
 
-        // Eyes (Emerald green slit)
+        // Eyes & Whiskers
         ctx.fillStyle = '#4E9F3D';
         ctx.beginPath(); ctx.arc(19, -20, 3, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#3D3D3D';
-        ctx.fillRect(18.5, -22, 1, 4);
+        ctx.fillStyle = '#3D3D3D'; ctx.fillRect(18.5, -22, 1, 4);
 
-        // Whiskers
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 1.2;
         ctx.beginPath();
         ctx.moveTo(23, -16); ctx.lineTo(32, -18);
         ctx.moveTo(23, -14); ctx.lineTo(33, -14);
@@ -1147,8 +1182,8 @@
       }
     }
 
-    const dog = new Dog(width * 0.3);
-    const cat = new Cat(width * 0.7);
+    const dog = new Dog(width * 0.35, floorYMin + (floorYMax - floorYMin) * 0.4);
+    const cat = new Cat(width * 0.65, floorYMin + (floorYMax - floorYMin) * 0.6);
 
     function drawFeatherWand(ctx) {
       if (activeToyType !== 'wand') return;
@@ -1159,28 +1194,16 @@
       const tipY = handleY - 40;
 
       ctx.save();
-      // Wand stick
-      ctx.strokeStyle = '#313A70';
-      ctx.lineWidth = 4;
-      ctx.lineCap = 'round';
-      ctx.beginPath();
-      ctx.moveTo(handleX, handleY);
-      ctx.lineTo(tipX, tipY);
-      ctx.stroke();
+      ctx.strokeStyle = '#313A70'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(handleX, handleY); ctx.lineTo(tipX, tipY); ctx.stroke();
 
-      // String line
       const stringLength = 50;
       const featherX = tipX + Math.sin(Date.now() * 0.008) * 20;
       const featherY = tipY + stringLength;
 
-      ctx.strokeStyle = '#FFFFFF';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(tipX, tipY);
-      ctx.lineTo(featherX, featherY);
-      ctx.stroke();
+      ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(tipX, tipY); ctx.lineTo(featherX, featherY); ctx.stroke();
 
-      // Feathers
       ctx.translate(featherX, featherY);
       ctx.rotate(Math.sin(Date.now() * 0.01) * 0.4);
 
@@ -1189,9 +1212,7 @@
         ctx.save();
         ctx.rotate((idx - 1) * 0.5);
         ctx.fillStyle = col;
-        ctx.beginPath();
-        ctx.ellipse(0, 12, 5, 16, 0, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.beginPath(); ctx.ellipse(0, 12, 5, 16, 0, 0, Math.PI * 2); ctx.fill();
         ctx.restore();
       });
 
@@ -1201,15 +1222,15 @@
     function drawTugRope(ctx) {
       if (activeToyType !== 'rope' || dog.state !== 'TUGGING') return;
 
+      const dogCoords = getScreenCoords(dog.x, dog.y, dog.z + 10);
+
       ctx.save();
-      ctx.strokeStyle = '#FFB300';
-      ctx.lineWidth = 8;
-      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#FFB300'; ctx.lineWidth = 8; ctx.lineCap = 'round';
 
       const startX = mousePos.x;
       const startY = mousePos.y;
-      const endX = dog.x + dog.facing * 20;
-      const endY = dog.y - 15;
+      const endX = dogCoords.screenX;
+      const endY = dogCoords.screenY;
 
       const midX = (startX + endX) / 2;
       const midY = (startY + endY) / 2 + 15;
@@ -1219,7 +1240,6 @@
       ctx.quadraticCurveTo(midX, midY, endX, endY);
       ctx.stroke();
 
-      // Rope knots
       ctx.fillStyle = '#C3684D';
       ctx.beginPath(); ctx.arc(startX, startY, 8, 0, Math.PI * 2); ctx.fill();
       ctx.beginPath(); ctx.arc(endX, endY, 8, 0, Math.PI * 2); ctx.fill();
@@ -1245,30 +1265,34 @@
       mousePos.isDown = true;
       mousePos.isDragging = false;
 
-      // Direct Petting Click Check
-      const distToDog = Math.hypot(coords.x - dog.x, coords.y - dog.y);
-      const distToCat = Math.hypot(coords.x - cat.x, coords.y - cat.y);
+      // Direct Petting Detection (2.5D Distance Check)
+      const dogCoords = getScreenCoords(dog.x, dog.y, dog.z);
+      const catCoords = getScreenCoords(cat.x, cat.y, cat.z);
 
-      if (distToDog < 45) {
+      const distToDog = Math.hypot(coords.x - dogCoords.screenX, coords.y - dogCoords.screenY);
+      const distToCat = Math.hypot(coords.x - catCoords.screenX, coords.y - catCoords.screenY);
+
+      if (distToDog < 45 * dogCoords.scale) {
         dog.triggerAction('PETTED');
         return;
-      } else if (distToCat < 40) {
+      } else if (distToCat < 40 * catCoords.scale) {
         cat.triggerAction('PETTED');
         return;
       }
 
-      // Handle Toys Actions
+      // Throw/Spawn Toys in 2.5D space
       if (activeToyType === 'ball' || activeToyType === 'bone' || activeToyType === 'yarn' || activeToyType === 'mouse') {
-        activeToyInstance = new ToyItem(activeToyType, coords.x, coords.y);
+        const clampY = Math.max(floorYMin + 15, Math.min(floorYMax - 15, coords.y));
+        activeToyInstance = new ToyItem(activeToyType, coords.x, clampY);
 
         if (activeToyType === 'ball') {
-          dog.triggerAction('FETCH_BALL', coords.x, coords.y);
+          dog.triggerAction('FETCH_BALL', coords.x, clampY);
         } else if (activeToyType === 'bone') {
-          dog.triggerAction('CHEW_BONE', coords.x, coords.y);
+          dog.triggerAction('CHEW_BONE', coords.x, clampY);
         } else if (activeToyType === 'yarn') {
-          cat.triggerAction('ROLL_YARN', coords.x, coords.y);
+          cat.triggerAction('BAT_WAND', coords.x, clampY);
         } else if (activeToyType === 'mouse') {
-          cat.triggerAction('POUNCE_MOUSE', coords.x, coords.y);
+          cat.triggerAction('POUNCE_MOUSE', coords.x, clampY);
         }
       } else if (activeToyType === 'rope') {
         dog.triggerAction('TUG_ROPE', coords.x, coords.y);
@@ -1282,16 +1306,13 @@
       mousePos.x = coords.x;
       mousePos.y = coords.y;
 
-      if (mousePos.isDown) {
-        mousePos.isDragging = true;
-      }
+      if (mousePos.isDown) mousePos.isDragging = true;
     }
 
     function handlePointerUp() {
       if (mousePos.isDown && activeToyInstance && Math.abs(mousePos.vx) > 2) {
-        // Toss momentum
-        activeToyInstance.vx = mousePos.vx * 0.8;
-        activeToyInstance.vy = mousePos.vy * 0.8;
+        activeToyInstance.vx = mousePos.vx * 0.7;
+        activeToyInstance.vy = mousePos.vy * 0.5;
       }
       mousePos.isDown = false;
       mousePos.isDragging = false;
@@ -1305,10 +1326,10 @@
     canvas.addEventListener('touchmove', (e) => { handlePointerMove(e); e.preventDefault(); });
     window.addEventListener('touchend', handlePointerUp);
 
-    // Toy Selection Toolbar Buttons
+    // Toolbar Toy Selection
     const toyBtns = document.querySelectorAll('.toy-btn, .toy-btn-cat');
     toyBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', () => {
         toyBtns.forEach(b => b.classList.remove('active-toy'));
         btn.classList.add('active-toy');
         activeToyType = btn.getAttribute('data-toy');
@@ -1316,21 +1337,18 @@
         soundEngine.playSqueak();
 
         const toyNames = {
-          ball: "Tennis Ball (Barnaby loves Fetch!)",
-          bone: "Squeaky Bone (Squeak for Barnaby!)",
-          rope: "Tug-of-War Rope (Pull with Barnaby!)",
-          wand: "Feather Wand (Wave for Mimi!)",
-          yarn: "Yarn Ball (Roll for Mimi!)",
-          mouse: "Wind-Up Mouse (Watch Mimi pounce!)"
+          ball: "Tennis Ball (Throw anywhere on the floor!)",
+          bone: "Squeaky Bone (Chew & squeak!)",
+          rope: "Tug Rope (Interactive tug-of-war!)",
+          laser: "Red Laser Pointer (Tracks cursor across the room!)",
+          wand: "Feather Wand (Wave for leap pounces!)",
+          yarn: "Yarn Ball (Unravels thread across the floor!)",
+          mouse: "Wind-up Mouse (Skitters autonomously!)"
         };
 
         updateBanner(`Selected ${toyNames[activeToyType]}`, "fa-solid fa-gamepad");
       });
     });
-
-    // Trick Buttons
-    document.getElementById('dogTrickBtn').addEventListener('click', () => dog.triggerAction('TRICK'));
-    document.getElementById('catTrickBtn').addEventListener('click', () => cat.triggerAction('TRICK'));
 
     // Sound Toggle
     const soundToggleBtn = document.getElementById('soundToggle');
@@ -1351,54 +1369,55 @@
       }
     });
 
-    // Reset Room Button
+    // Reset Pets Button
     document.getElementById('clearRoomBtn').addEventListener('click', () => {
       activeToyInstance = null;
-      dog.x = width * 0.3;
-      dog.state = 'ATTENTIVE';
-      cat.x = width * 0.7;
-      cat.state = 'ATTENTIVE';
-      dogHappiness = 85;
-      catHappiness = 80;
-      trickCombo = 0;
-      comboCounter.innerText = "0x";
+      dog.x = width * 0.35; dog.y = floorYMin + (floorYMax - floorYMin) * 0.4; dog.state = 'ROAMING';
+      cat.x = width * 0.65; cat.y = floorYMin + (floorYMax - floorYMin) * 0.6; cat.state = 'ROAMING';
+      dogHappiness = 88; catHappiness = 82;
       soundEngine.playBounce();
-      updateBanner("Room reset! Select a toy to begin play.", "fa-solid fa-rotate-left");
+      updateBanner("Pets reset! Barnaby and Mimi are ready to explore.", "fa-solid fa-rotate-left");
     });
 
     function gameLoop() {
-      // Decay happiness slightly over time
-      dogHappiness = Math.max(30, dogHappiness - 0.008);
-      catHappiness = Math.max(30, catHappiness - 0.008);
+      // Gentle happiness decay over time
+      dogHappiness = Math.max(30, dogHappiness - 0.005);
+      catHappiness = Math.max(30, catHappiness - 0.005);
 
-      // Update HUD Bars
       dogHappyBar.style.width = `${dogHappiness}%`;
       catHappyBar.style.width = `${catHappiness}%`;
 
-      // Clear Canvas
       ctx.clearRect(0, 0, width, height);
 
-      // Render Environment
+      // 1. Draw Environment
       drawRoomBackground(ctx);
 
-      // Render Active Toys
-      if (activeToyInstance) {
-        activeToyInstance.update();
-        activeToyInstance.draw(ctx);
-      }
+      // 2. Update Physics Logic
+      if (activeToyInstance) activeToyInstance.update();
+      dog.update();
+      cat.update();
 
-      // Render Wand / Rope Visuals
+      // 3. Dynamic Y-Sorting Array for 2.5D Render Order
+      const renderList = [];
+
+      if (activeToyInstance) {
+        renderList.push({ y: activeToyInstance.y, draw: () => activeToyInstance.draw(ctx) });
+      }
+      renderList.push({ y: dog.y, draw: () => dog.draw(ctx) });
+      renderList.push({ y: cat.y, draw: () => cat.draw(ctx) });
+
+      // Sort by 2.5D Floor Y so closer objects render on top of farther ones
+      renderList.sort((a, b) => a.y - b.y);
+
+      // Render sorted entities
+      renderList.forEach(item => item.draw());
+
+      // 4. Draw Overlay Toys (Laser & Wand & Rope)
+      drawLaserPointer(ctx);
       drawFeatherWand(ctx);
       drawTugRope(ctx);
 
-      // Update and Draw Pets
-      dog.update();
-      dog.draw(ctx);
-
-      cat.update();
-      cat.draw(ctx);
-
-      // Update & Draw Particles
+      // 5. Update & Draw Particles
       for (let i = particles.length - 1; i >= 0; i--) {
         particles[i].update();
         particles[i].draw(ctx);
@@ -1408,11 +1427,10 @@
       requestAnimationFrame(gameLoop);
     }
 
-    // Start Game Engine on Load
+    // Start Engine on Load
     window.onload = function() {
       gameLoop();
     };
   </script>
 </body>
-</html>
 </html>
