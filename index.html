@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PetMatch: Full Room Playground</title>
-  <!-- Tailwind CSS -->
+  <title>PetMatch: Full Room Playtime Playground</title>
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -20,10 +20,13 @@
           colors: {
             indigo: '#313A70',
             mustard: '#FFB300',
-            terracotta: '#C3684D',
-            cream: '#FAF1E4',
+            rose: '#C9888F',
             mint: '#AFE2CF',
-            charcoal: '#3D3D3D'
+            terracotta: '#C3684D',
+            charcoal: '#3D3D3D',
+            cream: '#FBF7F1',
+            grey: '#98A1A6',
+            wallTan: 'F7E9C6'
           },
           fontFamily: {
             sans: ['Inter', 'sans-serif'],
@@ -35,40 +38,41 @@
   </script>
 
   <style>
-    * {
-      user-select: none;
-      -webkit-user-select: none;
-    }
     body {
       background-color: #313A70;
       font-family: 'Inter', sans-serif;
+      user-select: none;
       touch-action: none;
-      overflow: hidden;
+    }
+    .font-display {
+      font-family: 'Fredoka', sans-serif;
     }
     canvas {
       touch-action: none;
     }
     .toy-btn.active-toy {
+      border-color: #FFB300 !important;
       background-color: #FFB300 !important;
       color: #313A70 !important;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(255, 179, 0, 0.4);
+      transform: scale(1.05);
+      box-shadow: 0 4px 14px rgba(255, 179, 0, 0.45);
     }
     .toy-btn-cat.active-toy {
-      background-color: #C3684D !important;
+      border-color: #C9888F !important;
+      background-color: #C9888F !important;
       color: #FFFFFF !important;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(195, 104, 77, 0.4);
+      transform: scale(1.05);
+      box-shadow: 0 4px 14px rgba(201, 136, 143, 0.45);
     }
   </style>
 </head>
-<body class="h-full flex flex-col justify-between text-charcoal bg-indigo">
+<body class="h-full flex flex-col justify-between text-charcoal bg-indigo overflow-hidden">
 
-  <!-- Top Navigation Header -->
-  <header class="bg-white/95 backdrop-blur border-b-4 border-mustard px-4 py-2.5 sm:px-6 flex justify-between items-center shadow-md z-20">
+  <!-- Header Navigation -->
+  <header class="bg-cream/95 backdrop-blur border-b-4 border-mustard px-4 py-2.5 sm:px-6 flex justify-between items-center shadow-lg z-20">
     <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 rounded-full bg-mustard flex items-center justify-center text-indigo text-xl font-bold shadow">
-        <i class="fa-solid fa-paw"></i>
+      <div class="w-10 h-10 rounded-full bg-terracotta flex items-center justify-center text-white text-xl font-bold shadow-md">
+        <i class="fa-solid fa-paw text-mustard"></i>
       </div>
       <div>
         <h1 class="font-display font-bold text-lg sm:text-xl text-indigo leading-tight">PetMatch: Full Room Playground</h1>
@@ -76,109 +80,109 @@
       </div>
     </div>
 
-    <!-- Header Controls -->
+    <!-- Sound & Reset Controls -->
     <div class="flex items-center space-x-2 sm:space-x-3">
       <button id="soundToggle" class="bg-mint hover:bg-opacity-80 text-indigo font-semibold px-3 py-1.5 rounded-full text-xs sm:text-sm flex items-center space-x-1.5 transition shadow">
         <i id="soundIcon" class="fa-solid fa-volume-high"></i>
         <span id="soundLabel" class="hidden sm:inline">Sound: ON</span>
       </button>
 
-      <button id="resetPetsBtn" class="bg-terracotta hover:bg-opacity-90 text-white font-semibold px-3 py-1.5 rounded-full text-xs sm:text-sm flex items-center space-x-1.5 transition shadow">
+      <button id="clearRoomBtn" class="bg-rose hover:bg-opacity-90 text-white font-semibold px-3 py-1.5 rounded-full text-xs sm:text-sm flex items-center space-x-1.5 transition shadow">
         <i class="fa-solid fa-rotate-left"></i>
-        <span class="hidden sm:inline">Reset Pets</span>
+        <span>Reset Pets</span>
       </button>
     </div>
   </header>
 
-  <!-- Main Canvas Room Playground -->
-  <main class="relative flex-1 w-full bg-cream overflow-hidden flex items-center justify-center">
+  <!-- Main Canvas Playfield -->
+  <main class="relative flex-1 w-full bg-cream overflow-hidden flex flex-col items-center justify-center">
     
-    <!-- Status Overlay Cards -->
-    <div class="absolute top-3 left-4 right-4 z-10 flex justify-between items-start pointer-events-none">
+    <!-- Top HUD Floating Status Overlay -->
+    <div class="absolute top-3 left-4 right-4 z-10 flex flex-wrap gap-2 justify-between pointer-events-none">
       
-      <!-- Barnaby Dog Card -->
+      <!-- Dog Happiness Card -->
       <div class="bg-white/95 backdrop-blur border-2 border-mustard rounded-2xl p-2 sm:p-2.5 shadow-lg flex items-center space-x-2.5 pointer-events-auto min-w-[150px] sm:min-w-[190px]">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-mustard/20 border-2 border-mustard flex items-center justify-center text-lg sm:text-xl">
+        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-mustard/20 border-2 border-mustard flex items-center justify-center text-lg sm:text-2xl text-terracotta">
           🐶
         </div>
         <div class="flex-1">
           <div class="flex justify-between items-center mb-0.5">
             <span class="font-display font-bold text-xs sm:text-sm text-indigo">Barnaby</span>
-            <span id="dogStatus" class="text-[10px] font-bold text-terracotta bg-mustard/20 px-1.5 py-0.5 rounded-full">Roaming</span>
+            <span id="dogActionTag" class="text-[10px] font-bold text-terracotta bg-mustard/20 px-1.5 py-0.5 rounded-full">Roaming</span>
           </div>
-          <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden border border-slate-300">
+          <div class="w-full bg-slate-200 h-2 sm:h-2.5 rounded-full overflow-hidden border border-slate-300">
             <div id="dogHappyBar" class="bg-mustard h-full transition-all duration-300 w-4/5"></div>
           </div>
         </div>
       </div>
 
-      <!-- Action Notification Banner -->
-      <div id="actionBanner" class="bg-indigo/90 text-white px-4 py-1.5 rounded-2xl shadow-xl border border-white/20 text-xs sm:text-sm font-medium flex items-center space-x-2 pointer-events-auto hidden md:flex">
-        <i id="actionIcon" class="fa-solid fa-face-smile text-mustard"></i>
-        <span id="actionText">Barnaby & Mimi are freely exploring the room!</span>
+      <!-- Center Dynamic Banner -->
+      <div id="actionBanner" class="bg-indigo text-white px-3.5 py-1.5 rounded-2xl shadow-xl border-2 border-mint text-xs sm:text-sm font-medium flex items-center space-x-2 transition-all">
+        <i id="actionBannerIcon" class="fa-solid fa-face-smile text-mustard"></i>
+        <span id="actionBannerText">Barnaby & Mimi are freely exploring the room!</span>
       </div>
 
-      <!-- Mimi Cat Card -->
-      <div class="bg-white/95 backdrop-blur border-2 border-terracotta rounded-2xl p-2 sm:p-2.5 shadow-lg flex items-center space-x-2.5 pointer-events-auto min-w-[150px] sm:min-w-[190px]">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-terracotta/20 border-2 border-terracotta flex items-center justify-center text-lg sm:text-xl">
+      <!-- Cat Happiness Card -->
+      <div class="bg-white/95 backdrop-blur border-2 border-rose rounded-2xl p-2 sm:p-2.5 shadow-lg flex items-center space-x-2.5 pointer-events-auto min-w-[150px] sm:min-w-[190px]">
+        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-rose/20 border-2 border-rose flex items-center justify-center text-lg sm:text-2xl text-rose">
           🐱
         </div>
         <div class="flex-1">
           <div class="flex justify-between items-center mb-0.5">
             <span class="font-display font-bold text-xs sm:text-sm text-indigo">Mimi</span>
-            <span id="catStatus" class="text-[10px] font-bold text-terracotta bg-terracotta/20 px-1.5 py-0.5 rounded-full">Exploring</span>
+            <span id="catActionTag" class="text-[10px] font-bold text-rose bg-rose/20 px-1.5 py-0.5 rounded-full">Exploring</span>
           </div>
-          <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden border border-slate-300">
-            <div id="catHappyBar" class="bg-terracotta h-full transition-all duration-300 w-3/4"></div>
+          <div class="w-full bg-slate-200 h-2 sm:h-2.5 rounded-full overflow-hidden border border-slate-300">
+            <div id="catHappyBar" class="bg-rose h-full transition-all duration-300 w-3/4"></div>
           </div>
         </div>
       </div>
 
     </div>
 
-    <!-- The 2.5D Canvas -->
-    <canvas id="playgroundCanvas" class="w-full h-full cursor-crosshair block"></canvas>
+    <!-- The 2.5D Game Canvas -->
+    <canvas id="gameCanvas" class="w-full h-full cursor-crosshair block"></canvas>
   </main>
 
-  <!-- Bottom Toys Toolbar -->
-  <footer class="bg-indigo border-t-4 border-mustard p-3 z-20 shadow-2xl">
-    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5">
+  <!-- Toy Toolbar Footer -->
+  <footer class="bg-indigo border-t-4 border-terracotta p-2 sm:p-3 z-20 shadow-2xl">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
       
-      <!-- Dog Toys -->
-      <div class="flex items-center space-x-2 w-full sm:w-auto justify-center">
+      <!-- Dog Toys Toolbar -->
+      <div class="flex items-center space-x-2 w-full md:w-auto justify-center">
         <span class="font-display text-white text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1.5">
           <i class="fa-solid fa-dog text-mustard"></i> Dog Toys:
         </span>
         <div class="flex space-x-1.5">
-          <button data-toy="ball" class="toy-btn active-toy bg-white text-indigo border-2 border-mustard px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition shadow">
-            Ball
+          <button data-toy="ball" class="toy-btn active-toy bg-cream text-indigo border-2 border-mustard px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1 transition shadow">
+            <span>🎾 Ball</span>
           </button>
-          <button data-toy="bone" class="toy-btn bg-white text-indigo border-2 border-mustard px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition shadow">
-            Bone
+          <button data-toy="bone" class="toy-btn bg-cream text-indigo border-2 border-mustard px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1 transition shadow">
+            <span>🦴 Bone</span>
           </button>
-          <button data-toy="rope" class="toy-btn bg-white text-indigo border-2 border-mustard px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition shadow">
-            Tug Rope
+          <button data-toy="rope" class="toy-btn bg-cream text-indigo border-2 border-mustard px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1 transition shadow">
+            <span>🪢 Tug Rope</span>
           </button>
         </div>
       </div>
 
-      <!-- Cat Toys -->
-      <div class="flex items-center space-x-2 w-full sm:w-auto justify-center">
+      <!-- Cat Toys Toolbar -->
+      <div class="flex items-center space-x-2 w-full md:w-auto justify-center">
         <span class="font-display text-white text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1.5">
-          <i class="fa-solid fa-cat text-terracotta"></i> Cat Toys:
+          <i class="fa-solid fa-cat text-rose"></i> Cat Toys:
         </span>
         <div class="flex space-x-1.5">
-          <button data-toy="laser" class="toy-btn-cat bg-white text-indigo border-2 border-terracotta px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition shadow">
-            Laser
+          <button data-toy="laser" class="toy-btn-cat bg-cream text-indigo border-2 border-rose px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1 transition shadow">
+            <span>🔴 Laser</span>
           </button>
-          <button data-toy="wand" class="toy-btn-cat bg-white text-indigo border-2 border-terracotta px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition shadow">
-            Wand
+          <button data-toy="wand" class="toy-btn-cat bg-cream text-indigo border-2 border-rose px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1 transition shadow">
+            <span>🪶 Wand</span>
           </button>
-          <button data-toy="yarn" class="toy-btn-cat bg-white text-indigo border-2 border-terracotta px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition shadow">
-            Yarn
+          <button data-toy="yarn" class="toy-btn-cat bg-cream text-indigo border-2 border-rose px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1 transition shadow">
+            <span>🧶 Yarn</span>
           </button>
-          <button data-toy="mouse" class="toy-btn-cat bg-white text-indigo border-2 border-terracotta px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition shadow">
-            Mouse
+          <button data-toy="mouse" class="toy-btn-cat bg-cream text-indigo border-2 border-rose px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1 transition shadow">
+            <span>🐭 Mouse</span>
           </button>
         </div>
       </div>
@@ -187,7 +191,6 @@
   </footer>
 
   <script>
-    /* Audio Synthesis Engine */
     class SoundEngine {
       constructor() {
         this.ctx = null;
@@ -206,168 +209,367 @@
 
       playBark() {
         if (this.muted) return;
-        this.init(); if (!this.ctx) return;
+        this.init();
+        if (!this.ctx) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
+
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(280, now);
-        osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
+        osc.frequency.exponentialRampToValueAtTime(95, now + 0.15);
+
         gain.gain.setValueAtTime(0.3, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-        osc.connect(gain); gain.connect(this.ctx.destination);
-        osc.start(now); osc.stop(now + 0.15);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.15);
       }
 
       playMeow() {
         if (this.muted) return;
-        this.init(); if (!this.ctx) return;
+        this.init();
+        if (!this.ctx) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
+
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(450, now);
-        osc.frequency.linearRampToValueAtTime(780, now + 0.14);
+        osc.frequency.setValueAtTime(460, now);
+        osc.frequency.linearRampToValueAtTime(820, now + 0.14);
         osc.frequency.linearRampToValueAtTime(420, now + 0.28);
+
         gain.gain.setValueAtTime(0.01, now);
         gain.gain.linearRampToValueAtTime(0.22, now + 0.08);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
-        osc.connect(gain); gain.connect(this.ctx.destination);
-        osc.start(now); osc.stop(now + 0.28);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.28);
       }
 
       playSqueak() {
         if (this.muted) return;
-        this.init(); if (!this.ctx) return;
+        this.init();
+        if (!this.ctx) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
+
         osc.type = 'sine';
         osc.frequency.setValueAtTime(1300, now);
         osc.frequency.exponentialRampToValueAtTime(2100, now + 0.08);
+
         gain.gain.setValueAtTime(0.2, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-        osc.connect(gain); gain.connect(this.ctx.destination);
-        osc.start(now); osc.stop(now + 0.08);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.08);
       }
 
       playBounce() {
         if (this.muted) return;
-        this.init(); if (!this.ctx) return;
+        this.init();
+        if (!this.ctx) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
+
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(170, now);
-        osc.frequency.exponentialRampToValueAtTime(50, now + 0.1);
-        gain.gain.setValueAtTime(0.2, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-        osc.connect(gain); gain.connect(this.ctx.destination);
-        osc.start(now); osc.stop(now + 0.1);
+        osc.frequency.exponentialRampToValueAtTime(50, now + 0.12);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.12);
+      }
+
+      playLaserZap() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(1800, now);
+        osc.frequency.exponentialRampToValueAtTime(300, now + 0.06);
+
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.06);
       }
 
       playPurr() {
         if (this.muted) return;
-        this.init(); if (!this.ctx) return;
+        this.init();
+        if (!this.ctx) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
+
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(36, now);
+        osc.frequency.setValueAtTime(32, now);
+
         gain.gain.setValueAtTime(0.12, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-        osc.connect(gain); gain.connect(this.ctx.destination);
-        osc.start(now); osc.stop(now + 0.3);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      }
+
+      playTugRumble() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(105, now);
+        osc.frequency.linearRampToValueAtTime(135, now + 0.1);
+
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.1);
       }
     }
 
     const soundEngine = new SoundEngine();
 
-    /* Canvas Setup & Image Pattern Loading */
-    const canvas = document.getElementById('playgroundCanvas');
+    const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
-    let width = 0, height = 0, wallY = 0;
-    let topoPattern = null;
-
-    // Load Floor Image Asset
-    const floorImg = new Image();
-    floorImg.src = 'assets/floor.jpg';
-    floorImg.onload = () => {
-      topoPattern = ctx.createPattern(floorImg, 'repeat');
-    };
+    let width = 0;
+    let height = 0;
+    let floorYMin = 0; // Back wall baseboard
+    let floorYMax = 0; // Foreground bottom
 
     function resizeCanvas() {
       width = canvas.parentElement.clientWidth;
       height = canvas.parentElement.clientHeight;
       canvas.width = width;
       canvas.height = height;
-      wallY = height * 0.35;
-      if (floorImg.complete && floorImg.naturalWidth > 0) {
-        topoPattern = ctx.createPattern(floorImg, 'repeat');
-      }
+      floorYMin = height * 0.48; // Wall ends, floor starts
+      floorYMax = height * 0.94; // Bottom of room floor
     }
 
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    /* Game States */
-    let activeToyType = 'ball';
-    let dogHappiness = 85;
-    let catHappiness = 80;
-
-    const mousePos = { x: width / 2, y: height * 0.65, isDown: false };
-
-    /* UI References */
-    const dogHappyBar = document.getElementById('dogHappyBar');
-    const catHappyBar = document.getElementById('catHappyBar');
-    const dogStatus = document.getElementById('dogStatus');
-    const catStatus = document.getElementById('catStatus');
-    const actionText = document.getElementById('actionText');
-
-    function updateBanner(text) {
-      if (actionText) actionText.innerText = text;
+    // 2.5D Depth Scale Mapping: Further back = smaller scale, Closer front = larger scale
+    function getDepthScale(y) {
+      const normY = Math.max(0, Math.min(1, (y - floorYMin) / (floorYMax - floorYMin)));
+      return 0.62 + normY * 0.53; // Ranges from ~0.62 to ~1.15
     }
 
-    /* Floating Particles */
+    // Convert 2.5D floor coords (x, y, z) into screen render coords
+    function getScreenCoords(x, y, z = 0) {
+      const scale = getDepthScale(y);
+      const screenX = x;
+      const screenY = y - z * scale;
+      return { screenX, screenY, scale };
+    }
+
+    // Global Game State
+    let activeToyType = 'ball'; // 'ball', 'bone', 'rope', 'laser', 'wand', 'yarn', 'mouse'
+    let dogHappiness = 88;
+    let catHappiness = 82;
+
+    const mousePos = { 
+      x: width / 2, 
+      y: (floorYMin + floorYMax) / 2, 
+      isDown: false, 
+      isDragging: false, 
+      vx: 0, 
+      vy: 0 
+    };
+
+    // DOM Elements
+    const dogHappyBar = document.getElementById('dogHappyBar');
+    const catHappyBar = document.getElementById('catHappyBar');
+    const dogActionTag = document.getElementById('dogActionTag');
+    const catActionTag = document.getElementById('catActionTag');
+    const actionBannerText = document.getElementById('actionBannerText');
+
+    function updateBanner(text, iconClass = "fa-solid fa-face-smile") {
+      actionBannerText.innerText = text;
+      document.getElementById('actionBannerIcon').className = `${iconClass} text-mustard`;
+    }
+
     class Particle {
-      constructor(x, y, z, symbol) {
-        this.x = x; this.y = y; this.z = z;
+      constructor(x, y, symbol) {
+        this.x = x;
+        this.y = y;
         this.symbol = symbol;
-        this.vx = (Math.random() - 0.5) * 3;
-        this.vy = (Math.random() - 0.5) * 2;
-        this.vz = Math.random() * 2 + 2;
+        this.vx = (Math.random() - 0.5) * 5;
+        this.vy = -Math.random() * 4 - 2;
         this.life = 1.0;
-        this.decay = Math.random() * 0.02 + 0.015;
+        this.decay = Math.random() * 0.025 + 0.015;
+        this.size = Math.random() * 12 + 14;
       }
+
       update() {
-        this.x += this.vx; this.y += this.vy; this.z += this.vz;
+        this.x += this.vx;
+        this.y += this.vy;
         this.life -= this.decay;
       }
+
       draw(ctx) {
         ctx.save();
         ctx.globalAlpha = Math.max(0, this.life);
-        ctx.font = '16px sans-serif';
-        ctx.fillText(this.symbol, this.x, this.y - this.z);
+        ctx.font = `${this.size}px sans-serif`;
+        ctx.fillText(this.symbol, this.x, this.y);
         ctx.restore();
       }
     }
+
     const particles = [];
-    function spawnParticles(x, y, z, symbol, count = 3) {
+    function spawnParticles(x, y, symbol, count = 3) {
       for (let i = 0; i < count; i++) {
-        particles.push(new Particle(x, y, z, symbol));
+        particles.push(new Particle(x + (Math.random() - 0.5) * 20, y + (Math.random() - 0.5) * 20, symbol));
       }
     }
 
-    /* Toy Physics Object */
+    function drawRoomBackground(ctx) {
+      // 1. Clean, warm solid TAN Wall Background
+      ctx.fillStyle = '#DAC19C';
+      ctx.fillRect(0, 0, width, floorYMin);
+
+      // Subtle wall highlight accent for depth
+      const wallGrad = ctx.createLinearGradient(0, 0, 0, floorYMin);
+      wallGrad.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
+      wallGrad.addColorStop(1, 'rgba(0, 0, 0, 0.08)');
+      ctx.fillStyle = wallGrad;
+      ctx.fillRect(0, 0, width, floorYMin);
+
+      // 2. Skirting Board / Wall Baseboard
+      ctx.fillStyle = '#C3684D';
+      ctx.fillRect(0, floorYMin - 16, width, 16);
+      ctx.fillStyle = '#A3533B';
+      ctx.fillRect(0, floorYMin - 16, width, 4);
+
+      // 3. Wood Floor (Bottom 2.5D Section)
+      ctx.fillStyle = '#E2C39B';
+      ctx.fillRect(0, floorYMin, width, height - floorYMin);
+
+      // Perspective floor planks
+      ctx.strokeStyle = '#D4B083';
+      ctx.lineWidth = 1.5;
+
+      // Horizontal plank lines
+      const floorHeight = height - floorYMin;
+      const numPlanks = 10;
+      for (let i = 1; i <= numPlanks; i++) {
+        const y = floorYMin + (i / numPlanks) * floorHeight;
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
+      }
+
+      // Perspective vertical plank seams
+      const numPerspectiveSeams = 14;
+      for (let i = 0; i < numPerspectiveSeams; i++) {
+        const topX = (i / numPerspectiveSeams) * width;
+        const bottomX = (width / 2) + (topX - width / 2) * 1.4;
+        ctx.beginPath(); ctx.moveTo(topX, floorYMin); ctx.lineTo(bottomX, height); ctx.stroke();
+      }
+
+      // 4. Center Oval Play Rug
+      const rugX = width * 0.5;
+      const rugY = floorYMin + (floorYMax - floorYMin) * 0.5;
+      const rugRx = Math.min(width * 0.38, 280);
+      const rugRy = Math.min((floorYMax - floorYMin) * 0.45, 65);
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(rugX, rugY, rugRx, rugRy, 0, 0, Math.PI * 2);
+      ctx.fillStyle = '#AFE2CF';
+      ctx.fill();
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = '#313A70';
+      ctx.stroke();
+
+      // Rug inner decorative ring
+      ctx.beginPath();
+      ctx.ellipse(rugX, rugY, rugRx * 0.78, rugRy * 0.78, 0, 0, Math.PI * 2);
+      ctx.strokeStyle = '#FFB300';
+      ctx.lineWidth = 3.5;
+      ctx.stroke();
+      ctx.restore();
+
+      // 5. Dog Cushion Bed (Left Room Corner)
+      const bedX = Math.max(90, width * 0.14);
+      const bedY = floorYMin + 25;
+      ctx.save();
+      ctx.fillStyle = '#C3684D';
+      ctx.beginPath(); ctx.ellipse(bedX, bedY, 65, 25, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#FBF7F1';
+      ctx.beginPath(); ctx.ellipse(bedX, bedY - 3, 52, 18, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+
+      // 6. Cat Tree Scratching Tower (Right Room Corner)
+      const catTreeX = Math.min(width - 90, width * 0.86);
+      const catTreeBaseY = floorYMin + 35;
+      ctx.save();
+      ctx.fillStyle = '#AFE2CF';
+      ctx.fillRect(catTreeX - 45, catTreeBaseY - 10, 90, 15);
+      ctx.fillStyle = '#C3A37C';
+      ctx.fillRect(catTreeX - 10, catTreeBaseY - 140, 20, 130);
+      ctx.strokeStyle = '#9A7B56';
+      ctx.lineWidth = 2;
+      for (let py = catTreeBaseY - 135; py < catTreeBaseY - 10; py += 8) {
+        ctx.beginPath(); ctx.moveTo(catTreeX - 10, py); ctx.lineTo(catTreeX + 10, py); ctx.stroke();
+      }
+      ctx.fillStyle = '#C9888F';
+      ctx.beginPath(); ctx.roundRect(catTreeX - 50, catTreeBaseY - 155, 100, 18, 8); ctx.fill();
+      // Hanging Pom-Pom
+      ctx.strokeStyle = '#313A70';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(catTreeX - 30, catTreeBaseY - 137); ctx.lineTo(catTreeX - 30, catTreeBaseY - 100); ctx.stroke();
+      ctx.fillStyle = '#FFB300';
+      ctx.beginPath(); ctx.arc(catTreeX - 30, catTreeBaseY - 95, 8, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+
+      // Wall Framed Photo
+      ctx.save();
+      const frameX = width * 0.5 - 32;
+      const frameY = 25;
+      ctx.fillStyle = '#C3684D'; ctx.fillRect(frameX, frameY, 64, 45);
+      ctx.fillStyle = '#FBF7F1'; ctx.fillRect(frameX + 4, frameY + 4, 56, 37);
+      ctx.font = '18px sans-serif'; ctx.fillText('🐶❤️🐱', frameX + 9, frameY + 28);
+      ctx.restore();
+    }
+
     class ToyItem {
       constructor(type, x, y) {
         this.type = type;
-        this.x = x; this.y = y; this.z = 0;
-        this.vx = (Math.random() - 0.5) * 6;
-        this.vy = (Math.random() - 0.5) * 4;
-        this.vz = 8;
-        this.radius = 12;
+        this.x = x; // 2.5D floor X
+        this.y = y; // 2.5D floor Y
+        this.z = 20; // 2.5D height above floor
+        this.vx = (Math.random() - 0.5) * 8;
+        this.vy = (Math.random() - 0.5) * 6;
+        this.vz = 5;
+        this.radius = 16;
         this.active = true;
         this.isHeld = false;
         this.trail = [];
@@ -376,445 +578,859 @@
       update() {
         if (this.isHeld) return;
 
-        // Mouse Toy skittering AI
+        // Wind-up mouse autonomous motion
         if (this.type === 'mouse' && this.active) {
           if (Math.random() < 0.08) {
-            this.vx = (Math.random() - 0.5) * 8;
-            this.vy = (Math.random() - 0.5) * 6;
+            this.vx = (Math.random() - 0.5) * 11;
+            this.vy = (Math.random() - 0.5) * 8;
             soundEngine.playSqueak();
           }
         }
 
-        // 3D Gravity & Floor Bounce
-        this.vz -= 0.45;
-        this.x += this.vx; this.y += this.vy; this.z += this.vz;
-        this.vx *= 0.96; this.vy *= 0.96;
+        // Gravity on Z axis
+        this.vz -= 0.42;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.z += this.vz;
 
+        this.vx *= 0.96;
+        this.vy *= 0.96;
+
+        // Floor Bounce Physics
         if (this.z <= 0) {
           this.z = 0;
           if (Math.abs(this.vz) > 1.5) {
-            this.vz = -this.vz * 0.5;
+            this.vz = -this.vz * 0.55;
             soundEngine.playBounce();
           } else {
             this.vz = 0;
           }
         }
 
-        // Room Bounds
+        // Floor Bounds Clamping
         this.x = Math.max(40, Math.min(width - 40, this.x));
-        this.y = Math.max(wallY + 20, Math.min(height - 40, this.y));
+        this.y = Math.max(floorYMin + 15, Math.min(floorYMax - 15, this.y));
 
-        if (this.type === 'yarn' && (Math.abs(this.vx) > 0.5 || Math.abs(this.vy) > 0.5)) {
-          this.trail.push({ x: this.x, y: this.y - this.z });
-          if (this.trail.length > 18) this.trail.shift();
+        // Yarn thread trail line
+        if (this.type === 'yarn' && (Math.abs(this.vx) > 0.4 || Math.abs(this.vy) > 0.4)) {
+          this.trail.push({ x: this.x, y: this.y });
+          if (this.trail.length > 25) this.trail.shift();
         }
       }
 
       draw(ctx) {
-        const scale = 0.7 + (this.y / height) * 0.5;
-        ctx.save();
-        
-        // Shadow
-        ctx.fillStyle = 'rgba(0,0,0,0.18)';
-        ctx.beginPath();
-        ctx.ellipse(this.x, this.y, 10 * scale, 5 * scale, 0, 0, Math.PI * 2);
-        ctx.fill();
+        const { screenX, screenY, scale } = getScreenCoords(this.x, this.y, this.z);
+        const shadowCoords = getScreenCoords(this.x, this.y, 0);
 
-        ctx.translate(this.x, this.y - this.z);
+        // Ground Shadow
+        ctx.save();
+        ctx.fillStyle = 'rgba(0,0,0,0.2)';
+        ctx.beginPath();
+        ctx.ellipse(shadowCoords.screenX, shadowCoords.screenY, 14 * scale, 6 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.save();
+        ctx.translate(screenX, screenY);
         ctx.scale(scale, scale);
 
         if (this.type === 'ball') {
-          ctx.beginPath(); ctx.arc(0, 0, 12, 0, Math.PI * 2);
+          ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 2);
           ctx.fillStyle = '#CCFF00'; ctx.fill();
-          ctx.lineWidth = 2; ctx.strokeStyle = '#FFFFFF'; ctx.stroke();
+          ctx.lineWidth = 2.5; ctx.strokeStyle = '#FFFFFF'; ctx.stroke();
+          ctx.beginPath(); ctx.arc(0, 0, 9, 0.4, 2.6); ctx.stroke();
+
         } else if (this.type === 'bone') {
           ctx.fillStyle = '#FFFDF9'; ctx.strokeStyle = '#C3684D'; ctx.lineWidth = 2;
-          ctx.fillRect(-10, -4, 20, 8);
+          ctx.fillRect(-12, -4, 24, 8);
           ctx.beginPath();
-          ctx.arc(-10, -4, 4, 0, Math.PI * 2); ctx.arc(-10, 4, 4, 0, Math.PI * 2);
-          ctx.arc(10, -4, 4, 0, Math.PI * 2); ctx.arc(10, 4, 4, 0, Math.PI * 2);
+          ctx.arc(-12, -5, 5, 0, Math.PI * 2); ctx.arc(-12, 5, 5, 0, Math.PI * 2);
+          ctx.arc(12, -5, 5, 0, Math.PI * 2); ctx.arc(12, 5, 5, 0, Math.PI * 2);
           ctx.fill(); ctx.stroke();
-        } else if (this.type === 'rope') {
-          ctx.strokeStyle = '#FFB300'; ctx.lineWidth = 6; ctx.lineCap = 'round';
-          ctx.beginPath(); ctx.moveTo(-12, 0); ctx.lineTo(12, 0); ctx.stroke();
-          ctx.fillStyle = '#C3684D';
-          ctx.beginPath(); ctx.arc(-12, 0, 5, 0, Math.PI*2); ctx.arc(12, 0, 5, 0, Math.PI*2); ctx.fill();
+
         } else if (this.type === 'yarn') {
-          ctx.beginPath(); ctx.arc(0, 0, 13, 0, Math.PI * 2);
-          ctx.fillStyle = '#C3684D'; ctx.fill();
-          ctx.lineWidth = 1.5; ctx.strokeStyle = '#313A70'; ctx.stroke();
+          ctx.beginPath(); ctx.arc(0, 0, 15, 0, Math.PI * 2);
+          ctx.fillStyle = '#C9888F'; ctx.fill();
+          ctx.lineWidth = 2; ctx.strokeStyle = '#313A70'; ctx.stroke();
+
         } else if (this.type === 'mouse') {
           ctx.fillStyle = '#98A1A6';
-          ctx.beginPath(); ctx.ellipse(0, 0, 11, 7, 0, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = '#C3684D';
-          ctx.beginPath(); ctx.arc(-3, -5, 3, 0, Math.PI * 2); ctx.arc(3, -5, 3, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.ellipse(0, 0, 12, 8, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#C9888F';
+          ctx.beginPath(); ctx.arc(-4, -6, 4, 0, Math.PI * 2); ctx.arc(4, -6, 4, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = '#C9888F'; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(-12, 0); ctx.quadraticCurveTo(-18, -6, -20, -2); ctx.stroke();
         }
+
         ctx.restore();
 
+        // Draw Yarn Thread Trail in 2.5D
         if (this.type === 'yarn' && this.trail.length > 1) {
           ctx.save();
-          ctx.strokeStyle = '#C3684D'; ctx.lineWidth = 2;
-          ctx.beginPath(); ctx.moveTo(this.trail[0].x, this.trail[0].y);
-          for (let p of this.trail) ctx.lineTo(p.x, p.y);
-          ctx.stroke(); ctx.restore();
+          ctx.strokeStyle = '#C9888F';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          const first = getScreenCoords(this.trail[0].x, this.trail[0].y, 0);
+          ctx.moveTo(first.screenX, first.screenY);
+          for (let p of this.trail) {
+            const sc = getScreenCoords(p.x, p.y, 0);
+            ctx.lineTo(sc.screenX, sc.screenY);
+          }
+          ctx.stroke();
+          ctx.restore();
         }
       }
     }
 
     let activeToyInstance = null;
 
-    /* Barnaby the Golden Retriever */
+    // Laser Dot rendering
+    function drawLaserPointer(ctx) {
+      if (activeToyType !== 'laser') return;
+
+      const lx = mousePos.x;
+      const ly = Math.max(floorYMin + 10, Math.min(floorYMax - 10, mousePos.y));
+      const { screenX, screenY, scale } = getScreenCoords(lx, ly, 0);
+
+      ctx.save();
+      // Outer Laser Glow
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.35)';
+      ctx.beginPath(); ctx.arc(screenX, screenY, 12 * scale, 0, Math.PI * 2); ctx.fill();
+
+      // Laser Center Dot
+      ctx.fillStyle = '#FF0033';
+      ctx.beginPath(); ctx.arc(screenX, screenY, 5 * scale, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath(); ctx.arc(screenX, screenY, 2 * scale, 0, Math.PI * 2); ctx.fill();
+
+      // Laser Emitter Beam from mouse source
+      ctx.strokeStyle = 'rgba(255, 0, 50, 0.25)';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(mousePos.x, mousePos.y - 60); ctx.lineTo(screenX, screenY); ctx.stroke();
+      ctx.restore();
+    }
+
     class Dog {
       constructor(x, y) {
-        this.x = x; this.y = y; this.z = 0;
-        this.vx = 0; this.vy = 0; this.vz = 0;
+        this.x = x; // 2.5D Floor X
+        this.y = y; // 2.5D Floor Y
+        this.z = 0; // Height off floor
+        this.targetX = x;
+        this.targetY = y;
+        this.vx = 0;
+        this.vy = 0;
+        this.vz = 0;
         this.facing = 1;
-        this.state = 'ROAMING';
-        this.target = { x: x, y: y };
-        this.roamTimer = 0;
-        this.animCycle = 0;
+        this.state = 'ROAMING'; // 'ROAMING', 'FETCHING', 'CHEWING', 'TUGGING', 'PETTED', 'PLAY_BOW'
+        this.roamTimer = Math.floor(Math.random() * 80) + 40;
+        this.trickTimer = 0;
+        this.rotation = 0;
+        this.tailWag = 0;
+        this.walkCycle = 0;
+      }
+
+      triggerAction(actionName, targetX, targetY) {
+        if (actionName === 'FETCH_BALL') {
+          this.state = 'FETCHING';
+          this.targetX = targetX;
+          this.targetY = targetY;
+          soundEngine.playBark();
+          dogActionTag.innerText = "Sprinting!";
+          updateBanner("Barnaby sprints to fetch the tennis ball across the room!", "fa-solid fa-dog");
+        } else if (actionName === 'CHEW_BONE') {
+          this.state = 'FETCHING';
+          this.targetX = targetX;
+          this.targetY = targetY;
+          soundEngine.playBark();
+          dogActionTag.innerText = "Targeting!";
+          updateBanner("Barnaby trots over to grab the squeaky bone!", "fa-solid fa-bone");
+        } else if (actionName === 'TUG_ROPE') {
+          this.state = 'TUGGING';
+          soundEngine.playTugRumble();
+          dogActionTag.innerText = "Tugging!";
+          updateBanner("Tug-of-War! Pull with Barnaby across the room floor!", "fa-solid fa-hand-rock");
+        } else if (actionName === 'PETTED') {
+          soundEngine.playBark();
+          const sc = getScreenCoords(this.x, this.y, this.z);
+          spawnParticles(sc.screenX, sc.screenY - 35, '❤️', 5);
+          dogHappiness = Math.min(100, dogHappiness + 15);
+          dogActionTag.innerText = "Loved!";
+          updateBanner("You petted Barnaby! He's super happy!", "fa-solid fa-heart");
+        }
+      }
+
+      pickNewRoamTarget() {
+        this.targetX = Math.random() * (width - 120) + 60;
+        this.targetY = Math.random() * (floorYMax - floorYMin - 30) + floorYMin + 15;
+        this.roamTimer = Math.floor(Math.random() * 120) + 60;
       }
 
       update() {
-        this.animCycle += 0.2;
+        this.tailWag += 0.28;
 
-        if (activeToyInstance && ['ball', 'bone', 'rope'].includes(activeToyType)) {
-          this.target.x = activeToyInstance.x;
-          this.target.y = activeToyInstance.y;
-          this.state = 'CHASING';
-        } else if (this.state === 'CHASING' && !activeToyInstance) {
-          this.state = 'ROAMING';
-        }
-
+        // 1. UNRESTRICTED CONTINUOUS IDLE ROAMING & AUTO-PLAY
         if (this.state === 'ROAMING') {
+          dogActionTag.innerText = "Roaming";
           this.roamTimer--;
+
           if (this.roamTimer <= 0) {
-            this.target.x = Math.random() * (width - 120) + 60;
-            this.target.y = Math.random() * (height - wallY - 80) + wallY + 40;
-            this.roamTimer = Math.random() * 200 + 100;
-          }
-        }
-
-        const dx = this.target.x - this.x;
-        const dy = this.target.y - this.y;
-        const dist = Math.hypot(dx, dy);
-
-        if (dist > 15) {
-          this.facing = dx >= 0 ? 1 : -1;
-          const speed = this.state === 'CHASING' ? 4.5 : 2.0;
-          this.vx = (dx / dist) * speed;
-          this.vy = (dy / dist) * speed;
-          this.x += this.vx; this.y += this.vy;
-        } else {
-          this.vx = 0; this.vy = 0;
-          if (this.state === 'CHASING' && activeToyInstance) {
-            if (activeToyType === 'ball') {
-              activeToyInstance.isHeld = true;
-              this.state = 'FETCHING';
-              this.target.x = width * 0.2; this.target.y = height * 0.6;
+            this.pickNewRoamTarget();
+            if (Math.random() < 0.25) {
+              this.state = 'PLAY_BOW';
+              this.trickTimer = 40;
               soundEngine.playBark();
-              updateBanner("Barnaby caught the ball!");
-            } else if (activeToyType === 'bone') {
-              soundEngine.playSqueak();
-              dogHappiness = Math.min(100, dogHappiness + 8);
-              spawnParticles(this.x, this.y, 25, '🦴', 2);
             }
           }
-        }
 
-        if (this.state === 'FETCHING') {
-          if (activeToyInstance) {
-            activeToyInstance.x = this.x + this.facing * 15;
-            activeToyInstance.y = this.y;
-            activeToyInstance.z = 12;
+          const dx = this.targetX - this.x;
+          const dy = this.targetY - this.y;
+          const dist = Math.hypot(dx, dy);
+
+          if (dist > 15) {
+            this.walkCycle += 0.2;
+            const speed = 2.8;
+            this.vx = (dx / dist) * speed;
+            this.vy = (dy / dist) * speed;
+            this.x += this.vx;
+            this.y += this.vy;
+            if (Math.abs(dx) > 2) this.facing = dx >= 0 ? 1 : -1;
+          } else {
+            this.vx = 0; this.vy = 0;
+            const targetX = activeToyInstance ? activeToyInstance.x : cat.x;
+            this.facing = targetX >= this.x ? 1 : -1;
           }
-          if (dist <= 15) {
+
+          // Auto-respond if toy present
+          if (activeToyInstance && (activeToyType === 'ball' || activeToyType === 'bone')) {
+            this.triggerAction(activeToyType === 'ball' ? 'FETCH_BALL' : 'CHEW_BONE', activeToyInstance.x, activeToyInstance.y);
+          }
+
+        } else if (this.state === 'PLAY_BOW') {
+          dogActionTag.innerText = "Play Bow";
+          this.trickTimer--;
+          if (this.trickTimer <= 0) this.state = 'ROAMING';
+
+        } else if (this.state === 'FETCHING') {
+          this.walkCycle += 0.35;
+          const target = activeToyInstance ? activeToyInstance : { x: this.targetX, y: this.targetY };
+          const dx = target.x - this.x;
+          const dy = target.y - this.y;
+          const dist = Math.hypot(dx, dy);
+
+          if (Math.abs(dx) > 2) this.facing = dx >= 0 ? 1 : -1;
+
+          if (dist > 25) {
+            const speed = 7.5;
+            this.x += (dx / dist) * speed;
+            this.y += (dy / dist) * speed;
+
+            // Leap into air near target
+            if (dist < 80 && this.z <= 0) {
+              this.vz = 6;
+            }
+          } else {
+            // Reached Toy
+            if (activeToyType === 'ball') {
+              if (activeToyInstance) activeToyInstance.isHeld = true;
+              this.state = 'CHEWING';
+              this.trickTimer = 60;
+              dogHappiness = Math.min(100, dogHappiness + 12);
+              soundEngine.playBark();
+              const sc = getScreenCoords(this.x, this.y, this.z);
+              spawnParticles(sc.screenX, sc.screenY - 30, '🎾', 3);
+            } else {
+              this.state = 'CHEWING';
+              this.trickTimer = 80;
+              soundEngine.playSqueak();
+              const sc = getScreenCoords(this.x, this.y, this.z);
+              spawnParticles(sc.screenX, sc.screenY - 30, '🦴', 3);
+            }
+          }
+
+        } else if (this.state === 'CHEWING') {
+          dogActionTag.innerText = "Chewing!";
+          this.trickTimer--;
+          if (Math.random() < 0.1) soundEngine.playSqueak();
+
+          if (this.trickTimer <= 0) {
             if (activeToyInstance) activeToyInstance.isHeld = false;
             this.state = 'ROAMING';
-            dogHappiness = Math.min(100, dogHappiness + 10);
-            soundEngine.playBark();
-            spawnParticles(this.x, this.y, 20, '❤️', 3);
-            updateBanner("Barnaby returned the ball!");
+          }
+
+        } else if (this.state === 'TUGGING') {
+          const dx = mousePos.x - this.x;
+          this.facing = dx >= 0 ? 1 : -1;
+
+          if (mousePos.isDragging) {
+            soundEngine.playTugRumble();
+            dogHappiness = Math.min(100, dogHappiness + 0.3);
+            const sc = getScreenCoords(this.x, this.y, this.z);
+            spawnParticles(sc.screenX, sc.screenY - 30, '⚡', 1);
+          }
+          if (!mousePos.isDown) this.state = 'ROAMING';
+        }
+
+        // Z Height Gravity Physics
+        if (this.z > 0 || this.vz !== 0) {
+          this.z += this.vz;
+          this.vz -= 0.45;
+          if (this.z <= 0) {
+            this.z = 0;
+            this.vz = 0;
           }
         }
 
-        dogStatus.innerText = this.state;
+        // Floor Boundary Clamping
+        this.x = Math.max(50, Math.min(width - 50, this.x));
+        this.y = Math.max(floorYMin + 10, Math.min(floorYMax - 10, this.y));
+
+        // Sync held ball position
+        if (activeToyInstance && activeToyInstance.isHeld && this.state === 'CHEWING') {
+          activeToyInstance.x = this.x + this.facing * 18;
+          activeToyInstance.y = this.y;
+          activeToyInstance.z = this.z + 10;
+        }
       }
 
       draw(ctx) {
-        const scale = 0.7 + (this.y / height) * 0.5;
-        const bounce = Math.abs(Math.sin(this.animCycle)) * (this.vx !== 0 ? 4 : 1);
+        const { screenX, screenY, scale } = getScreenCoords(this.x, this.y, this.z);
+        const shadowCoords = getScreenCoords(this.x, this.y, 0);
+
+        // Ground Shadow
+        ctx.save();
+        ctx.fillStyle = 'rgba(0,0,0,0.18)';
+        ctx.beginPath();
+        ctx.ellipse(shadowCoords.screenX, shadowCoords.screenY, 28 * scale, 9 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
 
         ctx.save();
-        ctx.fillStyle = 'rgba(0,0,0,0.2)';
-        ctx.beginPath();
-        ctx.ellipse(this.x, this.y, 22 * scale, 10 * scale, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.translate(this.x, this.y - this.z - bounce);
+        ctx.translate(screenX, screenY);
+        ctx.rotate(this.rotation);
         ctx.scale(this.facing * scale, scale);
 
-        ctx.fillStyle = '#FFB300';
-        ctx.beginPath(); ctx.ellipse(0, -12, 22, 14, 0, 0, Math.PI * 2); ctx.fill();
+        const legOffset = (this.state === 'FETCHING') ? Math.sin(this.walkCycle) * 12 : 0;
+        const tailAngle = Math.sin(this.tailWag) * 0.45;
 
-        ctx.strokeStyle = '#C3684D'; ctx.lineWidth = 5; ctx.lineCap = 'round';
+        // Tail
+        ctx.save();
+        ctx.translate(-22, -10); ctx.rotate(-0.5 + tailAngle);
+        ctx.strokeStyle = '#FFB300'; ctx.lineWidth = 8; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(-15, -10, -20, -5); ctx.stroke();
+        ctx.restore();
+
+        // Legs
+        ctx.strokeStyle = '#C3684D'; ctx.lineWidth = 6; ctx.lineCap = 'round';
         ctx.beginPath();
-        ctx.moveTo(-10, -4); ctx.lineTo(-10, 8);
-        ctx.moveTo(10, -4); ctx.lineTo(10, 8);
+        ctx.moveTo(-12, 0); ctx.lineTo(-12 + legOffset, 16);
+        ctx.moveTo(12, 0); ctx.lineTo(12 - legOffset, 16);
+        ctx.moveTo(-6, 0); ctx.lineTo(-6 - legOffset, 16);
+        ctx.moveTo(18, 0); ctx.lineTo(18 + legOffset, 16);
         ctx.stroke();
 
+        // Body
         ctx.fillStyle = '#FFB300';
-        ctx.beginPath(); ctx.ellipse(16, -22, 12, 10, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#FAF1E4';
-        ctx.beginPath(); ctx.ellipse(22, -20, 7, 5, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#3D3D3D';
-        ctx.beginPath(); ctx.arc(26, -21, 2.5, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.arc(18, -24, 2, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(0, -5, 25, 16, 0, 0, Math.PI * 2); ctx.fill();
 
+        // Head
+        const headY = this.state === 'PLAY_BOW' ? -10 : -20;
+        ctx.beginPath(); ctx.ellipse(18, headY, 14, 12, 0, 0, Math.PI * 2); ctx.fill();
+
+        // Snout
+        ctx.fillStyle = '#FFFDF9';
+        ctx.beginPath(); ctx.ellipse(25, headY + 3, 8, 6, 0, 0, Math.PI * 2); ctx.fill();
+
+        // Nose & Eye
+        ctx.fillStyle = '#3D3D3D';
+        ctx.beginPath(); ctx.arc(30, headY + 1, 3, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(20, headY - 2, 2.5, 0, Math.PI * 2); ctx.fill();
+
+        // Floppy Ear
         ctx.fillStyle = '#313A70';
-        ctx.beginPath(); ctx.ellipse(10, -20, 5, 10, 0.2, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(12, headY + 2, 6, 12, 0.3, 0, Math.PI * 2); ctx.fill();
 
         ctx.restore();
       }
     }
 
-    /* Mimi the Tabby Cat */
     class Cat {
       constructor(x, y) {
-        this.x = x; this.y = y; this.z = 0;
-        this.vx = 0; this.vy = 0; this.vz = 0;
+        this.x = x; // 2.5D Floor X
+        this.y = y; // 2.5D Floor Y
+        this.z = 0; // Height off floor
+        this.targetX = x;
+        this.targetY = y;
+        this.vx = 0;
+        this.vy = 0;
+        this.vz = 0;
         this.facing = -1;
-        this.state = 'EXPLORING';
-        this.target = { x: x, y: y };
-        this.roamTimer = 0;
-        this.animCycle = 0;
+        this.state = 'ROAMING'; // 'ROAMING', 'STALKING_LASER', 'POUNCING', 'ROLLING', 'PETTED'
+        this.roamTimer = Math.floor(Math.random() * 80) + 30;
+        this.trickTimer = 0;
+        this.rotation = 0;
+        this.tailWag = 0;
+        this.walkCycle = 0;
+      }
+
+      triggerAction(actionName, targetX, targetY) {
+        if (actionName === 'BAT_WAND') {
+          this.state = 'POUNCING';
+          this.targetX = targetX;
+          this.targetY = targetY;
+          this.vz = 7;
+          soundEngine.playMeow();
+          catActionTag.innerText = "Acrobatic Leap!";
+          updateBanner("Mimi leaps through the air to catch the feather wand!", "fa-solid fa-feather");
+        } else if (actionName === 'STALK_LASER') {
+          this.state = 'STALKING_LASER';
+          soundEngine.playLaserZap();
+          catActionTag.innerText = "Stalking Laser!";
+          updateBanner("Mimi is intently tracking the red laser dot across the room!", "fa-solid fa-bullseye");
+        } else if (actionName === 'PETTED') {
+          soundEngine.playMeow();
+          soundEngine.playPurr();
+          const sc = getScreenCoords(this.x, this.y, this.z);
+          spawnParticles(sc.screenX, sc.screenY - 35, '🐾', 5);
+          catHappiness = Math.min(100, catHappiness + 15);
+          catActionTag.innerText = "Purring!";
+          updateBanner("You petted Mimi! She is purring contentedly!", "fa-solid fa-heart");
+        }
+      }
+
+      pickNewRoamTarget() {
+        this.targetX = Math.random() * (width - 120) + 60;
+        this.targetY = Math.random() * (floorYMax - floorYMin - 30) + floorYMin + 15;
+        this.roamTimer = Math.floor(Math.random() * 100) + 50;
       }
 
       update() {
-        this.animCycle += 0.22;
+        this.tailWag += 0.24;
 
-        if (activeToyType === 'laser') {
-          this.target.x = mousePos.x;
-          this.target.y = mousePos.y;
-          this.state = 'STALKING';
-        } else if (activeToyInstance && ['wand', 'yarn', 'mouse'].includes(activeToyType)) {
-          this.target.x = activeToyInstance.x;
-          this.target.y = activeToyInstance.y;
-          this.state = 'POUNCING';
-        } else if (this.state !== 'EXPLORING') {
-          this.state = 'EXPLORING';
-        }
-
-        if (this.state === 'EXPLORING') {
+        // 1. UNRESTRICTED CONTINUOUS IDLE ROAMING & AUTO-PLAY
+        if (this.state === 'ROAMING') {
+          catActionTag.innerText = "Exploring";
           this.roamTimer--;
+
           if (this.roamTimer <= 0) {
-            this.target.x = Math.random() * (width - 120) + 60;
-            this.target.y = Math.random() * (height - wallY - 80) + wallY + 40;
-            this.roamTimer = Math.random() * 220 + 110;
-          }
-        }
-
-        const dx = this.target.x - this.x;
-        const dy = this.target.y - this.y;
-        const dist = Math.hypot(dx, dy);
-
-        if (dist > 12) {
-          this.facing = dx >= 0 ? 1 : -1;
-          const speed = this.state === 'POUNCING' ? 5.0 : (this.state === 'STALKING' ? 3.2 : 1.8);
-          this.vx = (dx / dist) * speed;
-          this.vy = (dy / dist) * speed;
-          this.x += this.vx; this.y += this.vy;
-
-          if (this.state === 'POUNCING' && dist < 40 && this.z <= 0) {
-            this.vz = 5; soundEngine.playMeow();
-          }
-        } else {
-          this.vx = 0; this.vy = 0;
-          if (this.state === 'STALKING') {
-            soundEngine.playPurr();
-            catHappiness = Math.min(100, catHappiness + 0.2);
-          }
-        }
-
-        if (this.z > 0 || this.vz !== 0) {
-          this.vz -= 0.45;
-          this.z += this.vz;
-          if (this.z <= 0) {
-            this.z = 0; this.vz = 0;
-            if (activeToyInstance) {
-              catHappiness = Math.min(100, catHappiness + 6);
-              spawnParticles(this.x, this.y, 20, '🐾', 2);
+            this.pickNewRoamTarget();
+            if (Math.random() < 0.2) {
+              this.state = 'ROLLING';
+              this.trickTimer = 45;
+              soundEngine.playPurr();
             }
           }
+
+          // Laser Pointer Auto Detection
+          if (activeToyType === 'laser') {
+            this.triggerAction('STALK_LASER', mousePos.x, mousePos.y);
+          }
+
+          const dx = this.targetX - this.x;
+          const dy = this.targetY - this.y;
+          const dist = Math.hypot(dx, dy);
+
+          if (dist > 15) {
+            this.walkCycle += 0.22;
+            const speed = 3.2;
+            this.vx = (dx / dist) * speed;
+            this.vy = (dy / dist) * speed;
+            this.x += this.vx;
+            this.y += this.vy;
+            if (Math.abs(dx) > 2) this.facing = dx >= 0 ? 1 : -1;
+          } else {
+            this.vx = 0; this.vy = 0;
+            const targetX = activeToyInstance ? activeToyInstance.x : dog.x;
+            this.facing = targetX >= this.x ? 1 : -1;
+          }
+
+        } else if (this.state === 'STALKING_LASER') {
+          const targetY = Math.max(floorYMin + 10, Math.min(floorYMax - 10, mousePos.y));
+          const dx = mousePos.x - this.x;
+          const dy = targetY - this.y;
+          const dist = Math.hypot(dx, dy);
+
+          this.facing = dx >= 0 ? 1 : -1;
+
+          if (dist > 30) {
+            this.walkCycle += 0.15; // Slow cat crouch stalk
+            const speed = 4.2;
+            this.x += (dx / dist) * speed;
+            this.y += (dy / dist) * speed;
+          } else {
+            // Pounce on Red Dot!
+            this.state = 'POUNCING';
+            this.vz = 6.5;
+            soundEngine.playMeow();
+            const sc = getScreenCoords(this.x, this.y, this.z);
+            spawnParticles(sc.screenX, sc.screenY - 20, '💥', 3);
+            catHappiness = Math.min(100, catHappiness + 10);
+          }
+
+          if (activeToyType !== 'laser') this.state = 'ROAMING';
+
+        } else if (this.state === 'POUNCING') {
+          this.walkCycle += 0.3;
+          const dx = this.targetX - this.x;
+          const dy = this.targetY - this.y;
+          const dist = Math.hypot(dx, dy);
+
+          if (dist > 10) {
+            this.x += (dx / dist) * 5.5;
+            this.y += (dy / dist) * 5.5;
+          }
+
+          if (this.z <= 0) {
+            this.state = 'ROLLING';
+            this.trickTimer = 35;
+            soundEngine.playPurr();
+          }
+
+        } else if (this.state === 'ROLLING') {
+          catActionTag.innerText = "Playful Roll";
+          this.rotation = Math.sin(this.trickTimer * 0.3) * 0.35;
+          this.trickTimer--;
+          if (this.trickTimer <= 0) {
+            this.rotation = 0;
+            this.state = 'ROAMING';
+          }
         }
 
-        catStatus.innerText = this.state;
+        // Z Height Physics
+        if (this.z > 0 || this.vz !== 0) {
+          this.z += this.vz;
+          this.vz -= 0.45;
+          if (this.z <= 0) {
+            this.z = 0;
+            this.vz = 0;
+          }
+        }
+
+        // Floor Bounds Clamping
+        this.x = Math.max(50, Math.min(width - 50, this.x));
+        this.y = Math.max(floorYMin + 10, Math.min(floorYMax - 10, this.y));
       }
 
       draw(ctx) {
-        const scale = 0.7 + (this.y / height) * 0.5;
-        const bounce = Math.abs(Math.sin(this.animCycle)) * (this.vx !== 0 ? 3 : 0.5);
+        const { screenX, screenY, scale } = getScreenCoords(this.x, this.y, this.z);
+        const shadowCoords = getScreenCoords(this.x, this.y, 0);
+
+        // Ground Shadow
+        ctx.save();
+        ctx.fillStyle = 'rgba(0,0,0,0.18)';
+        ctx.beginPath();
+        ctx.ellipse(shadowCoords.screenX, shadowCoords.screenY, 22 * scale, 7 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
 
         ctx.save();
-        ctx.fillStyle = 'rgba(0,0,0,0.2)';
-        ctx.beginPath();
-        ctx.ellipse(this.x, this.y, 16 * scale, 8 * scale, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.translate(this.x, this.y - this.z - bounce);
+        ctx.translate(screenX, screenY);
+        ctx.rotate(this.rotation);
         ctx.scale(this.facing * scale, scale);
 
-        ctx.fillStyle = '#C3684D';
-        ctx.beginPath(); ctx.ellipse(0, -10, 16, 11, 0, 0, Math.PI * 2); ctx.fill();
+        const legOffset = (this.state === 'STALKING_LASER') ? Math.sin(this.walkCycle) * 10 : 0;
+        const tailAngle = Math.sin(this.tailWag) * 0.5;
 
-        ctx.beginPath(); ctx.ellipse(12, -18, 9, 8, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.moveTo(8, -23); ctx.lineTo(12, -30); ctx.lineTo(15, -23); ctx.fill();
-        ctx.beginPath(); ctx.moveTo(13, -23); ctx.lineTo(17, -30); ctx.lineTo(20, -23); ctx.fill();
+        // Tail
+        ctx.save();
+        ctx.translate(-18, -8); ctx.strokeStyle = '#C9888F'; ctx.lineWidth = 5; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.bezierCurveTo(-15, -15 + tailAngle * 10, -25, -5 - tailAngle * 10, -20, -25); ctx.stroke();
+        ctx.restore();
 
-        ctx.fillStyle = '#AFE2CF';
-        ctx.beginPath(); ctx.arc(14, -19, 2, 0, Math.PI * 2); ctx.fill();
+        // Legs
+        ctx.strokeStyle = '#313A70'; ctx.lineWidth = 4.5; ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-10, 0); ctx.lineTo(-10 + legOffset, 15);
+        ctx.moveTo(10, 0); ctx.lineTo(10 - legOffset, 15);
+        ctx.moveTo(-4, 0); ctx.lineTo(-4 - legOffset, 15);
+        ctx.moveTo(14, 0); ctx.lineTo(14 + legOffset, 15);
+        ctx.stroke();
 
-        ctx.strokeStyle = '#C3684D'; ctx.lineWidth = 3.5; ctx.lineCap = 'round';
-        ctx.beginPath(); ctx.moveTo(-14, -8); ctx.quadraticCurveTo(-22, -18, -18, -24); ctx.stroke();
+        // Body
+        ctx.fillStyle = '#C9888F';
+        ctx.beginPath(); ctx.ellipse(0, -5, 20, 13, 0, 0, Math.PI * 2); ctx.fill();
+
+        // Tabby Stripes
+        ctx.strokeStyle = '#313A70'; ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(-6, -16); ctx.lineTo(-6, -6);
+        ctx.moveTo(0, -17); ctx.lineTo(0, -5);
+        ctx.moveTo(6, -16); ctx.lineTo(6, -6);
+        ctx.stroke();
+
+        // Head
+        ctx.fillStyle = '#C9888F';
+        ctx.beginPath(); ctx.ellipse(15, -18, 12, 10, 0, 0, Math.PI * 2); ctx.fill();
+
+        // Ears
+        ctx.fillStyle = '#313A70';
+        ctx.beginPath(); ctx.moveTo(10, -26); ctx.lineTo(14, -36); ctx.lineTo(18, -26); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(18, -26); ctx.lineTo(22, -36); ctx.lineTo(25, -24); ctx.fill();
+
+        // Eyes & Whiskers
+        ctx.fillStyle = '#4E9F3D';
+        ctx.beginPath(); ctx.arc(19, -20, 3, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#3D3D3D'; ctx.fillRect(18.5, -22, 1, 4);
+
+        ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(23, -16); ctx.lineTo(32, -18);
+        ctx.moveTo(23, -14); ctx.lineTo(33, -14);
+        ctx.moveTo(23, -12); ctx.lineTo(31, -10);
+        ctx.stroke();
 
         ctx.restore();
       }
     }
 
-    /* Instantiate Game World */
-    const dog = new Dog(width * 0.35, height * 0.65);
-    const cat = new Cat(width * 0.65, height * 0.70);
+    const dog = new Dog(width * 0.35, floorYMin + (floorYMax - floorYMin) * 0.4);
+    const cat = new Cat(width * 0.65, floorYMin + (floorYMax - floorYMin) * 0.6);
 
-    /* Main Render Loop */
-    function render() {
+    function drawFeatherWand(ctx) {
+      if (activeToyType !== 'wand') return;
+
+      const handleX = mousePos.x;
+      const handleY = mousePos.y;
+      const tipX = handleX + 40;
+      const tipY = handleY - 40;
+
+      ctx.save();
+      ctx.strokeStyle = '#313A70'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(handleX, handleY); ctx.lineTo(tipX, tipY); ctx.stroke();
+
+      const stringLength = 50;
+      const featherX = tipX + Math.sin(Date.now() * 0.008) * 20;
+      const featherY = tipY + stringLength;
+
+      ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(tipX, tipY); ctx.lineTo(featherX, featherY); ctx.stroke();
+
+      ctx.translate(featherX, featherY);
+      ctx.rotate(Math.sin(Date.now() * 0.01) * 0.4);
+
+      const colors = ['#C9888F', '#AFE2CF', '#FFB300'];
+      colors.forEach((col, idx) => {
+        ctx.save();
+        ctx.rotate((idx - 1) * 0.5);
+        ctx.fillStyle = col;
+        ctx.beginPath(); ctx.ellipse(0, 12, 5, 16, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      });
+
+      ctx.restore();
+    }
+
+    function drawTugRope(ctx) {
+      if (activeToyType !== 'rope' || dog.state !== 'TUGGING') return;
+
+      const dogCoords = getScreenCoords(dog.x, dog.y, dog.z + 10);
+
+      ctx.save();
+      ctx.strokeStyle = '#FFB300'; ctx.lineWidth = 8; ctx.lineCap = 'round';
+
+      const startX = mousePos.x;
+      const startY = mousePos.y;
+      const endX = dogCoords.screenX;
+      const endY = dogCoords.screenY;
+
+      const midX = (startX + endX) / 2;
+      const midY = (startY + endY) / 2 + 15;
+
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.quadraticCurveTo(midX, midY, endX, endY);
+      ctx.stroke();
+
+      ctx.fillStyle = '#C3684D';
+      ctx.beginPath(); ctx.arc(startX, startY, 8, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(endX, endY, 8, 0, Math.PI * 2); ctx.fill();
+
+      ctx.restore();
+    }
+
+    function getCanvasCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function handlePointerDown(e) {
+      soundEngine.init();
+      const coords = getCanvasCoords(e);
+      mousePos.x = coords.x;
+      mousePos.y = coords.y;
+      mousePos.isDown = true;
+      mousePos.isDragging = false;
+
+      // Direct Petting Detection (2.5D Distance Check)
+      const dogCoords = getScreenCoords(dog.x, dog.y, dog.z);
+      const catCoords = getScreenCoords(cat.x, cat.y, cat.z);
+
+      const distToDog = Math.hypot(coords.x - dogCoords.screenX, coords.y - dogCoords.screenY);
+      const distToCat = Math.hypot(coords.x - catCoords.screenX, coords.y - catCoords.screenY);
+
+      if (distToDog < 45 * dogCoords.scale) {
+        dog.triggerAction('PETTED');
+        return;
+      } else if (distToCat < 40 * catCoords.scale) {
+        cat.triggerAction('PETTED');
+        return;
+      }
+
+      // Throw/Spawn Toys in 2.5D space
+      if (activeToyType === 'ball' || activeToyType === 'bone' || activeToyType === 'yarn' || activeToyType === 'mouse') {
+        const clampY = Math.max(floorYMin + 15, Math.min(floorYMax - 15, coords.y));
+        activeToyInstance = new ToyItem(activeToyType, coords.x, clampY);
+
+        if (activeToyType === 'ball') {
+          dog.triggerAction('FETCH_BALL', coords.x, clampY);
+        } else if (activeToyType === 'bone') {
+          dog.triggerAction('CHEW_BONE', coords.x, clampY);
+        } else if (activeToyType === 'yarn') {
+          cat.triggerAction('BAT_WAND', coords.x, clampY);
+        } else if (activeToyType === 'mouse') {
+          cat.triggerAction('POUNCE_MOUSE', coords.x, clampY);
+        }
+      } else if (activeToyType === 'rope') {
+        dog.triggerAction('TUG_ROPE', coords.x, coords.y);
+      }
+    }
+
+    function handlePointerMove(e) {
+      const coords = getCanvasCoords(e);
+      mousePos.vx = coords.x - mousePos.x;
+      mousePos.vy = coords.y - mousePos.y;
+      mousePos.x = coords.x;
+      mousePos.y = coords.y;
+
+      if (mousePos.isDown) mousePos.isDragging = true;
+    }
+
+    function handlePointerUp() {
+      if (mousePos.isDown && activeToyInstance && Math.abs(mousePos.vx) > 2) {
+        activeToyInstance.vx = mousePos.vx * 0.7;
+        activeToyInstance.vy = mousePos.vy * 0.5;
+      }
+      mousePos.isDown = false;
+      mousePos.isDragging = false;
+    }
+
+    canvas.addEventListener('mousedown', handlePointerDown);
+    canvas.addEventListener('mousemove', handlePointerMove);
+    window.addEventListener('mouseup', handlePointerUp);
+
+    canvas.addEventListener('touchstart', (e) => { handlePointerDown(e); e.preventDefault(); });
+    canvas.addEventListener('touchmove', (e) => { handlePointerMove(e); e.preventDefault(); });
+    window.addEventListener('touchend', handlePointerUp);
+
+    // Toolbar Toy Selection
+    const toyBtns = document.querySelectorAll('.toy-btn, .toy-btn-cat');
+    toyBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        toyBtns.forEach(b => b.classList.remove('active-toy'));
+        btn.classList.add('active-toy');
+        activeToyType = btn.getAttribute('data-toy');
+        activeToyInstance = null;
+        soundEngine.playSqueak();
+
+        const toyNames = {
+          ball: "Tennis Ball (Throw anywhere on the floor!)",
+          bone: "Squeaky Bone (Chew & squeak!)",
+          rope: "Tug Rope (Interactive tug-of-war!)",
+          laser: "Red Laser Pointer (Tracks cursor across the room!)",
+          wand: "Feather Wand (Wave for leap pounces!)",
+          yarn: "Yarn Ball (Unravels thread across the floor!)",
+          mouse: "Wind-up Mouse (Skitters autonomously!)"
+        };
+
+        updateBanner(`Selected ${toyNames[activeToyType]}`, "fa-solid fa-gamepad");
+      });
+    });
+
+    // Sound Toggle
+    const soundToggleBtn = document.getElementById('soundToggle');
+    const soundIcon = document.getElementById('soundIcon');
+    const soundLabel = document.getElementById('soundLabel');
+
+    soundToggleBtn.addEventListener('click', () => {
+      soundEngine.muted = !soundEngine.muted;
+      if (soundEngine.muted) {
+        soundIcon.className = "fa-solid fa-volume-xmark";
+        soundLabel.innerText = "Sound: OFF";
+        soundToggleBtn.classList.replace('bg-mint', 'bg-slate-300');
+      } else {
+        soundIcon.className = "fa-solid fa-volume-high";
+        soundLabel.innerText = "Sound: ON";
+        soundToggleBtn.classList.replace('bg-slate-300', 'bg-mint');
+        soundEngine.playBark();
+      }
+    });
+
+    // Reset Pets Button
+    document.getElementById('clearRoomBtn').addEventListener('click', () => {
+      activeToyInstance = null;
+      dog.x = width * 0.35; dog.y = floorYMin + (floorYMax - floorYMin) * 0.4; dog.state = 'ROAMING';
+      cat.x = width * 0.65; cat.y = floorYMin + (floorYMax - floorYMin) * 0.6; cat.state = 'ROAMING';
+      dogHappiness = 88; catHappiness = 82;
+      soundEngine.playBounce();
+      updateBanner("Pets reset! Barnaby and Mimi are ready to explore.", "fa-solid fa-rotate-left");
+    });
+
+    function gameLoop() {
+      // Gentle happiness decay over time
+      dogHappiness = Math.max(30, dogHappiness - 0.005);
+      catHappiness = Math.max(30, catHappiness - 0.005);
+
+      dogHappyBar.style.width = `${dogHappiness}%`;
+      catHappyBar.style.width = `${catHappiness}%`;
+
       ctx.clearRect(0, 0, width, height);
 
-      // 1. Draw Wall
-      ctx.fillStyle = '#FAF1E4';
-      ctx.fillRect(0, 0, width, wallY);
+      // 1. Draw Environment
+      drawRoomBackground(ctx);
 
-      // Wall Baseboard
-      ctx.fillStyle = '#C3684D';
-      ctx.fillRect(0, wallY - 12, width, 12);
-      ctx.fillStyle = '#313A70';
-      ctx.fillRect(0, wallY - 14, width, 2);
-
-      // 2. Draw Tiled Floor Image (or fallback tan while loading)
-      if (topoPattern) {
-        ctx.fillStyle = topoPattern;
-        ctx.fillRect(0, wallY, width, height - wallY);
-      } else {
-        ctx.fillStyle = '#E2C394';
-        ctx.fillRect(0, wallY, width, height - wallY);
-      }
-
-      // Room Rug
-      ctx.save();
-      ctx.fillStyle = '#AFE2CF';
-      ctx.beginPath();
-      ctx.ellipse(width * 0.5, height * 0.68, width * 0.24, height * 0.12, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.lineWidth = 4; ctx.strokeStyle = '#313A70'; ctx.stroke();
-      ctx.lineWidth = 2; ctx.strokeStyle = '#FFB300'; ctx.stroke();
-      ctx.restore();
-
-      // Dog Bed & Cat Post
-      ctx.save();
-      ctx.fillStyle = '#FFFFFF'; ctx.strokeStyle = '#C3684D'; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.ellipse(width * 0.18, height * 0.52, 38, 18, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-      
-      // Cat Scratching Post
-      ctx.fillStyle = '#AFE2CF'; ctx.fillRect(width * 0.82 - 20, height * 0.52, 40, 6);
-      ctx.fillStyle = '#A88456'; ctx.fillRect(width * 0.82 - 5, height * 0.38, 10, 70);
-      ctx.restore();
-
-      // Laser Pointer Red Dot
-      if (activeToyType === 'laser') {
-        ctx.save();
-        ctx.fillStyle = '#FF0000';
-        ctx.shadowColor = '#FF0000'; ctx.shadowBlur = 12;
-        ctx.beginPath(); ctx.arc(mousePos.x, mousePos.y, 5, 0, Math.PI * 2); ctx.fill();
-        ctx.restore();
-      }
-
-      // 3. Update & Draw Toys + Pets with Depth Y-Sorting
+      // 2. Update Physics Logic
       if (activeToyInstance) activeToyInstance.update();
       dog.update();
       cat.update();
 
-      const entities = [dog, cat];
-      if (activeToyInstance && activeToyType !== 'laser') entities.push(activeToyInstance);
+      // 3. Dynamic Y-Sorting Array for 2.5D Render Order
+      const renderList = [];
 
-      entities.sort((a, b) => a.y - b.y);
+      if (activeToyInstance) {
+        renderList.push({ y: activeToyInstance.y, draw: () => activeToyInstance.draw(ctx) });
+      }
+      renderList.push({ y: dog.y, draw: () => dog.draw(ctx) });
+      renderList.push({ y: cat.y, draw: () => cat.draw(ctx) });
 
-      entities.forEach(ent => ent.draw(ctx));
+      // Sort by 2.5D Floor Y so closer objects render on top of farther ones
+      renderList.sort((a, b) => a.y - b.y);
 
-      // Particles
+      // Render sorted entities
+      renderList.forEach(item => item.draw());
+
+      // 4. Draw Overlay Toys (Laser & Wand & Rope)
+      drawLaserPointer(ctx);
+      drawFeatherWand(ctx);
+      drawTugRope(ctx);
+
+      // 5. Update & Draw Particles
       for (let i = particles.length - 1; i >= 0; i--) {
         particles[i].update();
         particles[i].draw(ctx);
         if (particles[i].life <= 0) particles.splice(i, 1);
       }
 
-      // Happiness Decay & Bar Sync
-      dogHappiness = Math.max(10, dogHappiness - 0.01);
-      catHappiness = Math.max(10, catHappiness - 0.01);
-      dogHappyBar.style.width = `${dogHappiness}%`;
-      catHappyBar.style.width = `${catHappiness}%`;
-
-      requestAnimationFrame(render);
+      requestAnimationFrame(gameLoop);
     }
 
-    /* Event Listeners */
-    canvas.addEventListener('pointerdown', (e) => {
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      mousePos.x = x; mousePos.y = y; mousePos.isDown = true;
-
-      if (y > wallY) {
-        if (activeToyType !== 'laser') {
-          activeToyInstance = new ToyItem(activeToyType, x, y);
-        }
-      }
-    });
-
-    canvas.addEventListener('pointermove', (e) => {
-      const rect = canvas.getBoundingClientRect();
-      mousePos.x = e.clientX - rect.left;
-      mousePos.y = e.clientY - rect.top;
-    });
-
-    window.addEventListener('pointerup', () => mousePos.isDown = false);
-
-    // Toy Toolbar Buttons
-    document.querySelectorAll('.toy-btn, .toy-btn-cat').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.toy-btn, .toy-btn-cat').forEach(b => b.classList.remove('active-toy'));
-        e.currentTarget.classList.add('active-toy');
-        activeToyType = e.currentTarget.dataset.toy;
-        activeToyInstance = null;
-        updateBanner(`Selected ${activeToyType.toUpperCase()}! Click on the floor to play.`);
-      });
-    });
-
-    // Header Controls
-    document.getElementById('soundToggle').addEventListener('click', () => {
-      soundEngine.muted = !soundEngine.muted;
-      document.getElementById('soundIcon').className = soundEngine.muted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
-      document.getElementById('soundLabel').innerText = soundEngine.muted ? 'Sound: OFF' : 'Sound: ON';
-    });
-
-    document.getElementById('resetPetsBtn').addEventListener('click', () => {
-      dog.x = width * 0.35; dog.y = height * 0.65;
-      cat.x = width * 0.65; cat.y = height * 0.70;
-      activeToyInstance = null;
-      updateBanner("Reset pet positions in the room!");
-    });
-
-    // Start App
-    render();
+    // Start Engine on Load
+    window.onload = function() {
+      gameLoop();
+    };
   </script>
 </body>
 </html>
