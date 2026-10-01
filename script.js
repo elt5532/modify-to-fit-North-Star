@@ -27,7 +27,7 @@ function draw() {
   ctx.fillRect(0, 0, w, h);
 
   // 3. Define 2.5D Floor Trapezoid Perspective
-  const horizonY = h * 0.55;    // Horizon line where wall meets floor (35% down)
+  const horizonY = h * 0.20;    // Horizon line where wall meets floor (35% down)
   const backLeftX = w * 0.15;   // Back-left corner of the room floor
   const backRightX = w * 0.85;  // Back-right corner of the room floor
 
