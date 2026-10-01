@@ -23,7 +23,7 @@ function draw() {
   ctx.clearRect(0, 0, w, h);
 
   // 2. Draw Back Wall background (covers entire canvas behind the floor)
-  ctx.fillStyle = "#2b2b3d"; // Wall color
+  ctx.fillStyle = "#fcf9f0"; // Wall color
   ctx.fillRect(0, 0, w, h);
 
   // 3. Define 2.5D Floor Trapezoid Perspective
