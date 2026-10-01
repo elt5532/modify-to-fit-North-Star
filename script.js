@@ -16,17 +16,46 @@ resizeCanvas();
 
 // Game render loop
 function draw() {
-  // Clear previous frame
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const w = canvas.width;
+  const h = canvas.height;
 
-  // 2. Draw the floor PNG image to cover the full canvas area
+  // Clear previous frame
+  ctx.clearRect(0, 0, w, h);
+
+  // 2. Draw Back Wall background (covers entire canvas behind the floor)
+  ctx.fillStyle = "#2b2b3d"; // Wall color
+  ctx.fillRect(0, 0, w, h);
+
+  // 3. Define 2.5D Floor Trapezoid Perspective
+  const horizonY = h * 0.35;    // Horizon line where wall meets floor (35% down)
+  const backLeftX = w * 0.15;   // Back-left corner of the room floor
+  const backRightX = w * 0.85;  // Back-right corner of the room floor
+
+  // Save drawing state before applying clipping path
+  ctx.save();
+
+  // Create trapezoid shape for the 2.5D floor
+  ctx.beginPath();
+  ctx.moveTo(backLeftX, horizonY); // Top-left of floor
+  ctx.lineTo(backRightX, horizonY); // Top-right of floor
+  ctx.lineTo(w, h);                // Bottom-right corner
+  ctx.lineTo(0, h);                // Bottom-left corner
+  ctx.closePath();
+
+  // Restrict drawing to ONLY the floor trapezoid shape
+  ctx.clip();
+
+  // 4. Draw floor image inside the 2.5D floor shape
   if (floorImage.complete && floorImage.naturalWidth !== 0) {
-    ctx.drawImage(floorImage, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(floorImage, 0, horizonY, w, h - horizonY);
   } else {
     // Fallback floor color while image loads
     ctx.fillStyle = "#3a3a4c";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fill();
   }
+
+  // Restore drawing state to remove clipping mask for future rendering (pets/toys)
+  ctx.restore();
 
   // Request the next frame
   requestAnimationFrame(draw);
