@@ -1,70 +1,109 @@
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+// Rescue Animals dataset with names and traits
+const pets = [
+  { emoji: '🐶', name: 'Milo', trait: 'Energetic' },
+  { emoji: '🐱', name: 'Luna', trait: 'Cuddly' },
+  { emoji: '🐰', name: 'Barnaby', trait: 'Gentle' },
+  { emoji: '🦜', name: 'Cleo', trait: 'Playful' },
+  { emoji: '🐹', name: 'Peanut', trait: 'Curious' },
+  { emoji: '🐢', name: 'Shelby', trait: 'Calm' },
+  { emoji: '🐕', name: 'Bella', trait: 'Senior Love' },
+  { emoji: '🐈', name: 'Oliver', trait: 'Acrobatic' }
+];
 
-// 1. Create and load the floor image
-const floorImage = new Image();
-floorImage.src = "assets/floor.png"; // Ensure your image is located at this path!
+const gameBoard = document.getElementById('gameBoard');
+const matchesDisplay = document.getElementById('matches');
+const flipsDisplay = document.getElementById('flips');
+const winModal = document.getElementById('winModal');
+const resetBtn = document.getElementById('resetBtn');
+const modalQuizBtn = document.getElementById('modalQuizBtn');
+const modalPlayAgainBtn = document.getElementById('modalPlayAgainBtn');
 
-// Adjust canvas resolution for sharp rendering on retina screens
-function resizeCanvas() {
-  canvas.width = window.innerWidth * window.devicePixelRatio;
-  canvas.height = window.innerHeight * window.devicePixelRatio;
+let cardsDeck = [];
+let firstCard = null;
+let lockBoard = false;
+let matchesCount = 0;
+let flipsCount = 0;
+
+function initGame() {
+  gameBoard.innerHTML = '';
+  winModal.classList.remove('active');
+  firstCard = null;
+  lockBoard = false;
+  matchesCount = 0;
+  flipsCount = 0;
+  matchesDisplay.textContent = `0 / ${pets.length}`;
+  flipsDisplay.textContent = '0';
+
+  // Duplicate and shuffle deck
+  cardsDeck = [...pets, ...pets].sort(() => 0.5 - Math.random());
+
+  // Render cards
+  cardsDeck.forEach((pet) => {
+    const card = document.createElement('div');
+    card.classList.add('card');
+    card.dataset.name = pet.name;
+
+    card.innerHTML = `
+      <div class="card-face card-back"></div>
+      <div class="card-face card-front">
+        <span class="card-emoji">${pet.emoji}</span>
+        <span class="card-name">${pet.name}</span>
+        <span class="card-trait">${pet.trait}</span>
+      </div>
+    `;
+
+    card.addEventListener('click', () => handleCardClick(card));
+    gameBoard.appendChild(card);
+  });
 }
 
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
+function handleCardClick(card) {
+  if (lockBoard || card === firstCard || card.classList.contains('matched') || card.classList.contains('flipped')) return;
 
-// Game render loop
-function draw() {
-  const w = canvas.width;
-  const h = canvas.height;
+  card.classList.add('flipped');
+  flipsCount++;
+  flipsDisplay.textContent = flipsCount;
 
-  // Clear previous frame
-  ctx.clearRect(0, 0, w, h);
-
-  // 2. Draw Back Wall background (covers entire canvas behind the floor)
-  ctx.fillStyle = "#fcf9f0"; // Wall color
-  ctx.fillRect(0, 0, w, h);
-
-  // 3. Define 2.5D Floor Trapezoid Perspective
-  const horizonY = h * 0.20;    // Horizon line where wall meets floor (35% down)
-  const backLeftX = w * 0.15;   // Back-left corner of the room floor
-  const backRightX = w * 0.85;  // Back-right corner of the room floor
-
-  // Save drawing state before applying clipping path
-  ctx.save();
-
-  // Create trapezoid shape for the 2.5D floor
-  ctx.beginPath();
-  ctx.moveTo(backLeftX, horizonY); // Top-left of floor
-  ctx.lineTo(backRightX, horizonY); // Top-right of floor
-  ctx.lineTo(w, h);                // Bottom-right corner
-  ctx.lineTo(0, h);                // Bottom-left corner
-  ctx.closePath();
-
-  // Restrict drawing to ONLY the floor trapezoid shape
-  ctx.clip();
-
-  // 4. Draw floor image inside the 2.5D floor shape
-  if (floorImage.complete && floorImage.naturalWidth !== 0) {
-    ctx.drawImage(floorImage, 0, horizonY, w, h - horizonY);
-  } else {
-    // Fallback floor color while image loads
-    ctx.fillStyle = "#3a3a4c";
-    ctx.fill();
+  if (!firstCard) {
+    firstCard = card;
+    return;
   }
 
-  // Restore drawing state to remove clipping mask for future rendering (pets/toys)
-  ctx.restore();
-
-  // Request the next frame
-  requestAnimationFrame(draw);
+  lockBoard = true;
+  checkMatch(card);
 }
 
-// Start drawing once floor image is loaded
-floorImage.onload = () => {
-  draw();
-};
+function checkMatch(secondCard) {
+  const isMatch = firstCard.dataset.name === secondCard.dataset.name;
 
-// Also start immediately in case image is cached
-draw();
+  if (isMatch) {
+    firstCard.classList.add('matched');
+    secondCard.classList.add('matched');
+    matchesCount++;
+    matchesDisplay.textContent = `${matchesCount} / ${pets.length}`;
+
+    resetTurn();
+
+    if (matchesCount === pets.length) {
+      setTimeout(() => winModal.classList.add('active'), 600);
+    }
+  } else {
+    setTimeout(() => {
+      firstCard.classList.remove('flipped');
+      secondCard.classList.remove('flipped');
+      resetTurn();
+    }, 900);
+  }
+}
+
+function resetTurn() {
+  [firstCard, lockBoard] = [null, false];
+}
+
+// Event Listeners
+resetBtn.addEventListener('click', initGame);
+modalPlayAgainBtn.addEventListener('click', initGame);
+modalQuizBtn.addEventListener('click', initGame);
+
+// Initialize game on load
+document.addEventListener('DOMContentLoaded', initGame);
