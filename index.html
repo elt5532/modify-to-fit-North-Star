@@ -3,30 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PetMatch: Full Room Playground</title>
+  <title>PetMatch | Rescue Memory Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <header class="header">
-    <h1>PetMatch: Full Room Playground</h1>
-    <p>Interactive 2.5D Co-Play Experience</p>
-  </header>
+  <div class="game-container">
+    <span class="brand-badge">PetMatch Campaign</span>
+    <h1 class="title">Find Their Forever Match 🐾</h1>
+    <p class="subtitle">Flip cards to match shelter animals with their ideal personality traits!</p>
 
-  <main class="game-container">
-    <div class="pet-status">
-      <div class="pet-card">🐶 <strong>Barnaby</strong>: Roaming</div>
-      <div class="pet-card">🐱 <strong>Mimi</strong>: Exploring</div>
+    <div class="stats-bar">
+      <div class="stat-item">
+        <span class="stat-label">Matches</span>
+        <span class="stat-value" id="matches">0 / 8</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Flips</span>
+        <span class="stat-value" id="flips">0</span>
+      </div>
     </div>
 
-    <!-- Canvas where floor PNG and pets render -->
-    <canvas id="gameCanvas"></canvas>
-  </main>
+    <div class="game-board" id="gameBoard"></div>
 
-  <footer class="toy-bar">
-    <div>🐶 <strong>Dog Toys:</strong> Ball, Bone, Rope</div>
-    <div>🐱 <strong>Cat Toys:</strong> Mouse, Yarn, Feather</div>
-  </footer>
+    <button class="btn-reset" id="resetBtn">Restart Game</button>
+
+    <!-- Completion Modal -->
+    <div class="modal-overlay" id="winModal">
+      <div class="modal-icon">🏡❤️</div>
+      <h2 class="modal-title">Every Pet Found a Match!</h2>
+      <p class="modal-text">
+        Just like in our game, every shelter animal deserves a loving home matched to their unique personality and needs.
+      </p>
+      <a href="#quiz" class="modal-btn" id="modalQuizBtn">Take the "Which Pet Is Right for You?" Quiz</a>
+      <button class="btn-reset" id="modalPlayAgainBtn">Play Again</button>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
