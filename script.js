@@ -56,10 +56,10 @@ let lockBoard = false;
 let matchesCount = 0;
 let flipsCount = 0;
 
-// Timer state
+// Reliable Real-Time Timer
 let timerInterval = null;
-let secondsElapsed = 0;
-let isTimerRunning = false;
+let startTime = null;
+let finalTimeFormatted = '00:00';
 
 function formatTime(totalSeconds) {
   const mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
@@ -68,25 +68,25 @@ function formatTime(totalSeconds) {
 }
 
 function startTimer() {
-  if (isTimerRunning) return;
-  isTimerRunning = true;
+  stopTimer();
+  startTime = Date.now();
+  timerDisplay.textContent = '00:00';
+
   timerInterval = setInterval(() => {
-    secondsElapsed++;
-    timerDisplay.textContent = formatTime(secondsElapsed);
+    const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+    finalTimeFormatted = formatTime(elapsedSeconds);
+    timerDisplay.textContent = finalTimeFormatted;
   }, 1000);
 }
 
 function stopTimer() {
-  clearInterval(timerInterval);
-  isTimerRunning = false;
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
 }
 
 function initGame() {
-  stopTimer();
-  secondsElapsed = 0;
-  isTimerRunning = false;
-  timerDisplay.textContent = '00:00';
-
   gameBoard.innerHTML = '';
   winModal.classList.remove('active');
   firstCard = null;
@@ -122,15 +122,13 @@ function initGame() {
     card.addEventListener('click', () => handleCardClick(card));
     gameBoard.appendChild(card);
   });
+
+  // Start timer automatically when board initializes
+  startTimer();
 }
 
 function handleCardClick(card) {
   if (lockBoard || card === firstCard || card.classList.contains('matched') || card.classList.contains('flipped')) return;
-
-  // Start timer on first card click
-  if (!isTimerRunning) {
-    startTimer();
-  }
 
   card.classList.add('flipped');
   flipsCount++;
@@ -158,7 +156,7 @@ function checkMatch(secondCard) {
 
     if (matchesCount === targetMatches) {
       stopTimer();
-      winStatsText.textContent = `You finished in ${formatTime(secondsElapsed)} with ${flipsCount} flips!`;
+      winStatsText.textContent = `You finished in ${finalTimeFormatted} with ${flipsCount} flips!`;
       setTimeout(() => winModal.classList.add('active'), 600);
     }
   } else {
