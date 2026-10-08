@@ -34,7 +34,7 @@ body {
 /* Container scales depending on active level */
 .game-container {
   width: 100%;
-  max-width: 500px;
+  max-width: 520px;
   background: var(--card-white);
   border-radius: 28px;
   box-shadow: var(--shadow-soft);
@@ -45,7 +45,7 @@ body {
 }
 
 .game-container.container-medium { max-width: 580px; }
-.game-container.container-hard { max-width: 680px; }
+.game-container.container-hard { max-width: 720px; }
 
 .brand-badge {
   display: inline-block;
@@ -139,7 +139,7 @@ body {
 }
 
 .game-board.mode-easy {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
 }
 
@@ -149,7 +149,7 @@ body {
 }
 
 .game-board.mode-hard {
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 8px;
 }
 
@@ -213,17 +213,7 @@ body {
 .mode-hard .card-back { font-size: 1.2rem; }
 .mode-hard .card-emoji { font-size: 1.4rem; }
 .mode-hard .card-name { font-size: 0.6rem; font-weight: 600; }
-.mode-hard .card-trait { display: none; }
-
-/* Center Rescue HQ Tile Styling */
-.card.center-tile {
-  cursor: default;
-}
-
-.card.center-tile .card-front {
-  background: var(--peach-light);
-  border-color: var(--terracotta);
-}
+.mode-hard .card-trait { font-size: 0.5rem; color: var(--teal-accent); }
 
 /* Matched Card State */
 .card.matched .card-front {
