@@ -14,14 +14,12 @@
     <h1 class="title">Find Their Forever Match 🐾</h1>
     <p class="subtitle">Flip cards to match shelter animals and their favorite toys!</p>
 
-    <!-- Difficulty Level Selector -->
+    <!-- Difficulty Change Button -->
     <div class="difficulty-bar">
-      <button class="diff-btn active" data-level="easy">Easy (3x4)</button>
-      <button class="diff-btn" data-level="medium">Medium (4x4)</button>
-      <button class="diff-btn" data-level="hard">Hard (5x6)</button>
+      <button class="diff-btn" id="changeDiffBtn">⚙️ Change Level (<span id="currentLevelLabel">Easy 3x4</span>)</button>
     </div>
 
-    <!-- Stats Bar -->
+    <!-- Stats Bar with Timer & Best Record -->
     <div class="stats-bar">
       <div class="stat-item">
         <span class="stat-label">Matches</span>
@@ -35,17 +33,51 @@
         <span class="stat-label">Time</span>
         <span class="stat-value" id="timer">00:00</span>
       </div>
+      <div class="stat-item">
+        <span class="stat-label">Best Record</span>
+        <span class="stat-value" id="bestRecord">--:--</span>
+      </div>
     </div>
 
     <div class="game-board mode-easy" id="gameBoard"></div>
 
     <button class="btn-reset" id="resetBtn">Restart Game</button>
 
-    <!-- Completion Modal -->
+    <!-- 1. Start / Select Difficulty Modal (Appears First) -->
+    <div class="modal-overlay active" id="startModal">
+      <div class="start-card">
+        <div class="modal-icon">🐾🎮</div>
+        <h2 class="modal-title">Choose Difficulty to Play</h2>
+        <p class="modal-text">Select a grid size to start the game and set your best time record!</p>
+        
+        <div class="start-diff-options">
+          <button class="start-diff-btn" data-level="easy">
+            <span class="diff-title">Easy (3x4)</span>
+            <span class="diff-desc">12 Cards • 6 Pairs</span>
+            <span class="diff-record" id="startRecordEasy">Best: --:--</span>
+          </button>
+          
+          <button class="start-diff-btn" data-level="medium">
+            <span class="diff-title">Medium (4x4)</span>
+            <span class="diff-desc">16 Cards • 8 Pairs</span>
+            <span class="diff-record" id="startRecordMedium">Best: --:--</span>
+          </button>
+          
+          <button class="start-diff-btn" data-level="hard">
+            <span class="diff-title">Hard (5x6)</span>
+            <span class="diff-desc">30 Cards • 15 Pairs</span>
+            <span class="diff-record" id="startRecordHard">Best: --:--</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Completion Win Modal -->
     <div class="modal-overlay" id="winModal">
       <div class="modal-icon">🏡❤️</div>
       <h2 class="modal-title">Every Pet Found a Match!</h2>
       <p class="modal-text" id="winStatsText">You matched all pets!</p>
+      <div class="record-badge" id="newRecordBadge" style="display: none;">🏆 New Best Record!</div>
       <a href="#quiz" class="modal-btn" id="modalQuizBtn">Take the "Which Pet Is Right for You?" Quiz</a>
       <button class="btn-reset" id="modalPlayAgainBtn">Play Again</button>
     </div>
