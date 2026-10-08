@@ -29,9 +29,8 @@
   box-sizing: border-box;
 }
 
-/* COMFORT BASE: Background uses a gentle warm radial gradient */
 body {
-  background: radial-gradient(circle at 50% 30%, #FFFDF9 0%, var(--bg-comfort-outer) 100%);
+  background: #ffffff;
   font-family: var(--font-main);
   color: var(--charcoal);
   display: flex;
