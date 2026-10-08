@@ -9,10 +9,17 @@
 </head>
 <body>
 
-  <div class="game-container">
+  <div class="game-container" id="gameContainer">
     <span class="brand-badge">PetMatch Campaign</span>
     <h1 class="title">Find Their Forever Match 🐾</h1>
-    <p class="subtitle">Flip cards to match shelter animals with their ideal personality traits!</p>
+    <p class="subtitle">Flip cards to match shelter animals and their favorite toys!</p>
+
+    <!-- Difficulty Level Selector -->
+    <div class="difficulty-bar">
+      <button class="diff-btn active" data-level="easy">Easy (4x4)</button>
+      <button class="diff-btn" data-level="medium">Medium (8x8)</button>
+      <button class="diff-btn" data-level="hard">Hard (12x12)</button>
+    </div>
 
     <div class="stats-bar">
       <div class="stat-item">
@@ -25,7 +32,7 @@
       </div>
     </div>
 
-    <div class="game-board" id="gameBoard"></div>
+    <div class="game-board mode-easy" id="gameBoard"></div>
 
     <button class="btn-reset" id="resetBtn">Restart Game</button>
 
