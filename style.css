@@ -5,7 +5,7 @@
   --bg-comfort-subtle: #F7E9C6;     /* Light cream for quiet UI regions */
   
   /* Warm Accent Layer (Actionable, Inviting, Lively) */
-  --peach-beige: #F8C5A0;          /* Soft Light Orange base */
+  --peach-beige: #F8C5A0;          /* Card back base */
   --peach-gradient: linear-gradient(135deg, #F8C5A0 0%, #FFB84E 100%); /* Warm card sheen */
   --goldenrod: #FFB84E;            /* Main button CTA */
   --goldenrod-glow: rgba(255, 184, 78, 0.35);
@@ -29,9 +29,9 @@
   box-sizing: border-box;
 }
 
-/* Page Background: Changed from dark coral (#F57550) to Light Orange (#F8C5A0) */
+/* COMFORT BASE: Background uses a gentle warm radial gradient */
 body {
-  background-color: #F8C5A0;
+  background: radial-gradient(circle at 50% 30%, #FFFDF9 0%, var(--bg-comfort-outer) 100%);
   font-family: var(--font-main);
   color: var(--charcoal);
   display: flex;
@@ -111,7 +111,7 @@ body {
   color: var(--deep-teal);
 }
 
-/* STATS BAR */
+/* STATS BAR: Soft comfort background with WARM energy numbers */
 .stats-bar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -134,6 +134,7 @@ body {
   font-weight: 600;
 }
 
+/* Warm Coral Orange draws quick eyes to game stats */
 .stat-value {
   font-size: 1rem;
   font-weight: 700;
@@ -180,7 +181,7 @@ body {
   box-shadow: var(--shadow-card);
 }
 
-/* WARM CARD BACK */
+/* WARM CARD BACK: Inviting gradient with tactile feel */
 .card-back {
   background: var(--peach-gradient);
   color: var(--charcoal);
@@ -192,7 +193,7 @@ body {
   opacity: 0.75;
 }
 
-/* REVEALED CARD FRONT */
+/* REVEALED CARD FRONT: Neutral clean canvas to highlight emojis */
 .card-front {
   background: #FFFFFF;
   border: 2px solid #90C6CF;
@@ -215,7 +216,7 @@ body {
 .mode-hard .card-name { font-size: 0.55rem; font-weight: 600; }
 .mode-hard .card-trait { font-size: 0.50rem; color: var(--deep-teal); }
 
-/* MATCHED STATE */
+/* MATCHED STATE: Soothing resolution transition */
 .card.matched .card-front {
   background: var(--matched-bg);
   border-color: var(--sage-green);
@@ -226,7 +227,7 @@ body {
   cursor: default;
 }
 
-/* ACTION BUTTONS */
+/* ACTION BUTTONS: Warm Goldenrod with tactile depth */
 .btn-reset {
   background: var(--goldenrod);
   color: var(--charcoal);
