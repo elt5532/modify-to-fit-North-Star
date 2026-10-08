@@ -31,23 +31,32 @@ const itemsPool = [
 
 // Grid Configurations
 const difficultyConfigs = {
-  easy: { pairs: 6 },   // 3x4 grid = 12 cards
-  medium: { pairs: 8 }, // 4x4 grid = 16 cards
-  hard: { pairs: 15 }   // 5x6 grid = 30 cards
+  easy: { name: 'Easy 3x4', pairs: 6 },
+  medium: { name: 'Medium 4x4', pairs: 8 },
+  hard: { name: 'Hard 5x6', pairs: 15 }
 };
 
+// Elements
 const gameContainer = document.getElementById('gameContainer');
 const gameBoard = document.getElementById('gameBoard');
 const matchesDisplay = document.getElementById('matches');
 const flipsDisplay = document.getElementById('flips');
 const timerDisplay = document.getElementById('timer');
+const bestRecordDisplay = document.getElementById('bestRecord');
+const currentLevelLabel = document.getElementById('currentLevelLabel');
+
+const startModal = document.getElementById('startModal');
 const winModal = document.getElementById('winModal');
 const winStatsText = document.getElementById('winStatsText');
+const newRecordBadge = document.getElementById('newRecordBadge');
+
 const resetBtn = document.getElementById('resetBtn');
+const changeDiffBtn = document.getElementById('changeDiffBtn');
 const modalQuizBtn = document.getElementById('modalQuizBtn');
 const modalPlayAgainBtn = document.getElementById('modalPlayAgainBtn');
-const diffButtons = document.querySelectorAll('.diff-btn');
+const startDiffButtons = document.querySelectorAll('.start-diff-btn');
 
+// Game State
 let currentDifficulty = 'easy';
 let targetMatches = 6;
 let cardsDeck = [];
@@ -56,9 +65,11 @@ let lockBoard = false;
 let matchesCount = 0;
 let flipsCount = 0;
 
-// Reliable Real-Time Timer
+// Timer State
 let timerInterval = null;
 let startTime = null;
+let elapsedSeconds = 0;
+let isTimerRunning = false;
 let finalTimeFormatted = '00:00';
 
 function formatTime(totalSeconds) {
@@ -67,13 +78,38 @@ function formatTime(totalSeconds) {
   return `${mins}:${secs}`;
 }
 
+// Record Time (localStorage)
+function getBestRecord(level) {
+  const record = localStorage.getItem(`petmatch_best_${level}`);
+  return record ? parseInt(record, 10) : null;
+}
+
+function saveBestRecord(level, seconds) {
+  localStorage.setItem(`petmatch_best_${level}`, seconds);
+}
+
+function updateRecordsUI() {
+  // Update main HUD best record
+  const currentBest = getBestRecord(currentDifficulty);
+  bestRecordDisplay.textContent = currentBest ? formatTime(currentBest) : '--:--';
+
+  // Update start modal records
+  ['easy', 'medium', 'hard'].forEach((lvl) => {
+    const rec = getBestRecord(lvl);
+    const elem = document.getElementById(`startRecord${lvl.charAt(0).toUpperCase() + lvl.slice(1)}`);
+    if (elem) {
+      elem.textContent = rec ? `Best: ${formatTime(rec)}` : 'Best: --:--';
+    }
+  });
+}
+
 function startTimer() {
-  stopTimer();
+  if (isTimerRunning) return;
+  isTimerRunning = true;
   startTime = Date.now();
-  timerDisplay.textContent = '00:00';
 
   timerInterval = setInterval(() => {
-    const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+    elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
     finalTimeFormatted = formatTime(elapsedSeconds);
     timerDisplay.textContent = finalTimeFormatted;
   }, 1000);
@@ -84,20 +120,41 @@ function stopTimer() {
     clearInterval(timerInterval);
     timerInterval = null;
   }
+  isTimerRunning = false;
+}
+
+function resetTimer() {
+  stopTimer();
+  elapsedSeconds = 0;
+  finalTimeFormatted = '00:00';
+  timerDisplay.textContent = '00:00';
+}
+
+function openStartModal() {
+  stopTimer();
+  updateRecordsUI();
+  startModal.classList.add('active');
 }
 
 function initGame() {
-  gameBoard.innerHTML = '';
+  resetTimer();
+  startModal.classList.remove('active');
   winModal.classList.remove('active');
+  newRecordBadge.style.display = 'none';
+
   firstCard = null;
   lockBoard = false;
   matchesCount = 0;
   flipsCount = 0;
 
-  targetMatches = difficultyConfigs[currentDifficulty].pairs;
+  const config = difficultyConfigs[currentDifficulty];
+  targetMatches = config.pairs;
+  currentLevelLabel.textContent = config.name;
 
   matchesDisplay.textContent = `0 / ${targetMatches}`;
   flipsDisplay.textContent = '0';
+
+  updateRecordsUI();
 
   gameBoard.className = `game-board mode-${currentDifficulty}`;
   gameContainer.className = `game-container container-${currentDifficulty}`;
@@ -105,6 +162,7 @@ function initGame() {
   const selectedItems = [...itemsPool].sort(() => 0.5 - Math.random()).slice(0, targetMatches);
   cardsDeck = [...selectedItems, ...selectedItems].sort(() => 0.5 - Math.random());
 
+  gameBoard.innerHTML = '';
   cardsDeck.forEach((item) => {
     const card = document.createElement('div');
     card.classList.add('card');
@@ -122,13 +180,15 @@ function initGame() {
     card.addEventListener('click', () => handleCardClick(card));
     gameBoard.appendChild(card);
   });
-
-  // Start timer automatically when board initializes
-  startTimer();
 }
 
 function handleCardClick(card) {
   if (lockBoard || card === firstCard || card.classList.contains('matched') || card.classList.contains('flipped')) return;
+
+  // Start timer on the first card click
+  if (!isTimerRunning) {
+    startTimer();
+  }
 
   card.classList.add('flipped');
   flipsCount++;
@@ -156,8 +216,7 @@ function checkMatch(secondCard) {
 
     if (matchesCount === targetMatches) {
       stopTimer();
-      winStatsText.textContent = `You finished in ${finalTimeFormatted} with ${flipsCount} flips!`;
-      setTimeout(() => winModal.classList.add('active'), 600);
+      handleWin();
     }
   } else {
     setTimeout(() => {
@@ -168,21 +227,40 @@ function checkMatch(secondCard) {
   }
 }
 
+function handleWin() {
+  const previousRecord = getBestRecord(currentDifficulty);
+  let isNewRecord = false;
+
+  if (!previousRecord || elapsedSeconds < previousRecord) {
+    saveBestRecord(currentDifficulty, elapsedSeconds);
+    isNewRecord = true;
+    updateRecordsUI();
+  }
+
+  winStatsText.textContent = `Completed in ${finalTimeFormatted} with ${flipsCount} flips!`;
+  newRecordBadge.style.display = isNewRecord ? 'inline-block' : 'none';
+
+  setTimeout(() => winModal.classList.add('active'), 500);
+}
+
 function resetTurn() {
   [firstCard, lockBoard] = [null, false];
 }
 
-diffButtons.forEach((btn) => {
+// Event Listeners
+startDiffButtons.forEach((btn) => {
   btn.addEventListener('click', (e) => {
-    diffButtons.forEach((b) => b.classList.remove('active'));
-    e.target.classList.add('active');
-    currentDifficulty = e.target.dataset.level;
+    currentDifficulty = e.currentTarget.dataset.level;
     initGame();
   });
 });
 
+changeDiffBtn.addEventListener('click', openStartModal);
 resetBtn.addEventListener('click', initGame);
 modalPlayAgainBtn.addEventListener('click', initGame);
 modalQuizBtn.addEventListener('click', initGame);
 
-document.addEventListener('DOMContentLoaded', initGame);
+// Load start screen on page open
+document.addEventListener('DOMContentLoaded', () => {
+  openStartModal();
+});
