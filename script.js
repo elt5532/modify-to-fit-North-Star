@@ -1,87 +1,41 @@
-// Dataset of 72 Pets and Toys (36 Pets + 36 Toys/Items)
+// Dataset of Pets and Toys
 const itemsPool = [
-  // --- Pets (36) ---
+  // --- Pets ---
   { emoji: '🐶', name: 'Milo', trait: 'Dog' },
   { emoji: '🐱', name: 'Luna', trait: 'Cat' },
   { emoji: '🐰', name: 'Barnaby', trait: 'Rabbit' },
   { emoji: '🦜', name: 'Cleo', trait: 'Parrot' },
   { emoji: '🐹', name: 'Peanut', trait: 'Hamster' },
   { emoji: '🐢', name: 'Shelby', trait: 'Turtle' },
-  { emoji: '🐕', name: 'Bella', trait: 'Dog' },
-  { emoji: '🐈', name: 'Oliver', trait: 'Cat' },
+  { emoji: '🐕', name: 'Bella', trait: 'Senior Dog' },
+  { emoji: '🐈', name: 'Oliver', trait: 'Tabby Cat' },
   { emoji: '🦊', name: 'Rusty', trait: 'Fox' },
   { emoji: '🐼', name: 'Panda', trait: 'Panda' },
   { emoji: '🦔', name: 'Spike', trait: 'Hedgehog' },
   { emoji: '🐨', name: 'Koa', trait: 'Koala' },
   { emoji: '🐠', name: 'Finny', trait: 'Fish' },
   { emoji: '🦎', name: 'Ziggy', trait: 'Lizard' },
-  { emoji: '🐸', name: 'Hoppy', trait: 'Frog' },
-  { emoji: '🦆', name: 'Waddles', trait: 'Duck' },
-  { emoji: '🦉', name: 'Hoot', trait: 'Owl' },
-  { emoji: '🐴', name: 'Scout', trait: 'Pony' },
-  { emoji: '🐷', name: 'Oinkers', trait: 'Pig' },
-  { emoji: '🐑', name: 'Wooly', trait: 'Lamb' },
-  { emoji: 'Otter', emoji: '🦦', name: 'Otto', trait: 'Otter' },
-  { emoji: '🦝', name: 'Bandit', trait: 'Raccoon' },
-  { emoji: '🐿️', name: 'Nuts', trait: 'Squirrel' },
-  { emoji: '🦩', name: 'Pinky', trait: 'Flamingo' },
-  { emoji: '🦥', name: 'Snooze', trait: 'Sloth' },
-  { emoji: '🦨', name: 'Stinky', trait: 'Skunk' },
-  { emoji: '🦡', name: 'Badger', trait: 'Badger' },
-  { emoji: '🦫', name: 'Chippy', trait: 'Beaver' },
-  { emoji: '🦘', name: 'Roo', trait: 'Kangaroo' },
-  { emoji: '🦙', name: 'Llama', trait: 'Llama' },
-  { emoji: '🐓', name: 'Clucky', trait: 'Rooster' },
-  { emoji: '🐁', name: 'Squeak', trait: 'Mouse' },
-  { emoji: '🐩', name: 'Poodle', trait: 'Dog' },
-  { emoji: '🐈‍⬛', name: 'Shadow', trait: 'Black Cat' },
-  { emoji: '🐥', name: 'Peep', trait: 'Chick' },
-  { emoji: '🦮', name: 'Buddy', trait: 'Guide Dog' },
 
-  // --- Toys & Items (36) ---
+  // --- Toys & Items ---
   { emoji: '🎾', name: 'Tennis Ball', trait: 'Toy' },
   { emoji: '🧸', name: 'Teddy Bear', trait: 'Toy' },
   { emoji: '🦴', name: 'Chew Bone', trait: 'Toy' },
   { emoji: '🧶', name: 'Yarn Ball', trait: 'Toy' },
-  { emoji: '🪀', name: 'Yo-Yo', trait: 'Toy' },
+  { emoji: '🪀', name: 'Squeaky Ring', trait: 'Toy' },
   { emoji: '🪁', name: 'Kite', trait: 'Toy' },
   { emoji: '🔔', name: 'Bell Toy', trait: 'Toy' },
-  { emoji: '🎀', name: 'Bow Ribbon', trait: 'Toy' },
   { emoji: '🥕', name: 'Chew Carrot', trait: 'Toy' },
   { emoji: '🐟', name: 'Fish Treat', trait: 'Snack' },
   { emoji: '🛏️', name: 'Pet Bed', trait: 'Item' },
   { emoji: '📦', name: 'Cat Box', trait: 'Toy' },
-  { emoji: '🎡', name: 'Wheel', trait: 'Toy' },
-  { emoji: '🪵', name: 'Perch Wood', trait: 'Item' },
-  { emoji: '🍼', name: 'Milk Bottle', trait: 'Item' },
-  { emoji: '🍲', name: 'Food Bowl', trait: 'Item' },
-  { emoji: '🪮', name: 'Pet Brush', trait: 'Item' },
-  { emoji: '🦮', name: 'Walk Leash', trait: 'Item' },
-  { emoji: '👑', name: 'Pet Crown', trait: 'Item' },
-  { emoji: '🕶️', name: 'Cool Shades', trait: 'Item' },
-  { emoji: '🎁', name: 'Gift Box', trait: 'Toy' },
-  { emoji: '🎈', name: 'Balloon', trait: 'Toy' },
-  { emoji: '🥏', name: 'Flying Disc', trait: 'Toy' },
-  { emoji: '🪢', name: 'Rope Toy', trait: 'Toy' },
-  { emoji: '🧀', name: 'Cheese Bite', trait: 'Snack' },
-  { emoji: '🥩', name: 'Steak Bone', trait: 'Snack' },
-  { emoji: '🍪', name: 'Pet Biscuit', trait: 'Snack' },
-  { emoji: '🏠', name: 'Dog House', trait: 'Item' },
-  { emoji: '🧼', name: 'Pet Soap', trait: 'Item' },
-  { emoji: '🥾', name: 'Chew Boot', trait: 'Toy' },
-  { emoji: '🪶', name: 'Feather Wand', trait: 'Toy' },
-  { emoji: '🌽', name: 'Corn Chew', trait: 'Toy' },
-  { emoji: '🎪', name: 'Play Tunnel', trait: 'Toy' },
-  { emoji: '🏆', name: 'Best Pet Cup', trait: 'Item' },
-  { emoji: '🪀', name: 'Squeak Ring', trait: 'Toy' },
-  { emoji: '🎯', name: 'Target Disc', trait: 'Toy' }
+  { emoji: '🪶', name: 'Feather Wand', trait: 'Toy' }
 ];
 
 // Grid Configurations
 const difficultyConfigs = {
-  easy: { pairs: 8 },    // 4x4 grid = 16 cards = 8 pairs
-  medium: { pairs: 32 }, // 8x8 grid = 64 cards = 32 pairs
-  hard: { pairs: 72 }    // 12x12 grid = 144 cards = 72 pairs
+  easy: { rows: 3, cols: 3, pairs: 4, hasCenter: true },   // 3x3 = 8 cards (4 pairs) + 1 center tile
+  medium: { rows: 4, cols: 4, pairs: 8, hasCenter: false }, // 4x4 = 16 cards (8 pairs)
+  hard: { rows: 5, cols: 5, pairs: 12, hasCenter: true }   // 5x5 = 24 cards (12 pairs) + 1 center tile
 };
 
 const gameContainer = document.getElementById('gameContainer');
@@ -95,7 +49,7 @@ const modalPlayAgainBtn = document.getElementById('modalPlayAgainBtn');
 const diffButtons = document.querySelectorAll('.diff-btn');
 
 let currentDifficulty = 'easy';
-let targetMatches = 8;
+let targetMatches = 4;
 let cardsDeck = [];
 let firstCard = null;
 let lockBoard = false;
@@ -110,34 +64,60 @@ function initGame() {
   matchesCount = 0;
   flipsCount = 0;
 
-  targetMatches = difficultyConfigs[currentDifficulty].pairs;
+  const config = difficultyConfigs[currentDifficulty];
+  targetMatches = config.pairs;
+
   matchesDisplay.textContent = `0 / ${targetMatches}`;
   flipsDisplay.textContent = '0';
 
-  // Apply layout classes based on mode
+  // Apply responsive grid layout classes
   gameBoard.className = `game-board mode-${currentDifficulty}`;
   gameContainer.className = `game-container container-${currentDifficulty}`;
 
-  // Pick random items for current level and duplicate
+  // Pick random items for current level pairs and duplicate them
   const selectedItems = [...itemsPool].sort(() => 0.5 - Math.random()).slice(0, targetMatches);
   cardsDeck = [...selectedItems, ...selectedItems].sort(() => 0.5 - Math.random());
+
+  // Insert "Rescue HQ" Free Space tile in the exact center for odd-numbered grids
+  if (config.hasCenter) {
+    const centerIndex = Math.floor((config.rows * config.cols) / 2);
+    cardsDeck.splice(centerIndex, 0, {
+      isCenter: true,
+      emoji: '🏡',
+      name: 'Rescue HQ',
+      trait: 'Free Space'
+    });
+  }
 
   // Render cards
   cardsDeck.forEach((item) => {
     const card = document.createElement('div');
-    card.classList.add('card');
-    card.dataset.name = item.name;
 
-    card.innerHTML = `
-      <div class="card-face card-back"></div>
-      <div class="card-face card-front">
-        <span class="card-emoji">${item.emoji}</span>
-        <span class="card-name">${item.name}</span>
-        <span class="card-trait">${item.trait}</span>
-      </div>
-    `;
+    if (item.isCenter) {
+      card.classList.add('card', 'center-tile', 'flipped', 'matched');
+      card.innerHTML = `
+        <div class="card-face card-front">
+          <span class="card-emoji">${item.emoji}</span>
+          <span class="card-name">${item.name}</span>
+          <span class="card-trait">${item.trait}</span>
+        </div>
+      `;
+    } else {
+      card.classList.add('card');
+      card.dataset.name = item.name;
 
-    card.addEventListener('click', () => handleCardClick(card));
+      card.innerHTML = `
+        <div class="card-face card-back"></div>
+        <div class="card-face card-front">
+          <span class="card-emoji">${item.emoji}</span>
+          <span class="card-name">${item.name}</span>
+          <span class="card-trait">${item.trait}</span>
+        </div>
+      `;
+
+      card.addEventListener('click', () => handleCardClick(card));
+    }
+
     gameBoard.appendChild(card);
   });
 }
@@ -185,7 +165,7 @@ function resetTurn() {
   [firstCard, lockBoard] = [null, false];
 }
 
-// Difficulty selector click handler
+// Difficulty Selector Event Handlers
 diffButtons.forEach((btn) => {
   btn.addEventListener('click', (e) => {
     diffButtons.forEach((b) => b.classList.remove('active'));
