@@ -1,30 +1,32 @@
-// Dataset of Pets and Toys
+// Dataset of Domestic Pets, Toys & Care Items
 const itemsPool = [
-  // --- Pets ---
+  // --- Domestic Pets ---
   { emoji: '🐶', name: 'Milo', trait: 'Dog' },
   { emoji: '🐱', name: 'Luna', trait: 'Cat' },
   { emoji: '🐰', name: 'Barnaby', trait: 'Rabbit' },
   { emoji: '🦜', name: 'Cleo', trait: 'Parrot' },
   { emoji: '🐹', name: 'Peanut', trait: 'Hamster' },
-  { emoji: '🐢', name: 'Shelby', trait: 'Turtle' },
-  { emoji: '🐕', name: 'Bella', trait: 'Senior Dog' },
+  { emoji: '🐢', name: 'Shelby', trait: 'Pet Turtle' },
+  { emoji: '🐕', name: 'Bella', trait: 'Golden Retriever' },
   { emoji: '🐈', name: 'Oliver', trait: 'Tabby Cat' },
-  { emoji: '🦊', name: 'Rusty', trait: 'Fox' },
-  { emoji: '🐼', name: 'Panda', trait: 'Panda' },
-  { emoji: '🦔', name: 'Spike', trait: 'Hedgehog' },
-  { emoji: '🐨', name: 'Koa', trait: 'Koala' },
+  { emoji: '🐩', name: 'Pippa', trait: 'Poodle' },
+  { emoji: '🐤', name: 'Sunny', trait: 'Canary' },
+  { emoji: '🐁', name: 'Nibbles', trait: 'Pet Mouse' },
+  { emoji: '🐾', name: 'Paws', trait: 'Puppy' },
 
-  // --- Toys & Items ---
+  // --- Pet Toys, Snacks & Care Items ---
   { emoji: '🎾', name: 'Tennis Ball', trait: 'Toy' },
   { emoji: '🧸', name: 'Teddy Bear', trait: 'Toy' },
   { emoji: '🦴', name: 'Chew Bone', trait: 'Toy' },
   { emoji: '🧶', name: 'Yarn Ball', trait: 'Toy' },
   { emoji: '🪀', name: 'Squeaky Ring', trait: 'Toy' },
   { emoji: '🥕', name: 'Chew Carrot', trait: 'Toy' },
-  { emoji: '🐟', name: 'Fish Treat', trait: 'Snack' },
   { emoji: '🛏️', name: 'Pet Bed', trait: 'Item' },
-  { emoji: '📦', name: 'Cat Box', trait: 'Toy' },
-  { emoji: '🪶', name: 'Feather Wand', trait: 'Toy' }
+  { emoji: '📦', name: 'Scratch Box', trait: 'Toy' },
+  { emoji: '🪶', name: 'Feather Wand', trait: 'Toy' },
+  { emoji: '🥣', name: 'Pet Bowl', trait: 'Item' },
+  { emoji: '🔔', name: 'Collar Bell', trait: 'Item' },
+  { emoji: '🥓', name: 'Crunchy Treat', trait: 'Snack' }
 ];
 
 // Grid Configurations
