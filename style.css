@@ -1,27 +1,25 @@
 :root {
-  /* Comfort & Warm Neutrals */
-  --bg-warm: #FFF6E9;          /* Cream background */
-  --card-white: #FFFFFF;        /* Game container background */
-  --light-cream: #F7E9C6;       /* Subtle stats & option backgrounds */
-  --primary-dark: #2D2D2D;      /* Charcoal text */
-  --text-muted: #666666;        /* Subtitle text */
+  /* Comfort Base Layer (Calming, Low Eye Strain) */
+  --bg-comfort-outer: #FFF6E9;      /* Warm soft cream */
+  --bg-comfort-inner: #FFFFFF;      /* Crisp container focus */
+  --bg-comfort-subtle: #F7E9C6;     /* Light cream for quiet UI regions */
+  
+  /* Warm Accent Layer (Actionable, Inviting, Lively) */
+  --peach-beige: #F8C5A0;          /* Card back base */
+  --peach-gradient: linear-gradient(135deg, #F8C5A0 0%, #FFB84E 100%); /* Warm card sheen */
+  --goldenrod: #FFB84E;            /* Main button CTA */
+  --goldenrod-glow: rgba(255, 184, 78, 0.35);
+  --coral-orange: #F57550;         /* High-energy stats & badges */
 
-  /* Warm Primary & Accent Colors */
-  --peach-beige: #F8C5A0;      /* Card back & soft badges */
-  --goldenrod: #FFB84E;        /* Buttons & interactive elements */
-  --goldenrod-hover: #F0A53A;  /* Hover state for buttons */
-  --coral-orange: #F57550;     /* Stat values & highlight badges */
+  /* Balancing Anchors & State Indicators */
+  --deep-teal: #43756B;            /* Crisp dark anchor text & links */
+  --charcoal: #2D2D2D;             /* Main body text */
+  --sage-green: #B1B298;           /* Peaceful matched state border */
+  --matched-bg: #F4F7F2;           /* Soothing matched card fill */
 
-  /* Grounding & Complementary Tones */
-  --deep-teal: #43756B;        /* High-contrast headings, links, records */
-  --deep-teal-hover: #366058;  /* Quiz button hover state */
-  --powder-blue: #90C6CF;      /* Card front background tint */
-  --sage-green: #B1B298;       /* Matched card state border */
-  --matched-bg: #F4F7F2;       /* Matched card soft green background */
-
-  /* Shadows & Typography */
-  --shadow-soft: 0 12px 32px rgba(45, 45, 45, 0.08);
-  --shadow-card: 0 6px 16px rgba(0, 0, 0, 0.06);
+  /* Shadows & Radius */
+  --shadow-soft: 0 16px 36px rgba(67, 117, 107, 0.08);
+  --shadow-card: 0 6px 14px rgba(45, 45, 45, 0.07);
   --font-main: 'Fredoka', sans-serif;
 }
 
@@ -31,10 +29,11 @@
   box-sizing: border-box;
 }
 
+/* COMFORT BASE: Background uses a gentle warm radial gradient */
 body {
-  background-color: var(--bg-warm);
+  background: radial-gradient(circle at 50% 30%, #FFFDF9 0%, var(--bg-comfort-outer) 100%);
   font-family: var(--font-main);
-  color: var(--primary-dark);
+  color: var(--charcoal);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -43,12 +42,13 @@ body {
   padding: 16px;
 }
 
-/* Main Container */
+/* COMFORT FRAME: Elevated white canvas keeps game focus clear */
 .game-container {
   width: 100%;
   max-width: 520px;
   min-height: 520px;
-  background: var(--card-white);
+  background: var(--bg-comfort-inner);
+  border: 2px solid var(--bg-comfort-subtle);
   border-radius: 28px;
   box-shadow: var(--shadow-soft);
   padding: 24px 20px;
@@ -64,9 +64,10 @@ body {
 .game-container.container-medium { max-width: 580px; }
 .game-container.container-hard { max-width: 720px; }
 
+/* BRAND BADGE: Muted comfort pill */
 .brand-badge {
   display: inline-block;
-  background: var(--light-cream);
+  background: var(--bg-comfort-subtle);
   color: var(--deep-teal);
   font-weight: 600;
   font-size: 0.85rem;
@@ -79,12 +80,12 @@ body {
   font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 6px;
-  color: var(--primary-dark);
+  color: var(--charcoal);
 }
 
 .subtitle {
   font-size: 0.9rem;
-  color: var(--text-muted);
+  color: #666;
   margin-bottom: 12px;
 }
 
@@ -93,9 +94,9 @@ body {
 }
 
 .diff-btn {
-  background: var(--bg-warm);
+  background: var(--bg-comfort-outer);
   border: 1px solid var(--peach-beige);
-  color: var(--primary-dark);
+  color: var(--charcoal);
   font-family: var(--font-main);
   font-weight: 600;
   font-size: 0.85rem;
@@ -106,16 +107,16 @@ body {
 }
 
 .diff-btn:hover {
-  background: var(--light-cream);
+  background: var(--bg-comfort-subtle);
   color: var(--deep-teal);
 }
 
-/* Stats Bar */
+/* STATS BAR: Soft comfort background with WARM energy numbers */
 .stats-bar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 6px;
-  background: var(--bg-warm);
+  background: var(--bg-comfort-outer);
   border-radius: 16px;
   padding: 8px 6px;
   margin-bottom: 16px;
@@ -129,39 +130,29 @@ body {
 .stat-label {
   font-size: 0.65rem;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: #888;
   font-weight: 600;
 }
 
+/* Warm Coral Orange draws quick eyes to game stats */
 .stat-value {
   font-size: 1rem;
   font-weight: 700;
   color: var(--coral-orange);
 }
 
-/* Grid Layout Modes */
+/* GAME BOARD */
 .game-board {
   display: grid;
   margin-bottom: 16px;
   perspective: 1000px;
 }
 
-.game-board.mode-easy {
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
+.game-board.mode-easy { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.game-board.mode-medium { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.game-board.mode-hard { grid-template-columns: repeat(6, 1fr); gap: 6px; }
 
-.game-board.mode-medium {
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-
-.game-board.mode-hard {
-  grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
-}
-
-/* Card Styles */
+/* CARD ARCHITECTURE */
 .card {
   width: 100%;
   aspect-ratio: 1 / 1;
@@ -169,7 +160,7 @@ body {
   transform-style: preserve-3d;
   transition: transform 0.4s ease;
   cursor: pointer;
-  border-radius: 12px;
+  border-radius: 14px;
 }
 
 .card.flipped {
@@ -181,7 +172,7 @@ body {
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 12px;
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -190,21 +181,22 @@ body {
   box-shadow: var(--shadow-card);
 }
 
-/* Warm Card Back */
+/* WARM CARD BACK: Inviting gradient with tactile feel */
 .card-back {
-  background: var(--peach-beige);
-  color: var(--primary-dark);
+  background: var(--peach-gradient);
+  color: var(--charcoal);
+  border: 2px solid #FFFFFF;
 }
 
 .card-back::after {
   content: '🐾';
-  opacity: 0.7;
+  opacity: 0.75;
 }
 
-/* Revealed Card Front */
+/* REVEALED CARD FRONT: Neutral clean canvas to highlight emojis */
 .card-front {
   background: #FFFFFF;
-  border: 2px solid var(--powder-blue);
+  border: 2px solid #90C6CF;
   transform: rotateY(180deg);
   padding: 2px;
 }
@@ -222,45 +214,48 @@ body {
 .mode-hard .card-back { font-size: 1.1rem; }
 .mode-hard .card-emoji { font-size: 1.3rem; }
 .mode-hard .card-name { font-size: 0.55rem; font-weight: 600; }
-.mode-hard .card-trait { font-size: 0.5rem; color: var(--deep-teal); }
+.mode-hard .card-trait { font-size: 0.50rem; color: var(--deep-teal); }
 
-/* Matched Card State */
+/* MATCHED STATE: Soothing resolution transition */
 .card.matched .card-front {
   background: var(--matched-bg);
   border-color: var(--sage-green);
+  opacity: 0.85;
 }
 
 .card.matched {
   cursor: default;
 }
 
-/* Action Button */
+/* ACTION BUTTONS: Warm Goldenrod with tactile depth */
 .btn-reset {
   background: var(--goldenrod);
-  color: var(--primary-dark);
+  color: var(--charcoal);
   border: none;
-  padding: 10px 24px;
+  padding: 12px 28px;
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 700;
   font-family: var(--font-main);
   border-radius: 30px;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 4px 12px var(--goldenrod-glow);
+  transition: all 0.2s ease;
 }
 
 .btn-reset:hover {
-  background: var(--goldenrod-hover);
   transform: translateY(-2px);
+  box-shadow: 0 6px 16px var(--goldenrod-glow);
+  background: #F0A53A;
 }
 
-/* Modal Overlay & Start Screen */
+/* MODAL OVERLAY */
 .modal-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 246, 233, 0.98); /* Cream overlay tone */
+  background: rgba(255, 246, 233, 0.97);
   border-radius: 28px;
   display: flex;
   flex-direction: column;
@@ -296,7 +291,7 @@ body {
 }
 
 .start-diff-btn {
-  background: var(--card-white);
+  background: #FFFFFF;
   border: 2px solid var(--peach-beige);
   border-radius: 14px;
   padding: 10px 14px;
@@ -309,7 +304,7 @@ body {
 }
 
 .start-diff-btn:hover {
-  background: var(--light-cream);
+  background: var(--bg-comfort-subtle);
   border-color: var(--goldenrod);
   transform: translateY(-2px);
 }
@@ -318,12 +313,12 @@ body {
   font-family: var(--font-main);
   font-size: 1rem;
   font-weight: 700;
-  color: var(--primary-dark);
+  color: var(--charcoal);
 }
 
 .diff-desc {
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: #666;
   margin: 1px 0 3px;
 }
 
@@ -334,7 +329,7 @@ body {
 }
 
 .record-badge {
-  background: var(--light-cream);
+  background: var(--bg-comfort-subtle);
   color: var(--coral-orange);
   border: 1px solid var(--peach-beige);
   padding: 6px 16px;
@@ -345,8 +340,8 @@ body {
 }
 
 .modal-icon { font-size: 2.5rem; margin-bottom: 6px; }
-.modal-title { font-size: 1.4rem; margin-bottom: 4px; color: var(--primary-dark); }
-.modal-text { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; line-height: 1.3; }
+.modal-title { font-size: 1.4rem; margin-bottom: 4px; color: var(--charcoal); }
+.modal-text { font-size: 0.85rem; color: #666; margin-bottom: 10px; line-height: 1.3; }
 
 .modal-btn {
   background: var(--deep-teal);
@@ -361,5 +356,5 @@ body {
 }
 
 .modal-btn:hover {
-  background: var(--deep-teal-hover);
+  background: #366058;
 }
