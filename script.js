@@ -1,4 +1,4 @@
-// Rescue Animals dataset with names and traits
+// Expanded rescue animals dataset to support up to 12 pairs (Hard Mode)
 const pets = [
   { emoji: '🐶', name: 'Milo', trait: 'Energetic' },
   { emoji: '🐱', name: 'Luna', trait: 'Cuddly' },
@@ -7,8 +7,19 @@ const pets = [
   { emoji: '🐹', name: 'Peanut', trait: 'Curious' },
   { emoji: '🐢', name: 'Shelby', trait: 'Calm' },
   { emoji: '🐕', name: 'Bella', trait: 'Senior Love' },
-  { emoji: '🐈', name: 'Oliver', trait: 'Acrobatic' }
+  { emoji: '🐈', name: 'Oliver', trait: 'Acrobatic' },
+  { emoji: '🦊', name: 'Rusty', trait: 'Clever' },
+  { emoji: '🐼', name: 'Panda', trait: 'Chill' },
+  { emoji: '🦔', name: 'Spike', trait: 'Shy' },
+  { emoji: '🐨', name: 'Koa', trait: 'Sleepy' }
 ];
+
+// Difficulty settings defining number of pairs and grid columns
+const difficultyConfigs = {
+  easy: { pairs: 4, cols: 4 },
+  medium: { pairs: 8, cols: 4 },
+  hard: { pairs: 12, cols: 4 }
+};
 
 const gameBoard = document.getElementById('gameBoard');
 const matchesDisplay = document.getElementById('matches');
@@ -17,7 +28,10 @@ const winModal = document.getElementById('winModal');
 const resetBtn = document.getElementById('resetBtn');
 const modalQuizBtn = document.getElementById('modalQuizBtn');
 const modalPlayAgainBtn = document.getElementById('modalPlayAgainBtn');
+const diffButtons = document.querySelectorAll('.diff-btn');
 
+let currentDifficulty = 'medium';
+let targetMatches = 8;
 let cardsDeck = [];
 let firstCard = null;
 let lockBoard = false;
@@ -31,11 +45,19 @@ function initGame() {
   lockBoard = false;
   matchesCount = 0;
   flipsCount = 0;
-  matchesDisplay.textContent = `0 / ${pets.length}`;
+
+  const config = difficultyConfigs[currentDifficulty];
+  targetMatches = config.pairs;
+
+  matchesDisplay.textContent = `0 / ${targetMatches}`;
   flipsDisplay.textContent = '0';
 
-  // Duplicate and shuffle deck
-  cardsDeck = [...pets, ...pets].sort(() => 0.5 - Math.random());
+  // Apply responsive grid columns dynamically
+  gameBoard.style.gridTemplateColumns = `repeat(${config.cols}, 1fr)`;
+
+  // Select pets for selected difficulty level and shuffle
+  const selectedPets = [...pets].sort(() => 0.5 - Math.random()).slice(0, targetMatches);
+  cardsDeck = [...selectedPets, ...selectedPets].sort(() => 0.5 - Math.random());
 
   // Render cards
   cardsDeck.forEach((pet) => {
@@ -80,11 +102,11 @@ function checkMatch(secondCard) {
     firstCard.classList.add('matched');
     secondCard.classList.add('matched');
     matchesCount++;
-    matchesDisplay.textContent = `${matchesCount} / ${pets.length}`;
+    matchesDisplay.textContent = `${matchesCount} / ${targetMatches}`;
 
     resetTurn();
 
-    if (matchesCount === pets.length) {
+    if (matchesCount === targetMatches) {
       setTimeout(() => winModal.classList.add('active'), 600);
     }
   } else {
@@ -99,6 +121,16 @@ function checkMatch(secondCard) {
 function resetTurn() {
   [firstCard, lockBoard] = [null, false];
 }
+
+// Difficulty Selector Handlers
+diffButtons.forEach((btn) => {
+  btn.addEventListener('click', (e) => {
+    diffButtons.forEach((b) => b.classList.remove('active'));
+    e.target.classList.add('active');
+    currentDifficulty = e.target.dataset.level;
+    initGame();
+  });
+});
 
 // Event Listeners
 resetBtn.addEventListener('click', initGame);
