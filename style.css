@@ -1,255 +1,39 @@
-:root {
-  --bg-warm: #faf5ef;
-  --card-white: #ffffff;
-  --primary-dark: #2b2d42;
-  --terracotta: #e87a5d;
-  --terracotta-hover: #d6684b;
-  --peach-light: #fde8e1;
-  --teal-accent: #5c9e99;
-  --teal-light: #e6f2f1;
-  --sage-green: #7bae7f;
-  --gold-star: #f4a261;
-  --shadow-soft: 0 12px 32px rgba(43, 45, 66, 0.08);
-  --shadow-card: 0 6px 16px rgba(0, 0, 0, 0.06);
-  --font-main: 'Fredoka', sans-serif;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  background-color: var(--bg-warm);
-  font-family: var(--font-main);
-  color: var(--primary-dark);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 16px;
-}
-
+/* Container dimensions - Added min-height so the modal has plenty of space */
 .game-container {
   width: 100%;
   max-width: 520px;
+  min-height: 560px; /* Ensures the container is tall enough for the start modal */
   background: var(--card-white);
   border-radius: 28px;
   box-shadow: var(--shadow-soft);
-  padding: 28px 20px;
+  padding: 24px 20px;
   text-align: center;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   transition: max-width 0.3s ease;
 }
 
-.game-container.container-medium { max-width: 580px; }
-.game-container.container-hard { max-width: 720px; }
-
-.brand-badge {
-  display: inline-block;
-  background: var(--peach-light);
-  color: var(--terracotta);
-  font-weight: 600;
-  font-size: 0.9rem;
-  padding: 6px 16px;
-  border-radius: 20px;
-  margin-bottom: 12px;
-}
-
-.title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.subtitle {
-  font-size: 0.95rem;
-  color: #6c757d;
-  margin-bottom: 16px;
-}
-
-.difficulty-bar {
-  margin-bottom: 16px;
-}
-
-.diff-btn {
-  background: var(--bg-warm);
-  border: 1px solid #e0e0e0;
-  color: var(--primary-dark);
-  font-family: var(--font-main);
-  font-weight: 600;
-  font-size: 0.85rem;
-  padding: 8px 18px;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.diff-btn:hover {
-  background: var(--peach-light);
-  color: var(--terracotta);
-}
-
-/* Stats Bar */
-.stats-bar {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-  background: var(--bg-warm);
-  border-radius: 16px;
-  padding: 10px 8px;
-  margin-bottom: 20px;
-}
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-}
-
-.stat-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  color: #8d99ae;
-  font-weight: 600;
-}
-
-.stat-value {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--terracotta);
-}
-
-/* Grid Layout Modes */
-.game-board {
-  display: grid;
-  margin-bottom: 24px;
-  perspective: 1000px;
-}
-
-.game-board.mode-easy {
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-
-.game-board.mode-medium {
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
-
-.game-board.mode-hard {
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-}
-
-/* Card Styles */
-.card {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.4s ease;
-  cursor: pointer;
-  border-radius: 14px;
-}
-
-.card.flipped {
-  transform: rotateY(180deg);
-}
-
-.card-face {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  border-radius: 14px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  user-select: none;
-  box-shadow: var(--shadow-card);
-}
-
-.card-back {
-  background: var(--terracotta);
-  color: white;
-}
-
-.card-back::after {
-  content: '🐾';
-  opacity: 0.8;
-}
-
-.card-front {
-  background: var(--teal-light);
-  border: 2px solid var(--teal-accent);
-  transform: rotateY(180deg);
-  padding: 2px;
-}
-
-.mode-easy .card-back { font-size: 1.8rem; }
-.mode-easy .card-emoji { font-size: 2.2rem; }
-.mode-easy .card-name { font-size: 0.75rem; font-weight: 600; }
-.mode-easy .card-trait { font-size: 0.65rem; color: var(--teal-accent); }
-
-.mode-medium .card-back { font-size: 1.5rem; }
-.mode-medium .card-emoji { font-size: 1.8rem; }
-.mode-medium .card-name { font-size: 0.7rem; font-weight: 600; }
-.mode-medium .card-trait { font-size: 0.6rem; color: var(--teal-accent); }
-
-.mode-hard .card-back { font-size: 1.2rem; }
-.mode-hard .card-emoji { font-size: 1.4rem; }
-.mode-hard .card-name { font-size: 0.6rem; font-weight: 600; }
-.mode-hard .card-trait { font-size: 0.5rem; color: var(--teal-accent); }
-
-.card.matched .card-front {
-  background: #eaf5eb;
-  border-color: var(--sage-green);
-}
-
-.card.matched {
-  cursor: default;
-}
-
-/* Action Buttons */
-.btn-reset {
-  background: var(--terracotta);
-  color: white;
-  border: none;
-  padding: 12px 28px;
-  font-size: 1rem;
-  font-weight: 600;
-  font-family: var(--font-main);
-  border-radius: 30px;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
-}
-
-.btn-reset:hover {
-  background: var(--terracotta-hover);
-  transform: translateY(-2px);
-}
-
-/* Modals Overlay */
+/* Modals Overlay - Updated height & padding to fit all content cleanly */
 .modal-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.97);
+  background: rgba(255, 255, 255, 0.98);
   border-radius: 28px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 24px;
+  padding: 20px 16px;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
   z-index: 10;
+  overflow-y: auto; /* Fallback scrollbar if screen height is very small */
 }
 
 .modal-overlay.active {
@@ -260,20 +44,24 @@ body {
 .start-card {
   width: 100%;
   max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .start-diff-options {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 10px; /* Reduced gap slightly */
+  margin-top: 12px;
+  width: 100%;
 }
 
 .start-diff-btn {
   background: var(--bg-warm);
   border: 2px solid #ebd3c8;
-  border-radius: 18px;
-  padding: 14px 20px;
+  border-radius: 16px;
+  padding: 10px 16px; /* Adjusted padding so buttons fit inside the boundary */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -285,47 +73,4 @@ body {
   background: var(--peach-light);
   border-color: var(--terracotta);
   transform: translateY(-2px);
-}
-
-.diff-title {
-  font-family: var(--font-main);
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--primary-dark);
-}
-
-.diff-desc {
-  font-size: 0.8rem;
-  color: #6c757d;
-  margin: 2px 0 4px;
-}
-
-.diff-record {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--teal-accent);
-}
-
-.record-badge {
-  background: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffeeba;
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  margin-bottom: 16px;
-}
-
-.modal-icon { font-size: 3.2rem; margin-bottom: 10px; }
-.modal-title { font-size: 1.6rem; margin-bottom: 8px; }
-.modal-text { font-size: 0.95rem; color: #555; margin-bottom: 16px; line-height: 1.4; }
-.modal-btn {
-  background: var(--teal-accent);
-  color: white;
-  text-decoration: none;
-  padding: 12px 24px;
-  font-weight: 600;
-  border-radius: 24px;
-  margin-bottom: 12px;
 }
