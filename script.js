@@ -13,8 +13,6 @@ const itemsPool = [
   { emoji: '🐼', name: 'Panda', trait: 'Panda' },
   { emoji: '🦔', name: 'Spike', trait: 'Hedgehog' },
   { emoji: '🐨', name: 'Koa', trait: 'Koala' },
-  { emoji: '🐠', name: 'Finny', trait: 'Fish' },
-  { emoji: '🦎', name: 'Ziggy', trait: 'Lizard' },
 
   // --- Toys & Items ---
   { emoji: '🎾', name: 'Tennis Ball', trait: 'Toy' },
@@ -22,8 +20,6 @@ const itemsPool = [
   { emoji: '🦴', name: 'Chew Bone', trait: 'Toy' },
   { emoji: '🧶', name: 'Yarn Ball', trait: 'Toy' },
   { emoji: '🪀', name: 'Squeaky Ring', trait: 'Toy' },
-  { emoji: '🪁', name: 'Kite', trait: 'Toy' },
-  { emoji: '🔔', name: 'Bell Toy', trait: 'Toy' },
   { emoji: '🥕', name: 'Chew Carrot', trait: 'Toy' },
   { emoji: '🐟', name: 'Fish Treat', trait: 'Snack' },
   { emoji: '🛏️', name: 'Pet Bed', trait: 'Item' },
@@ -33,9 +29,9 @@ const itemsPool = [
 
 // Grid Configurations
 const difficultyConfigs = {
-  easy: { rows: 3, cols: 3, pairs: 4, hasCenter: true },   // 3x3 = 8 cards (4 pairs) + 1 center tile
-  medium: { rows: 4, cols: 4, pairs: 8, hasCenter: false }, // 4x4 = 16 cards (8 pairs)
-  hard: { rows: 5, cols: 5, pairs: 12, hasCenter: true }   // 5x5 = 24 cards (12 pairs) + 1 center tile
+  easy: { pairs: 6 },   // 3x4 grid = 12 cards = 6 pairs
+  medium: { pairs: 8 }, // 4x4 grid = 16 cards = 8 pairs
+  hard: { pairs: 15 }   // 5x6 grid = 30 cards = 15 pairs
 };
 
 const gameContainer = document.getElementById('gameContainer');
@@ -49,7 +45,7 @@ const modalPlayAgainBtn = document.getElementById('modalPlayAgainBtn');
 const diffButtons = document.querySelectorAll('.diff-btn');
 
 let currentDifficulty = 'easy';
-let targetMatches = 4;
+let targetMatches = 6;
 let cardsDeck = [];
 let firstCard = null;
 let lockBoard = false;
@@ -64,13 +60,12 @@ function initGame() {
   matchesCount = 0;
   flipsCount = 0;
 
-  const config = difficultyConfigs[currentDifficulty];
-  targetMatches = config.pairs;
+  targetMatches = difficultyConfigs[currentDifficulty].pairs;
 
   matchesDisplay.textContent = `0 / ${targetMatches}`;
   flipsDisplay.textContent = '0';
 
-  // Apply responsive grid layout classes
+  // Apply grid layout classes
   gameBoard.className = `game-board mode-${currentDifficulty}`;
   gameContainer.className = `game-container container-${currentDifficulty}`;
 
@@ -78,46 +73,22 @@ function initGame() {
   const selectedItems = [...itemsPool].sort(() => 0.5 - Math.random()).slice(0, targetMatches);
   cardsDeck = [...selectedItems, ...selectedItems].sort(() => 0.5 - Math.random());
 
-  // Insert "Rescue HQ" Free Space tile in the exact center for odd-numbered grids
-  if (config.hasCenter) {
-    const centerIndex = Math.floor((config.rows * config.cols) / 2);
-    cardsDeck.splice(centerIndex, 0, {
-      isCenter: true,
-      emoji: '🏡',
-      name: 'Rescue HQ',
-      trait: 'Free Space'
-    });
-  }
-
   // Render cards
   cardsDeck.forEach((item) => {
     const card = document.createElement('div');
+    card.classList.add('card');
+    card.dataset.name = item.name;
 
-    if (item.isCenter) {
-      card.classList.add('card', 'center-tile', 'flipped', 'matched');
-      card.innerHTML = `
-        <div class="card-face card-front">
-          <span class="card-emoji">${item.emoji}</span>
-          <span class="card-name">${item.name}</span>
-          <span class="card-trait">${item.trait}</span>
-        </div>
-      `;
-    } else {
-      card.classList.add('card');
-      card.dataset.name = item.name;
+    card.innerHTML = `
+      <div class="card-face card-back"></div>
+      <div class="card-face card-front">
+        <span class="card-emoji">${item.emoji}</span>
+        <span class="card-name">${item.name}</span>
+        <span class="card-trait">${item.trait}</span>
+      </div>
+    `;
 
-      card.innerHTML = `
-        <div class="card-face card-back"></div>
-        <div class="card-face card-front">
-          <span class="card-emoji">${item.emoji}</span>
-          <span class="card-name">${item.name}</span>
-          <span class="card-trait">${item.trait}</span>
-        </div>
-      `;
-
-      card.addEventListener('click', () => handleCardClick(card));
-    }
-
+    card.addEventListener('click', () => handleCardClick(card));
     gameBoard.appendChild(card);
   });
 }
