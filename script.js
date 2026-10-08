@@ -31,16 +31,18 @@ const itemsPool = [
 
 // Grid Configurations
 const difficultyConfigs = {
-  easy: { pairs: 6 },   // 3x4 grid = 12 cards = 6 pairs
-  medium: { pairs: 8 }, // 4x4 grid = 16 cards = 8 pairs
-  hard: { pairs: 15 }   // 5x6 grid = 30 cards = 15 pairs
+  easy: { pairs: 6 },   // 3x4 grid = 12 cards
+  medium: { pairs: 8 }, // 4x4 grid = 16 cards
+  hard: { pairs: 15 }   // 5x6 grid = 30 cards
 };
 
 const gameContainer = document.getElementById('gameContainer');
 const gameBoard = document.getElementById('gameBoard');
 const matchesDisplay = document.getElementById('matches');
 const flipsDisplay = document.getElementById('flips');
+const timerDisplay = document.getElementById('timer');
 const winModal = document.getElementById('winModal');
+const winStatsText = document.getElementById('winStatsText');
 const resetBtn = document.getElementById('resetBtn');
 const modalQuizBtn = document.getElementById('modalQuizBtn');
 const modalPlayAgainBtn = document.getElementById('modalPlayAgainBtn');
@@ -54,7 +56,37 @@ let lockBoard = false;
 let matchesCount = 0;
 let flipsCount = 0;
 
+// Timer state
+let timerInterval = null;
+let secondsElapsed = 0;
+let isTimerRunning = false;
+
+function formatTime(totalSeconds) {
+  const mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+  const secs = (totalSeconds % 60).toString().padStart(2, '0');
+  return `${mins}:${secs}`;
+}
+
+function startTimer() {
+  if (isTimerRunning) return;
+  isTimerRunning = true;
+  timerInterval = setInterval(() => {
+    secondsElapsed++;
+    timerDisplay.textContent = formatTime(secondsElapsed);
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  isTimerRunning = false;
+}
+
 function initGame() {
+  stopTimer();
+  secondsElapsed = 0;
+  isTimerRunning = false;
+  timerDisplay.textContent = '00:00';
+
   gameBoard.innerHTML = '';
   winModal.classList.remove('active');
   firstCard = null;
@@ -67,15 +99,12 @@ function initGame() {
   matchesDisplay.textContent = `0 / ${targetMatches}`;
   flipsDisplay.textContent = '0';
 
-  // Apply grid layout classes
   gameBoard.className = `game-board mode-${currentDifficulty}`;
   gameContainer.className = `game-container container-${currentDifficulty}`;
 
-  // Pick random items for current level pairs and duplicate them
   const selectedItems = [...itemsPool].sort(() => 0.5 - Math.random()).slice(0, targetMatches);
   cardsDeck = [...selectedItems, ...selectedItems].sort(() => 0.5 - Math.random());
 
-  // Render cards
   cardsDeck.forEach((item) => {
     const card = document.createElement('div');
     card.classList.add('card');
@@ -97,6 +126,11 @@ function initGame() {
 
 function handleCardClick(card) {
   if (lockBoard || card === firstCard || card.classList.contains('matched') || card.classList.contains('flipped')) return;
+
+  // Start timer on first card click
+  if (!isTimerRunning) {
+    startTimer();
+  }
 
   card.classList.add('flipped');
   flipsCount++;
@@ -123,6 +157,8 @@ function checkMatch(secondCard) {
     resetTurn();
 
     if (matchesCount === targetMatches) {
+      stopTimer();
+      winStatsText.textContent = `You finished in ${formatTime(secondsElapsed)} with ${flipsCount} flips!`;
       setTimeout(() => winModal.classList.add('active'), 600);
     }
   } else {
@@ -138,7 +174,6 @@ function resetTurn() {
   [firstCard, lockBoard] = [null, false];
 }
 
-// Difficulty Selector Event Handlers
 diffButtons.forEach((btn) => {
   btn.addEventListener('click', (e) => {
     diffButtons.forEach((b) => b.classList.remove('active'));
