@@ -21,6 +21,7 @@
       <button class="diff-btn" data-level="hard">Hard (5x6)</button>
     </div>
 
+    <!-- Stats Bar with Timer -->
     <div class="stats-bar">
       <div class="stat-item">
         <span class="stat-label">Matches</span>
@@ -29,6 +30,10 @@
       <div class="stat-item">
         <span class="stat-label">Flips</span>
         <span class="stat-value" id="flips">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Time</span>
+        <span class="stat-value" id="timer">00:00</span>
       </div>
     </div>
 
@@ -40,9 +45,7 @@
     <div class="modal-overlay" id="winModal">
       <div class="modal-icon">🏡❤️</div>
       <h2 class="modal-title">Every Pet Found a Match!</h2>
-      <p class="modal-text">
-        Just like in our game, every shelter animal deserves a loving home matched to their unique personality and needs.
-      </p>
+      <p class="modal-text" id="winStatsText">You matched all pets!</p>
       <a href="#quiz" class="modal-btn" id="modalQuizBtn">Take the "Which Pet Is Right for You?" Quiz</a>
       <button class="btn-reset" id="modalPlayAgainBtn">Play Again</button>
     </div>
