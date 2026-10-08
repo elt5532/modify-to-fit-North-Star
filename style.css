@@ -1,5 +1,4 @@
 :root {
-  /* Brand Color Palette derived from PetMatch Style Guide */
   --bg-warm: #faf5ef;
   --card-white: #ffffff;
   --primary-dark: #2b2d42;
@@ -29,18 +28,28 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: 24px;
+  padding: 16px;
 }
 
+/* Container scales width based on mode */
 .game-container {
-  max-width: 640px;
   width: 100%;
+  max-width: 600px;
   background: var(--card-white);
   border-radius: 28px;
   box-shadow: var(--shadow-soft);
-  padding: 36px 28px;
+  padding: 28px 20px;
   text-align: center;
   position: relative;
+  transition: max-width 0.3s ease;
+}
+
+.game-container.container-medium {
+  max-width: 800px;
+}
+
+.game-container.container-hard {
+  max-width: 980px;
 }
 
 .brand-badge {
@@ -52,21 +61,51 @@ body {
   padding: 6px 16px;
   border-radius: 20px;
   margin-bottom: 12px;
-  letter-spacing: 0.5px;
 }
 
 .title {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--primary-dark);
   margin-bottom: 8px;
 }
 
 .subtitle {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #6c757d;
-  margin-bottom: 24px;
-  line-height: 1.4;
+  margin-bottom: 18px;
+}
+
+/* Difficulty Buttons */
+.difficulty-bar {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.diff-btn {
+  background: var(--bg-warm);
+  border: 2px solid transparent;
+  color: var(--primary-dark);
+  font-family: var(--font-main);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.diff-btn:hover {
+  background: var(--peach-light);
+  color: var(--terracotta);
+}
+
+.diff-btn.active {
+  background: var(--terracotta);
+  color: white;
+  box-shadow: 0 4px 10px rgba(232, 122, 93, 0.25);
 }
 
 /* Stats Board */
@@ -75,47 +114,59 @@ body {
   justify-content: space-around;
   background: var(--bg-warm);
   border-radius: 16px;
-  padding: 12px 20px;
-  margin-bottom: 28px;
+  padding: 10px 20px;
+  margin-bottom: 20px;
 }
 
 .stat-item {
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 .stat-label {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   color: #8d99ae;
   font-weight: 600;
 }
 
 .stat-value {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: var(--terracotta);
 }
 
-/* Game Board Grid */
+/* Board Grid Layouts */
 .game-board {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   perspective: 1000px;
 }
 
-/* Flip Card Styles */
+.game-board.mode-easy {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.game-board.mode-medium {
+  grid-template-columns: repeat(8, 1fr);
+  gap: 6px;
+}
+
+.game-board.mode-hard {
+  grid-template-columns: repeat(12, 1fr);
+  gap: 4px;
+}
+
+/* Flip Card Base Styles */
 .card {
   width: 100%;
   aspect-ratio: 1 / 1;
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 0.5s ease;
+  transition: transform 0.4s ease;
   cursor: pointer;
-  border-radius: 18px;
+  border-radius: 12px;
 }
 
 .card.flipped {
@@ -127,7 +178,7 @@ body {
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 18px;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -136,11 +187,9 @@ body {
   box-shadow: var(--shadow-card);
 }
 
-/* Card Back (Hidden state) */
 .card-back {
   background: var(--terracotta);
   color: white;
-  font-size: 1.8rem;
 }
 
 .card-back::after {
@@ -148,37 +197,33 @@ body {
   opacity: 0.8;
 }
 
-.card:hover .card-back {
-  background: var(--terracotta-hover);
-}
-
-/* Card Front (Revealed state) */
 .card-front {
   background: var(--teal-light);
-  border: 3px solid var(--teal-accent);
+  border: 2px solid var(--teal-accent);
   transform: rotateY(180deg);
-  padding: 6px;
+  padding: 2px;
 }
 
-.card-emoji {
-  font-size: 2.2rem;
-  line-height: 1;
-  margin-bottom: 4px;
-}
+/* Scaled elements per mode */
+/* Easy (4x4) */
+.mode-easy .card-back { font-size: 1.8rem; }
+.mode-easy .card-emoji { font-size: 2.2rem; }
+.mode-easy .card-name { font-size: 0.75rem; font-weight: 600; }
+.mode-easy .card-trait { font-size: 0.65rem; color: var(--teal-accent); }
 
-.card-name {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--primary-dark);
-}
+/* Medium (8x8) */
+.mode-medium .card-back { font-size: 1.1rem; }
+.mode-medium .card-emoji { font-size: 1.3rem; }
+.mode-medium .card-name { font-size: 0.55rem; font-weight: 600; }
+.mode-medium .card-trait { display: none; }
 
-.card-trait {
-  font-size: 0.65rem;
-  color: var(--teal-accent);
-  font-weight: 500;
-}
+/* Hard (12x12) */
+.mode-hard .card-back { font-size: 0.8rem; }
+.mode-hard .card-emoji { font-size: 0.95rem; }
+.mode-hard .card-name { display: none; }
+.mode-hard .card-trait { display: none; }
 
-/* Matched State */
+/* Matched Card State */
 .card.matched .card-front {
   background: #eaf5eb;
   border-color: var(--sage-green);
@@ -188,7 +233,7 @@ body {
   cursor: default;
 }
 
-/* Action Buttons */
+/* Action Button */
 .btn-reset {
   background: var(--terracotta);
   color: white;
@@ -200,7 +245,6 @@ body {
   border-radius: 30px;
   cursor: pointer;
   transition: background 0.2s ease, transform 0.1s ease;
-  box-shadow: 0 4px 12px rgba(232, 122, 93, 0.3);
 }
 
 .btn-reset:hover {
@@ -208,7 +252,7 @@ body {
   transform: translateY(-2px);
 }
 
-/* Modal Call-To-Action Overlay */
+/* Win Modal Overlay */
 .modal-overlay {
   position: absolute;
   top: 0;
@@ -233,24 +277,9 @@ body {
   pointer-events: auto;
 }
 
-.modal-icon {
-  font-size: 3.5rem;
-  margin-bottom: 12px;
-}
-
-.modal-title {
-  font-size: 1.8rem;
-  color: var(--primary-dark);
-  margin-bottom: 10px;
-}
-
-.modal-text {
-  font-size: 1rem;
-  color: #555;
-  margin-bottom: 24px;
-  line-height: 1.5;
-}
-
+.modal-icon { font-size: 3.5rem; margin-bottom: 12px; }
+.modal-title { font-size: 1.8rem; margin-bottom: 10px; }
+.modal-text { font-size: 1rem; color: #555; margin-bottom: 20px; line-height: 1.5; }
 .modal-btn {
   background: var(--teal-accent);
   color: white;
@@ -258,21 +287,5 @@ body {
   padding: 12px 24px;
   font-weight: 600;
   border-radius: 24px;
-  display: inline-block;
   margin-bottom: 12px;
-}
-
-@media (max-width: 480px) {
-  .game-board {
-    gap: 8px;
-  }
-  .card-emoji {
-    font-size: 1.6rem;
-  }
-  .card-name {
-    font-size: 0.65rem;
-  }
-  .card-trait {
-    display: none;
-  }
 }
