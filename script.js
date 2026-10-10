@@ -158,9 +158,6 @@ function initGame() {
     const card = document.createElement('div');
     card.classList.add('card');
     card.dataset.name = item.name;
-    card.setAttribute('tabindex', '0');
-    card.setAttribute('role', 'button');
-    card.setAttribute('aria-label', `Card ${index + 1}: Hidden`);
 
     card.innerHTML = `
       <div class="card-face card-back"></div>
@@ -171,15 +168,7 @@ function initGame() {
       </div>
     `;
 
-    // Mouse & Keyboard Inputs
     card.addEventListener('click', () => handleCardClick(card));
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        handleCardClick(card);
-      }
-    });
-
     gameBoard.appendChild(card);
   });
 }
@@ -210,8 +199,6 @@ function checkMatch(secondCard) {
   if (isMatch) {
     firstCard.classList.add('matched', 'matched-pop');
     secondCard.classList.add('matched', 'matched-pop');
-    firstCard.setAttribute('aria-label', `${firstCard.dataset.name}, Matched`);
-    secondCard.setAttribute('aria-label', `${secondCard.dataset.name}, Matched`);
 
     matchesCount++;
     matchesDisplay.textContent = `${matchesCount} / ${targetMatches}`;
@@ -223,7 +210,6 @@ function checkMatch(secondCard) {
       handleWin();
     }
   } else {
-    // Visual Feedback: Shake effect on mismatch
     firstCard.classList.add('mismatch');
     secondCard.classList.add('mismatch');
 
