@@ -38,6 +38,137 @@ body {
   padding: 16px;
 }
 
+/* FULL SCREEN MODAL OVERLAY (No Scroll) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 246, 233, 0.98);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.start-card {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-icon { 
+  font-size: 2.2rem; 
+  margin-bottom: 4px; 
+}
+
+.modal-title { 
+  font-size: 1.5rem; 
+  margin-bottom: 8px; 
+  color: var(--charcoal); 
+  text-align: center;
+}
+
+.modal-text {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+/* Compact Instructions Box */
+.instructions-box {
+  background: #FFFFFF;
+  border: 1px solid var(--peach-beige);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  width: 100%;
+  text-align: left;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: var(--charcoal);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.instructions-box p + p {
+  margin-top: 4px;
+}
+
+/* Horizontal Difficulty Buttons */
+.start-diff-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.start-diff-btn {
+  background: #FFFFFF;
+  border: 2px solid var(--peach-beige);
+  border-radius: 14px;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+}
+
+.start-diff-btn:hover, 
+.start-diff-btn:focus {
+  background: var(--bg-comfort-subtle);
+  border-color: var(--goldenrod);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.diff-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.diff-title {
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--charcoal);
+}
+
+.diff-desc {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.diff-record {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--deep-teal);
+  background: var(--bg-comfort-outer);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+/* GAME CONTAINER */
 .game-container {
   width: 100%;
   max-width: 520px;
@@ -103,28 +234,6 @@ body {
   outline: none;
 }
 
-/* Instructions Box */
-.instructions-box {
-  background: var(--bg-comfort-outer);
-  border: 1px solid var(--peach-beige);
-  border-radius: 12px;
-  padding: 10px 14px;
-  margin-bottom: 14px;
-  text-align: left;
-  font-size: 0.8rem;
-  line-height: 1.4;
-  color: var(--charcoal);
-}
-
-.instructions-box kbd {
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 1px 5px;
-  font-family: monospace;
-  font-size: 0.75rem;
-}
-
 .stats-bar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -164,7 +273,6 @@ body {
 .game-board.mode-medium { grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .game-board.mode-hard { grid-template-columns: repeat(6, 1fr); gap: 6px; }
 
-/* Responsive Grid Boundary Safeguard */
 @media (max-width: 480px) {
   .game-board.mode-hard {
     grid-template-columns: repeat(5, 1fr);
@@ -180,11 +288,6 @@ body {
   transition: transform 0.4s ease;
   cursor: pointer;
   border-radius: 14px;
-}
-
-.card:focus {
-  outline: 3px solid var(--goldenrod);
-  outline-offset: 2px;
 }
 
 .card.flipped { transform: rotateY(180deg); }
@@ -236,7 +339,6 @@ body {
 .mode-hard .card-name { font-size: 0.55rem; font-weight: 600; }
 .mode-hard .card-trait { font-size: 0.50rem; color: var(--deep-teal); }
 
-/* Keyframe Visual Feedback */
 @keyframes shake {
   0%, 100% { transform: rotateY(180deg) translateX(0); }
   20%, 60% { transform: rotateY(180deg) translateX(-5px); }
@@ -287,85 +389,6 @@ body {
   outline: none;
 }
 
-.modal-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 246, 233, 0.97);
-  border-radius: 28px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 20px 16px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-  z-index: 10;
-  overflow-y: auto;
-}
-
-.modal-overlay.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.start-card {
-  width: 100%;
-  max-width: 380px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.start-diff-options {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-}
-
-.start-diff-btn {
-  background: #FFFFFF;
-  border: 2px solid var(--peach-beige);
-  border-radius: 14px;
-  padding: 10px 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 100%;
-}
-
-.start-diff-btn:hover, .start-diff-btn:focus {
-  background: var(--bg-comfort-subtle);
-  border-color: var(--goldenrod);
-  transform: translateY(-2px);
-  outline: none;
-}
-
-.diff-title {
-  font-family: var(--font-main);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--charcoal);
-}
-
-.diff-desc {
-  font-size: 0.75rem;
-  color: #666;
-  margin: 1px 0 3px;
-}
-
-.diff-record {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--deep-teal);
-}
-
 .record-badge {
   background: var(--bg-comfort-subtle);
   color: var(--coral-orange);
@@ -376,7 +399,3 @@ body {
   font-weight: 700;
   margin-bottom: 12px;
 }
-
-.modal-icon { font-size: 2.5rem; margin-bottom: 6px; }
-.modal-title { font-size: 1.4rem; margin-bottom: 4px; color: var(--charcoal); }
-.modal-text { font-size: 0.85rem; color: #666; margin-bottom: 14px; line-height: 1.3; }
