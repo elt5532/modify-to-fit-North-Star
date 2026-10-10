@@ -19,7 +19,7 @@
       <button class="diff-btn" id="changeDiffBtn">⚙️ Change Level (<span id="currentLevelLabel">Easy 3x4</span>)</button>
     </div>
 
-    <!-- Stats Bar with Timer & Best Record -->
+    <!-- Stats Bar -->
     <div class="stats-bar">
       <div class="stat-item">
         <span class="stat-label">Matches</span>
@@ -39,17 +39,22 @@
       </div>
     </div>
 
-    <div class="game-board mode-easy" id="gameBoard"></div>
+    <div class="game-board mode-easy" id="gameBoard" role="region" aria-label="Memory Game Board"></div>
 
     <button class="btn-reset" id="resetBtn">Restart Game</button>
 
-    <!-- 1. Start / Select Difficulty Modal (Appears First) -->
+    <!-- 1. Start Modal & Instructions -->
     <div class="modal-overlay active" id="startModal">
       <div class="start-card">
         <div class="modal-icon">🐾🎮</div>
         <h2 class="modal-title">Choose Difficulty to Play</h2>
-        <p class="modal-text">Select a grid size to start the game and set your best time record!</p>
         
+        <!-- Instruction & UI Clarity Box -->
+        <div class="instructions-box">
+          <p><strong>🎯 Goal:</strong> Find all matching pet & item pairs in as few flips as possible.</p>
+          <p><strong>⌨️ Controls:</strong> Click cards or press <kbd>Tab</kbd> to focus and <kbd>Enter</kbd> / <kbd>Space</kbd> to flip.</p>
+        </div>
+
         <div class="start-diff-options">
           <button class="start-diff-btn" data-level="easy">
             <span class="diff-title">Easy (3x4)</span>
@@ -72,13 +77,12 @@
       </div>
     </div>
 
-    <!-- 2. Completion Win Modal -->
+    <!-- 2. Victory Modal -->
     <div class="modal-overlay" id="winModal">
       <div class="modal-icon">🏡❤️</div>
       <h2 class="modal-title">Every Pet Found a Match!</h2>
       <p class="modal-text" id="winStatsText">You matched all pets!</p>
       <div class="record-badge" id="newRecordBadge" style="display: none;">🏆 New Best Record!</div>
-      <a href="#quiz" class="modal-btn" id="modalQuizBtn">Take the "Which Pet Is Right for You?" Quiz</a>
       <button class="btn-reset" id="modalPlayAgainBtn">Play Again</button>
     </div>
   </div>
