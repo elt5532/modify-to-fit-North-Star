@@ -1,382 +1,272 @@
-:root {
-  --bg-comfort-outer: #FFF6E9;
-  --bg-comfort-inner: #FFFFFF;
-  --bg-comfort-subtle: #F7E9C6;
-  
-  --peach-beige: #F8C5A0;
-  --peach-gradient: linear-gradient(135deg, #F8C5A0 0%, #FFB84E 100%);
-  --goldenrod: #FFB84E;
-  --goldenrod-glow: rgba(255, 184, 78, 0.35);
-  --coral-orange: #F57550;
+const itemsPool = [
+  { emoji: '🐶', name: 'Milo', trait: 'Dog' },
+  { emoji: '🐱', name: 'Luna', trait: 'Cat' },
+  { emoji: '🐰', name: 'Barnaby', trait: 'Rabbit' },
+  { emoji: '🦜', name: 'Cleo', trait: 'Parrot' },
+  { emoji: '🐹', name: 'Peanut', trait: 'Hamster' },
+  { emoji: '🐢', name: 'Shelby', trait: 'Pet Turtle' },
+  { emoji: '🐕', name: 'Bella', trait: 'Golden Retriever' },
+  { emoji: '🐈', name: 'Oliver', trait: 'Tabby Cat' },
+  { emoji: '🐩', name: 'Pippa', trait: 'Poodle' },
+  { emoji: '🐤', name: 'Sunny', trait: 'Canary' },
+  { emoji: '🐁', name: 'Nibbles', trait: 'Pet Mouse' },
+  { emoji: '🐾', name: 'Paws', trait: 'Puppy' },
+  { emoji: '🎾', name: 'Tennis Ball', trait: 'Toy' },
+  { emoji: '🧸', name: 'Teddy Bear', trait: 'Toy' },
+  { emoji: '🦴', name: 'Chew Bone', trait: 'Toy' },
+  { emoji: '🧶', name: 'Yarn Ball', trait: 'Toy' },
+  { emoji: '🪀', name: 'Squeaky Ring', trait: 'Toy' },
+  { emoji: '🥕', name: 'Chew Carrot', trait: 'Toy' },
+  { emoji: '🛏️', name: 'Pet Bed', trait: 'Item' },
+  { emoji: '📦', name: 'Scratch Box', trait: 'Toy' },
+  { emoji: '🪶', name: 'Feather Wand', trait: 'Toy' },
+  { emoji: '🥣', name: 'Pet Bowl', trait: 'Item' },
+  { emoji: '🔔', name: 'Collar Bell', trait: 'Item' },
+  { emoji: '🥓', name: 'Crunchy Treat', trait: 'Snack' }
+];
 
-  --deep-teal: #43756B;
-  --charcoal: #2D2D2D;
-  --sage-green: #B1B298;
-  --matched-bg: #F4F7F2;
-  --error-red: #E74C3C;
+const difficultyConfigs = {
+  easy: { name: 'Easy 3x4', pairs: 6 },
+  medium: { name: 'Medium 4x4', pairs: 8 },
+  hard: { name: 'Hard 5x6', pairs: 15 }
+};
 
-  --shadow-soft: 0 16px 36px rgba(67, 117, 107, 0.08);
-  --shadow-card: 0 6px 14px rgba(45, 45, 45, 0.07);
-  --font-main: 'Fredoka', sans-serif;
+// DOM Elements
+const gameContainer = document.getElementById('gameContainer');
+const gameBoard = document.getElementById('gameBoard');
+const matchesDisplay = document.getElementById('matches');
+const flipsDisplay = document.getElementById('flips');
+const timerDisplay = document.getElementById('timer');
+const bestRecordDisplay = document.getElementById('bestRecord');
+const currentLevelLabel = document.getElementById('currentLevelLabel');
+
+const startModal = document.getElementById('startModal');
+const winModal = document.getElementById('winModal');
+const winStatsText = document.getElementById('winStatsText');
+const newRecordBadge = document.getElementById('newRecordBadge');
+
+const resetBtn = document.getElementById('resetBtn');
+const changeDiffBtn = document.getElementById('changeDiffBtn');
+const modalPlayAgainBtn = document.getElementById('modalPlayAgainBtn');
+const startDiffButtons = document.querySelectorAll('.start-diff-btn');
+
+// Game State
+let currentDifficulty = 'easy';
+let targetMatches = 6;
+let cardsDeck = [];
+let firstCard = null;
+let lockBoard = false;
+let matchesCount = 0;
+let flipsCount = 0;
+
+// Timer State
+let timerInterval = null;
+let startTime = null;
+let elapsedSeconds = 0;
+let isTimerRunning = false;
+let finalTimeFormatted = '00:00';
+
+function formatTime(totalSeconds) {
+  const mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+  const secs = (totalSeconds % 60).toString().padStart(2, '0');
+  return `${mins}:${secs}`;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+function getBestRecord(level) {
+  const record = localStorage.getItem(`petmatch_best_${level}`);
+  return record ? parseInt(record, 10) : null;
 }
 
-body {
-  background: radial-gradient(circle at 50% 30%, #FFFDF9 0%, var(--bg-comfort-outer) 100%);
-  font-family: var(--font-main);
-  color: var(--charcoal);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 16px;
+function saveBestRecord(level, seconds) {
+  localStorage.setItem(`petmatch_best_${level}`, seconds);
 }
 
-.game-container {
-  width: 100%;
-  max-width: 520px;
-  background: var(--bg-comfort-inner);
-  border: 2px solid var(--bg-comfort-subtle);
-  border-radius: 28px;
-  box-shadow: var(--shadow-soft);
-  padding: 24px 20px;
-  text-align: center;
-  position: relative;
-  transition: max-width 0.3s ease;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+function updateRecordsUI() {
+  const currentBest = getBestRecord(currentDifficulty);
+  bestRecordDisplay.textContent = currentBest ? formatTime(currentBest) : '--:--';
+
+  ['easy', 'medium', 'hard'].forEach((lvl) => {
+    const rec = getBestRecord(lvl);
+    const elem = document.getElementById(`startRecord${lvl.charAt(0).toUpperCase() + lvl.slice(1)}`);
+    if (elem) {
+      elem.textContent = rec ? `Best: ${formatTime(rec)}` : 'Best: --:--';
+    }
+  });
 }
 
-.game-container.container-medium { max-width: 580px; }
-.game-container.container-hard { max-width: 720px; }
+function startTimer() {
+  if (isTimerRunning) return;
+  isTimerRunning = true;
+  startTime = Date.now();
 
-.brand-badge {
-  display: inline-block;
-  background: var(--bg-comfort-subtle);
-  color: var(--deep-teal);
-  font-weight: 600;
-  font-size: 0.85rem;
-  padding: 4px 14px;
-  border-radius: 20px;
-  margin-bottom: 8px;
+  timerInterval = setInterval(() => {
+    elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+    finalTimeFormatted = formatTime(elapsedSeconds);
+    timerDisplay.textContent = finalTimeFormatted;
+  }, 1000);
 }
 
-.title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 6px;
-  color: var(--charcoal);
+function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  isTimerRunning = false;
 }
 
-.subtitle {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 12px;
+function resetTimer() {
+  stopTimer();
+  elapsedSeconds = 0;
+  finalTimeFormatted = '00:00';
+  timerDisplay.textContent = '00:00';
 }
 
-.difficulty-bar { margin-bottom: 12px; }
-
-.diff-btn {
-  background: var(--bg-comfort-outer);
-  border: 1px solid var(--peach-beige);
-  color: var(--charcoal);
-  font-family: var(--font-main);
-  font-weight: 600;
-  font-size: 0.85rem;
-  padding: 6px 16px;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+function openStartModal() {
+  stopTimer();
+  updateRecordsUI();
+  startModal.classList.add('active');
 }
 
-.diff-btn:hover, .diff-btn:focus {
-  background: var(--bg-comfort-subtle);
-  color: var(--deep-teal);
-  outline: none;
+function initGame() {
+  resetTimer();
+  startModal.classList.remove('active');
+  winModal.classList.remove('active');
+  newRecordBadge.style.display = 'none';
+
+  firstCard = null;
+  lockBoard = false;
+  matchesCount = 0;
+  flipsCount = 0;
+
+  const config = difficultyConfigs[currentDifficulty];
+  targetMatches = config.pairs;
+  currentLevelLabel.textContent = config.name;
+
+  matchesDisplay.textContent = `0 / ${targetMatches}`;
+  flipsDisplay.textContent = '0';
+
+  updateRecordsUI();
+
+  gameBoard.className = `game-board mode-${currentDifficulty}`;
+  gameContainer.className = `game-container container-${currentDifficulty}`;
+
+  const selectedItems = [...itemsPool].sort(() => 0.5 - Math.random()).slice(0, targetMatches);
+  cardsDeck = [...selectedItems, ...selectedItems].sort(() => 0.5 - Math.random());
+
+  gameBoard.innerHTML = '';
+  cardsDeck.forEach((item, index) => {
+    const card = document.createElement('div');
+    card.classList.add('card');
+    card.dataset.name = item.name;
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', `Card ${index + 1}: Hidden`);
+
+    card.innerHTML = `
+      <div class="card-face card-back"></div>
+      <div class="card-face card-front">
+        <span class="card-emoji">${item.emoji}</span>
+        <span class="card-name">${item.name}</span>
+        <span class="card-trait">${item.trait}</span>
+      </div>
+    `;
+
+    // Mouse & Keyboard Inputs
+    card.addEventListener('click', () => handleCardClick(card));
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleCardClick(card);
+      }
+    });
+
+    gameBoard.appendChild(card);
+  });
 }
 
-/* Instructions Box */
-.instructions-box {
-  background: var(--bg-comfort-outer);
-  border: 1px solid var(--peach-beige);
-  border-radius: 12px;
-  padding: 10px 14px;
-  margin-bottom: 14px;
-  text-align: left;
-  font-size: 0.8rem;
-  line-height: 1.4;
-  color: var(--charcoal);
+function handleCardClick(card) {
+  if (lockBoard || card === firstCard || card.classList.contains('matched') || card.classList.contains('flipped')) return;
+
+  if (!isTimerRunning) {
+    startTimer();
+  }
+
+  card.classList.add('flipped');
+  flipsCount++;
+  flipsDisplay.textContent = flipsCount;
+
+  if (!firstCard) {
+    firstCard = card;
+    return;
+  }
+
+  lockBoard = true;
+  checkMatch(card);
 }
 
-.instructions-box kbd {
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 1px 5px;
-  font-family: monospace;
-  font-size: 0.75rem;
-}
+function checkMatch(secondCard) {
+  const isMatch = firstCard.dataset.name === secondCard.dataset.name;
 
-.stats-bar {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-  background: var(--bg-comfort-outer);
-  border-radius: 16px;
-  padding: 8px 6px;
-  margin-bottom: 16px;
-}
+  if (isMatch) {
+    firstCard.classList.add('matched', 'matched-pop');
+    secondCard.classList.add('matched', 'matched-pop');
+    firstCard.setAttribute('aria-label', `${firstCard.dataset.name}, Matched`);
+    secondCard.setAttribute('aria-label', `${secondCard.dataset.name}, Matched`);
 
-.stat-item {
-  display: flex;
-  flex-direction: column;
-}
+    matchesCount++;
+    matchesDisplay.textContent = `${matchesCount} / ${targetMatches}`;
 
-.stat-label {
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  color: #888;
-  font-weight: 600;
-}
+    resetTurn();
 
-.stat-value {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--coral-orange);
-}
+    if (matchesCount === targetMatches) {
+      stopTimer();
+      handleWin();
+    }
+  } else {
+    // Visual Feedback: Shake effect on mismatch
+    firstCard.classList.add('mismatch');
+    secondCard.classList.add('mismatch');
 
-.game-board {
-  display: grid;
-  margin-bottom: 16px;
-  perspective: 1000px;
-  width: 100%;
-}
-
-.game-board.mode-easy { grid-template-columns: repeat(4, 1fr); gap: 10px; }
-.game-board.mode-medium { grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.game-board.mode-hard { grid-template-columns: repeat(6, 1fr); gap: 6px; }
-
-/* Responsive Grid Boundary Safeguard */
-@media (max-width: 480px) {
-  .game-board.mode-hard {
-    grid-template-columns: repeat(5, 1fr);
-    gap: 4px;
+    setTimeout(() => {
+      firstCard.classList.remove('flipped', 'mismatch');
+      secondCard.classList.remove('flipped', 'mismatch');
+      resetTurn();
+    }, 800);
   }
 }
 
-.card {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.4s ease;
-  cursor: pointer;
-  border-radius: 14px;
+function handleWin() {
+  const previousRecord = getBestRecord(currentDifficulty);
+  let isNewRecord = false;
+
+  if (!previousRecord || elapsedSeconds < previousRecord) {
+    saveBestRecord(currentDifficulty, elapsedSeconds);
+    isNewRecord = true;
+    updateRecordsUI();
+  }
+
+  winStatsText.textContent = `Completed in ${finalTimeFormatted} with ${flipsCount} flips!`;
+  newRecordBadge.style.display = isNewRecord ? 'inline-block' : 'none';
+
+  setTimeout(() => winModal.classList.add('active'), 400);
 }
 
-.card:focus {
-  outline: 3px solid var(--goldenrod);
-  outline-offset: 2px;
+function resetTurn() {
+  [firstCard, lockBoard] = [null, false];
 }
 
-.card.flipped { transform: rotateY(180deg); }
+// Event Listeners
+startDiffButtons.forEach((btn) => {
+  btn.addEventListener('click', (e) => {
+    currentDifficulty = e.currentTarget.dataset.level;
+    initGame();
+  });
+});
 
-.card-face {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  border-radius: 14px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  user-select: none;
-  box-shadow: var(--shadow-card);
-}
+changeDiffBtn.addEventListener('click', openStartModal);
+resetBtn.addEventListener('click', initGame);
+modalPlayAgainBtn.addEventListener('click', initGame);
 
-.card-back {
-  background: var(--peach-gradient);
-  color: var(--charcoal);
-  border: 2px solid #FFFFFF;
-}
-
-.card-back::after {
-  content: '🐾';
-  opacity: 0.75;
-}
-
-.card-front {
-  background: #FFFFFF;
-  border: 2px solid #90C6CF;
-  transform: rotateY(180deg);
-  padding: 2px;
-}
-
-.mode-easy .card-back { font-size: 1.6rem; }
-.mode-easy .card-emoji { font-size: 2rem; }
-.mode-easy .card-name { font-size: 0.7rem; font-weight: 600; }
-.mode-easy .card-trait { font-size: 0.6rem; color: var(--deep-teal); }
-
-.mode-medium .card-back { font-size: 1.4rem; }
-.mode-medium .card-emoji { font-size: 1.6rem; }
-.mode-medium .card-name { font-size: 0.65rem; font-weight: 600; }
-.mode-medium .card-trait { font-size: 0.55rem; color: var(--deep-teal); }
-
-.mode-hard .card-back { font-size: 1.1rem; }
-.mode-hard .card-emoji { font-size: 1.3rem; }
-.mode-hard .card-name { font-size: 0.55rem; font-weight: 600; }
-.mode-hard .card-trait { font-size: 0.50rem; color: var(--deep-teal); }
-
-/* Keyframe Visual Feedback */
-@keyframes shake {
-  0%, 100% { transform: rotateY(180deg) translateX(0); }
-  20%, 60% { transform: rotateY(180deg) translateX(-5px); }
-  40%, 80% { transform: rotateY(180deg) translateX(5px); }
-}
-
-@keyframes matchPop {
-  0% { transform: rotateY(180deg) scale(1); }
-  50% { transform: rotateY(180deg) scale(1.12); }
-  100% { transform: rotateY(180deg) scale(1); }
-}
-
-.card.mismatch .card-front {
-  border-color: var(--error-red);
-  animation: shake 0.4s ease-in-out;
-}
-
-.card.matched-pop .card-front {
-  animation: matchPop 0.4s ease-in-out;
-}
-
-.card.matched .card-front {
-  background: var(--matched-bg);
-  border-color: var(--sage-green);
-  opacity: 0.85;
-}
-
-.card.matched { cursor: default; }
-
-.btn-reset {
-  background: var(--goldenrod);
-  color: var(--charcoal);
-  border: none;
-  padding: 12px 28px;
-  font-size: 0.95rem;
-  font-weight: 700;
-  font-family: var(--font-main);
-  border-radius: 30px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px var(--goldenrod-glow);
-  transition: all 0.2s ease;
-}
-
-.btn-reset:hover, .btn-reset:focus {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px var(--goldenrod-glow);
-  background: #F0A53A;
-  outline: none;
-}
-
-.modal-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 246, 233, 0.97);
-  border-radius: 28px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 20px 16px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-  z-index: 10;
-  overflow-y: auto;
-}
-
-.modal-overlay.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.start-card {
-  width: 100%;
-  max-width: 380px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.start-diff-options {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-}
-
-.start-diff-btn {
-  background: #FFFFFF;
-  border: 2px solid var(--peach-beige);
-  border-radius: 14px;
-  padding: 10px 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 100%;
-}
-
-.start-diff-btn:hover, .start-diff-btn:focus {
-  background: var(--bg-comfort-subtle);
-  border-color: var(--goldenrod);
-  transform: translateY(-2px);
-  outline: none;
-}
-
-.diff-title {
-  font-family: var(--font-main);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--charcoal);
-}
-
-.diff-desc {
-  font-size: 0.75rem;
-  color: #666;
-  margin: 1px 0 3px;
-}
-
-.diff-record {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--deep-teal);
-}
-
-.record-badge {
-  background: var(--bg-comfort-subtle);
-  color: var(--coral-orange);
-  border: 1px solid var(--peach-beige);
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-
-.modal-icon { font-size: 2.5rem; margin-bottom: 6px; }
-.modal-title { font-size: 1.4rem; margin-bottom: 4px; color: var(--charcoal); }
-.modal-text { font-size: 0.85rem; color: #666; margin-bottom: 14px; line-height: 1.3; }
+document.addEventListener('DOMContentLoaded', () => {
+  openStartModal();
+});
