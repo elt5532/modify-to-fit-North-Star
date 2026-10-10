@@ -44,38 +44,38 @@
     <button class="btn-reset" id="resetBtn">Restart Game</button>
 
     <!-- 1. Start Modal & Instructions -->
-    <div class="modal-overlay active" id="startModal">
-      <div class="start-card">
-        <div class="modal-icon">🐾🎮</div>
-        <h2 class="modal-title">Choose Difficulty to Play</h2>
-        
-      <!-- Instruction & UI Clarity Box -->
-<div class="instructions-box">
-  <p><strong>🎯 Goal:</strong> Find all matching pet & item pairs in as few flips as possible.</p>
-  <p><strong>🖱️ Controls:</strong> Click on any card using your mouse to flip it over.</p>
-</div>
-
-        <div class="start-diff-options">
-          <button class="start-diff-btn" data-level="easy">
-            <span class="diff-title">Easy (3x4)</span>
-            <span class="diff-desc">12 Cards • 6 Pairs</span>
-            <span class="diff-record" id="startRecordEasy">Best: --:--</span>
-          </button>
-          
-          <button class="start-diff-btn" data-level="medium">
-            <span class="diff-title">Medium (4x4)</span>
-            <span class="diff-desc">16 Cards • 8 Pairs</span>
-            <span class="diff-record" id="startRecordMedium">Best: --:--</span>
-          </button>
-          
-          <button class="start-diff-btn" data-level="hard">
-            <span class="diff-title">Hard (5x6)</span>
-            <span class="diff-desc">30 Cards • 15 Pairs</span>
-            <span class="diff-record" id="startRecordHard">Best: --:--</span>
-          </button>
-        </div>
-      </div>
+<div class="modal-overlay active" id="startModal">
+  <div class="start-card">
+    <div class="modal-icon">🐾🎮</div>
+    <h2 class="modal-title">Choose Difficulty to Play</h2>
+    
+    <!-- Instruction & UI Clarity Box -->
+    <div class="instructions-box">
+      <p><strong>🎯 Goal:</strong> Find all matching pet & item pairs in as few flips as possible.</p>
+      <p><strong>🖱️ Controls:</strong> Click on any card using your mouse to flip it over.</p>
     </div>
+
+    <div class="start-diff-options">
+      <button class="start-diff-btn" data-level="easy">
+        <span class="diff-title">Easy (3x4)</span>
+        <span class="diff-desc">12 Cards • 6 Pairs</span>
+        <span class="diff-record" id="startRecordEasy">Best: --:--</span>
+      </button>
+      
+      <button class="start-diff-btn" data-level="medium">
+        <span class="diff-title">Medium (4x4)</span>
+        <span class="diff-desc">16 Cards • 8 Pairs</span>
+        <span class="diff-record" id="startRecordMedium">Best: --:--</span>
+      </button>
+      
+      <button class="start-diff-btn" data-level="hard">
+        <span class="diff-title">Hard (5x6)</span>
+        <span class="diff-desc">30 Cards • 15 Pairs</span>
+        <span class="diff-record" id="startRecordHard">Best: --:--</span>
+      </button>
+    </div>
+  </div>
+</div>
 
     <!-- 2. Victory Modal -->
     <div class="modal-overlay" id="winModal">
